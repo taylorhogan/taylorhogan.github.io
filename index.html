@@ -36,6 +36,39 @@
             color: var(--accent-color);
         }
 
+        nav.dso-nav {
+            background-color: rgba(21, 25, 43, 0.95);
+            border-bottom: 1px solid rgba(62, 100, 255, 0.3);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav.dso-nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 1.25rem;
+            justify-content: center;
+        }
+
+        nav.dso-nav a {
+            color: #8b9bb4;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-family: monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: color 0.2s;
+        }
+
+        nav.dso-nav a:hover {
+            color: var(--accent-color);
+        }
+
         .container {
             max-width: 1000px;
             margin: 0 auto;
@@ -49,6 +82,7 @@
             margin-bottom: 3rem;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             transition: transform 0.3s ease;
+            scroll-margin-top: 70px;
         }
 
         .dso-section:hover {
@@ -129,10 +163,36 @@
         <p>A journey through space and history</p>
     </header>
 
+    <nav class="dso-nav">
+        <ul>
+            <li><a href="#ic1318">IC1318</a></li>
+            <li><a href="#ic5146">IC5146</a></li>
+            <li><a href="#ic727">IC727</a></li>
+            <li><a href="#m13">M13</a></li>
+            <li><a href="#m51">M51</a></li>
+            <li><a href="#m57">M57</a></li>
+            <li><a href="#m63">M63</a></li>
+            <li><a href="#m74">M74</a></li>
+            <li><a href="#m94">M94</a></li>
+            <li><a href="#m101">M101</a></li>
+            <li><a href="#m106">M106</a></li>
+            <li><a href="#ngc1275">NGC1275</a></li>
+            <li><a href="#ngc3190">NGC3190</a></li>
+            <li><a href="#ngc4565">NGC4565</a></li>
+            <li><a href="#ngc6339">NGC6339</a></li>
+            <li><a href="#ngc6888">NGC6888</a></li>
+            <li><a href="#ngc7331">NGC7331</a></li>
+            <li><a href="#ngc7635">NGC7635</a></li>
+            <li><a href="#ngc891">NGC891</a></li>
+            <li><a href="#ngc925">NGC925</a></li>
+            <li><a href="#sh2-101">SH2-101</a></li>
+        </ul>
+    </nav>
+
     <div class="container">
 
         <!-- IC1318 -->
-        <article class="dso-section">
+        <article id="ic1318" class="dso-section">
             <div class="dso-image-container">
                 <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/ic1318.jpg" alt="IC1318" class="dso-image">
             </div>
@@ -153,96 +213,8 @@
             </div>
         </article>
 
-        <!-- M13 -->
-        <article class="dso-section">
-            <div class="dso-image-container">
-                <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/m13.jpg" alt="M13" class="dso-image">
-            </div>
-            <div class="dso-content">
-                <h2 class="dso-title">M13 - Hercules Globular Cluster</h2>
-                <div class="dso-meta">DISTANCE: ~25,000 LIGHT YEARS | TYPE: GLOBULAR CLUSTER</div>
-
-                <p class="science-text">
-                    M13 is one of the oldest known globular clusters in the Milky Way, containing over 300,000 stars packed into a 145 light-year diameter sphere. Aged at 11.65 billion years, it orbits the galactic center in a halo trajectory, providing insights into stellar evolution, variable stars, and the galaxy's formation history through its low-metallicity Population II stars.
-                </p>
-
-                <div class="time-travel-box">
-                    <span class="time-travel-title">On Earth: ~23,000 BC</span>
-                    <p>
-                        When this light departed M13, Earth was in the Last Glacial Maximum. Modern humans were creating cave art in Europe, like at Lascaux. Hunter-gatherers adapted to ice age conditions, with megafauna like mammoths dominating. The Bering land bridge allowed migration to the Americas.
-                    </p>
-                </div>
-            </div>
-        </article>
-
-        <!-- NGC1275 -->
-        <article class="dso-section">
-            <div class="dso-image-container">
-                <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/ngc1275.jpg" alt="NGC1275" class="dso-image">
-            </div>
-            <div class="dso-content">
-                <h2 class="dso-title">NGC1275 - Perseus A</h2>
-                <div class="dso-meta">DISTANCE: ~230 MILLION LIGHT YEARS | TYPE: SEYFERT GALAXY</div>
-
-                <p class="science-text">
-                    NGC1275 is the dominant galaxy in the Perseus Cluster, a radio galaxy with an active nucleus powered by a supermassive black hole. It exhibits filamentary structures of cool gas falling into the hot intracluster medium, providing key evidence for AGN feedback mechanisms that regulate star formation and cluster cooling flows.
-                </p>
-
-                <div class="time-travel-box">
-                    <span class="time-travel-title">On Earth: 230 Million Years Ago</span>
-                    <p>
-                        The photons left during the Triassic period, when the supercontinent Pangaea was forming. Early dinosaurs and mammals were emerging after the Permian extinction. Vast forests of cycads and ferns covered the land, and the first flying reptiles appeared in a world recovering from mass extinction.
-                    </p>
-                </div>
-            </div>
-        </article>
-
-        <!-- NGC7331 -->
-        <article class="dso-section">
-            <div class="dso-image-container">
-                <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/ngc7331.jpg" alt="NGC7331" class="dso-image">
-            </div>
-            <div class="dso-content">
-                <h2 class="dso-title">NGC7331 - Deer Lick Galaxy</h2>
-                <div class="dso-meta">DISTANCE: ~40 MILLION LIGHT YEARS | TYPE: SPIRAL GALAXY</div>
-
-                <p class="science-text">
-                    NGC7331 is an unbarred spiral galaxy often compared to the Milky Way, with a prominent dust lane and active star formation in its arms. As the brightest member of its group, it showcases galactic interactions and serves as a calibrator for the cosmic distance ladder through its Cepheid variables.
-                </p>
-
-                <div class="time-travel-box">
-                    <span class="time-travel-title">On Earth: 40 Million Years Ago</span>
-                    <p>
-                        During the Eocene epoch, Earth experienced a warm climate with lush forests extending to the poles. Early primates evolved in these environments, while modern mammal orders like whales transitioned from land to sea. Antarctica began separating from Australia, initiating global cooling trends.
-                    </p>
-                </div>
-            </div>
-        </article>
-
-        <!-- SH2-101 -->
-        <article class="dso-section">
-            <div class="dso-image-container">
-                <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/sh2-101.jpg" alt="SH2-101" class="dso-image">
-            </div>
-            <div class="dso-content">
-                <h2 class="dso-title">SH2-101 - Tulip Nebula</h2>
-                <div class="dso-meta">DISTANCE: ~6,000 LIGHT YEARS | TYPE: EMISSION NEBULA</div>
-
-                <p class="science-text">
-                    SH2-101, the Tulip Nebula, is an H II region ionized by the young star cluster near microquasar Cygnus X-1. Spanning 70 light-years, it demonstrates stellar wind interactions and triggered star formation, with dark molecular clouds silhouetted against glowing hydrogen gas.
-                </p>
-
-                <div class="time-travel-box">
-                    <span class="time-travel-title">On Earth: ~4,000 BC</span>
-                    <p>
-                        The Neolithic Revolution was underway, with agriculture spreading in the Fertile Crescent. Megalithic structures like Göbekli Tepe were built in Anatolia. In Europe, farming communities emerged, while in China, early rice cultivation began along the Yangtze River.
-                    </p>
-                </div>
-            </div>
-        </article>
-
         <!-- IC5146 -->
-        <article class="dso-section">
+        <article id="ic5146" class="dso-section">
             <div class="dso-image-container">
                 <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/ic5146.jpg" alt="IC5146" class="dso-image">
             </div>
@@ -264,7 +236,7 @@
         </article>
 
         <!-- IC727 -->
-        <article class="dso-section">
+        <article id="ic727" class="dso-section">
             <div class="dso-image-container">
                 <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/ic727.jpg" alt="IC727" class="dso-image">
             </div>
@@ -285,8 +257,30 @@
             </div>
         </article>
 
+        <!-- M13 -->
+        <article id="m13" class="dso-section">
+            <div class="dso-image-container">
+                <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/m13.jpg" alt="M13" class="dso-image">
+            </div>
+            <div class="dso-content">
+                <h2 class="dso-title">M13 - Hercules Globular Cluster</h2>
+                <div class="dso-meta">DISTANCE: ~25,000 LIGHT YEARS | TYPE: GLOBULAR CLUSTER</div>
+
+                <p class="science-text">
+                    M13 is one of the oldest known globular clusters in the Milky Way, containing over 300,000 stars packed into a 145 light-year diameter sphere. Aged at 11.65 billion years, it orbits the galactic center in a halo trajectory, providing insights into stellar evolution, variable stars, and the galaxy's formation history through its low-metallicity Population II stars.
+                </p>
+
+                <div class="time-travel-box">
+                    <span class="time-travel-title">On Earth: ~23,000 BC</span>
+                    <p>
+                        When this light departed M13, Earth was in the Last Glacial Maximum. Modern humans were creating cave art in Europe, like at Lascaux. Hunter-gatherers adapted to ice age conditions, with megafauna like mammoths dominating. The Bering land bridge allowed migration to the Americas.
+                    </p>
+                </div>
+            </div>
+        </article>
+
         <!-- M51 -->
-        <article class="dso-section">
+        <article id="m51" class="dso-section">
             <div class="dso-image-container">
                 <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/m51.jpg" alt="M51" class="dso-image">
             </div>
@@ -308,7 +302,7 @@
         </article>
 
         <!-- M57 -->
-        <article class="dso-section">
+        <article id="m57" class="dso-section">
             <div class="dso-image-container">
                 <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/m57.jpg" alt="M57" class="dso-image">
             </div>
@@ -329,74 +323,8 @@
             </div>
         </article>
 
-        <!-- NGC4565 -->
-        <article class="dso-section">
-            <div class="dso-image-container">
-                <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/ngc4565.jpg" alt="NGC4565" class="dso-image">
-            </div>
-            <div class="dso-content">
-                <h2 class="dso-title">NGC4565 - Needle Galaxy</h2>
-                <div class="dso-meta">DISTANCE: ~47 MILLION LIGHT YEARS | TYPE: SPIRAL GALAXY</div>
-
-                <p class="science-text">
-                    NGC4565 is an edge-on spiral showcasing a prominent dust lane bisecting its thin disk. Similar in size to the Milky Way, it allows detailed study of galactic structure, including bulge-to-disk ratios and dark matter halo effects through rotation curve analysis.
-                </p>
-
-                <div class="time-travel-box">
-                    <span class="time-travel-title">On Earth: 47 Million Years Ago</span>
-                    <p>
-                        During the Eocene, Earth had a greenhouse climate with palm trees in polar regions. Early whales evolved from land mammals, and primates began diversifying. Massive volcanic activity in the North Atlantic formed new ocean basins.
-                    </p>
-                </div>
-            </div>
-        </article>
-
-        <!-- NGC7635 -->
-        <article class="dso-section">
-            <div class="dso-image-container">
-                <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/ngc7635.jpg" alt="NGC7635" class="dso-image">
-            </div>
-            <div class="dso-content">
-                <h2 class="dso-title">NGC7635 - Bubble Nebula</h2>
-                <div class="dso-meta">DISTANCE: ~7,100 LIGHT YEARS | TYPE: EMISSION NEBULA</div>
-
-                <p class="science-text">
-                    NGC7635 is a spherical shell created by the stellar wind from a massive O-type star, expanding into the surrounding molecular cloud. This 7 light-year diameter bubble demonstrates wind-blown nebula formation and ionization processes in H II regions.
-                </p>
-
-                <div class="time-travel-box">
-                    <span class="time-travel-title">On Earth: ~5,100 BC</span>
-                    <p>
-                        The Neolithic period saw the rise of farming villages in the Middle East. Pottery and weaving advanced, and early metallurgy began with copper. In Europe, megalithic tombs were constructed, marking the transition from hunter-gatherer societies.
-                    </p>
-                </div>
-            </div>
-        </article>
-
-        <!-- M101 -->
-        <article class="dso-section">
-            <div class="dso-image-container">
-                <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/m101.jpg" alt="M101" class="dso-image">
-            </div>
-            <div class="dso-content">
-                <h2 class="dso-title">M101 - Pinwheel Galaxy</h2>
-                <div class="dso-meta">DISTANCE: ~21 MILLION LIGHT YEARS | TYPE: SPIRAL GALAXY</div>
-
-                <p class="science-text">
-                    M101 is a grand-design spiral with asymmetric arms possibly due to interactions with companions. Hosting numerous H II regions, it has a high supernova rate, making it ideal for studying star formation and galactic asymmetry.
-                </p>
-
-                <div class="time-travel-box">
-                    <span class="time-travel-title">On Earth: 21 Million Years Ago</span>
-                    <p>
-                        In the Miocene, apes proliferated in Africa and Eurasia. Grasslands expanded, leading to the evolution of modern horses and elephants. The Mediterranean Sea experienced desiccation events, and global temperatures began a long-term cooling trend.
-                    </p>
-                </div>
-            </div>
-        </article>
-
         <!-- M63 -->
-        <article class="dso-section">
+        <article id="m63" class="dso-section">
             <div class="dso-image-container">
                 <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/m63.jpg" alt="M63" class="dso-image">
             </div>
@@ -417,74 +345,8 @@
             </div>
         </article>
 
-        <!-- NGC6339 -->
-        <article class="dso-section">
-            <div class="dso-image-container">
-                <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/ngc6339.jpg" alt="NGC6339" class="dso-image">
-            </div>
-            <div class="dso-content">
-                <h2 class="dso-title">NGC6339 - Spiral Galaxy</h2>
-                <div class="dso-meta">DISTANCE: ~94 MILLION LIGHT YEARS | TYPE: SPIRAL GALAXY</div>
-
-                <p class="science-text">
-                    NGC6339 is a barred spiral in Hercules with disturbed arms indicating possible interactions. Its kinematics show perpendicular rotation to its major axis, making it valuable for studying galactic bars and secular evolution.
-                </p>
-
-                <div class="time-travel-box">
-                    <span class="time-travel-title">On Earth: 94 Million Years Ago</span>
-                    <p>
-                        During the Late Cretaceous, dinosaurs like Tyrannosaurus roamed while flowering plants diversified. The Western Interior Seaway divided North America, and birds began evolving from theropods. The stage was set for the Chicxulub impact.
-                    </p>
-                </div>
-            </div>
-        </article>
-
-        <!-- NGC891 -->
-        <article class="dso-section">
-            <div class="dso-image-container">
-                <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/ngc891.jpg" alt="NGC891" class="dso-image">
-            </div>
-            <div class="dso-content">
-                <h2 class="dso-title">NGC891 - Silver Sliver Galaxy</h2>
-                <div class="dso-meta">DISTANCE: ~30 MILLION LIGHT YEARS | TYPE: SPIRAL GALAXY</div>
-
-                <p class="science-text">
-                    NGC891 is an edge-on spiral with a thick dust lane, similar to how the Milky Way might appear from outside. It reveals vertical structures in its disk, informing models of galactic fountains and the role of magnetic fields in halo gas dynamics.
-                </p>
-
-                <div class="time-travel-box">
-                    <span class="time-travel-title">On Earth: 30 Million Years Ago</span>
-                    <p>
-                        The Oligocene featured the rise of modern mammal families. Early whales diversified in the oceans, and the first grasses appeared, transforming ecosystems. Tectonic activity continued shaping continents, with Australia separating from Antarctica.
-                    </p>
-                </div>
-            </div>
-        </article>
-
-        <!-- M106 -->
-        <article class="dso-section">
-            <div class="dso-image-container">
-                <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/m106.jpg" alt="M106" class="dso-image">
-            </div>
-            <div class="dso-content">
-                <h2 class="dso-title">M106 - Spiral Galaxy</h2>
-                <div class="dso-meta">DISTANCE: ~23.5 MILLION LIGHT YEARS | TYPE: SPIRAL GALAXY</div>
-
-                <p class="science-text">
-                    M106 is a Seyfert spiral with anomalous arms of hot gas, likely ejected from its active nucleus. This LINER galaxy demonstrates feedback from supermassive black holes, influencing star formation and galactic evolution.
-                </p>
-
-                <div class="time-travel-box">
-                    <span class="time-travel-title">On Earth: 23.5 Million Years Ago</span>
-                    <p>
-                        Early Miocene saw the diversification of grazing animals as grasslands spread. Apes migrated from Africa to Eurasia, and massive volcanic eruptions formed the Columbia River Basalts. Global cooling continued, leading to Antarctic glaciation.
-                    </p>
-                </div>
-            </div>
-        </article>
-
         <!-- M74 -->
-        <article class="dso-section">
+        <article id="m74" class="dso-section">
             <div class="dso-image-container">
                 <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/m74.jpg" alt="M74" class="dso-image">
             </div>
@@ -505,8 +367,162 @@
             </div>
         </article>
 
+        <!-- M94 -->
+        <article id="m94" class="dso-section">
+            <div class="dso-image-container">
+                <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/m94.jpg" alt="M94" class="dso-image">
+            </div>
+            <div class="dso-content">
+                <h2 class="dso-title">M94 - Croc's Eye Galaxy</h2>
+                <div class="dso-meta">DISTANCE: ~16 MILLION LIGHT YEARS | TYPE: SPIRAL GALAXY</div>
+
+                <p class="science-text">
+                    M94, nicknamed the Croc's Eye Galaxy, is a compact spiral galaxy in Canes Venatici notable for its unusually bright, starburst-active nucleus ringed by a tightly wound inner disk. Surrounding this inner structure is a broader, faint outer ring of older stellar populations—giving the galaxy a nested, multi-ring architecture rarely so clearly displayed. The intense star formation in the inner ring is thought to be driven by a density wave resonance rather than a galaxy merger, making M94 a valuable case study in internally triggered starbursts. Its relatively face-on orientation allows astronomers to map the transition zones between these distinct stellar populations in fine detail.
+                </p>
+
+                <div class="time-travel-box">
+                    <span class="time-travel-title">On Earth: 16 Million Years Ago</span>
+                    <p>
+                        These photons left during the middle Miocene, an era of exceptional warmth known as the Miocene Climatic Optimum. Vast subtropical forests stretched across Europe and North America, supporting diverse faunas of early apes, three-toed horses, and mastodons. In East Africa, the ancestors of humans were beginning to diverge from other great ape lineages. The Himalayan and Alpine mountain-building was in full swing, gradually reshaping ocean circulation and setting the stage for the planet's long cooling trend toward the Ice Ages.
+                    </p>
+                </div>
+            </div>
+        </article>
+
+        <!-- M101 -->
+        <article id="m101" class="dso-section">
+            <div class="dso-image-container">
+                <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/m101.jpg" alt="M101" class="dso-image">
+            </div>
+            <div class="dso-content">
+                <h2 class="dso-title">M101 - Pinwheel Galaxy</h2>
+                <div class="dso-meta">DISTANCE: ~21 MILLION LIGHT YEARS | TYPE: SPIRAL GALAXY</div>
+
+                <p class="science-text">
+                    M101 is a grand-design spiral with asymmetric arms possibly due to interactions with companions. Hosting numerous H II regions, it has a high supernova rate, making it ideal for studying star formation and galactic asymmetry.
+                </p>
+
+                <div class="time-travel-box">
+                    <span class="time-travel-title">On Earth: 21 Million Years Ago</span>
+                    <p>
+                        In the Miocene, apes proliferated in Africa and Eurasia. Grasslands expanded, leading to the evolution of modern horses and elephants. The Mediterranean Sea experienced desiccation events, and global temperatures began a long-term cooling trend.
+                    </p>
+                </div>
+            </div>
+        </article>
+
+        <!-- M106 -->
+        <article id="m106" class="dso-section">
+            <div class="dso-image-container">
+                <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/m106.jpg" alt="M106" class="dso-image">
+            </div>
+            <div class="dso-content">
+                <h2 class="dso-title">M106 - Spiral Galaxy</h2>
+                <div class="dso-meta">DISTANCE: ~23.5 MILLION LIGHT YEARS | TYPE: SPIRAL GALAXY</div>
+
+                <p class="science-text">
+                    M106 is a Seyfert spiral with anomalous arms of hot gas, likely ejected from its active nucleus. This LINER galaxy demonstrates feedback from supermassive black holes, influencing star formation and galactic evolution.
+                </p>
+
+                <div class="time-travel-box">
+                    <span class="time-travel-title">On Earth: 23.5 Million Years Ago</span>
+                    <p>
+                        Early Miocene saw the diversification of grazing animals as grasslands spread. Apes migrated from Africa to Eurasia, and massive volcanic eruptions formed the Columbia River Basalts. Global cooling continued, leading to Antarctic glaciation.
+                    </p>
+                </div>
+            </div>
+        </article>
+
+        <!-- NGC1275 -->
+        <article id="ngc1275" class="dso-section">
+            <div class="dso-image-container">
+                <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/ngc1275.jpg" alt="NGC1275" class="dso-image">
+            </div>
+            <div class="dso-content">
+                <h2 class="dso-title">NGC1275 - Perseus A</h2>
+                <div class="dso-meta">DISTANCE: ~230 MILLION LIGHT YEARS | TYPE: SEYFERT GALAXY</div>
+
+                <p class="science-text">
+                    NGC1275 is the dominant galaxy in the Perseus Cluster, a radio galaxy with an active nucleus powered by a supermassive black hole. It exhibits filamentary structures of cool gas falling into the hot intracluster medium, providing key evidence for AGN feedback mechanisms that regulate star formation and cluster cooling flows.
+                </p>
+
+                <div class="time-travel-box">
+                    <span class="time-travel-title">On Earth: 230 Million Years Ago</span>
+                    <p>
+                        The photons left during the Triassic period, when the supercontinent Pangaea was forming. Early dinosaurs and mammals were emerging after the Permian extinction. Vast forests of cycads and ferns covered the land, and the first flying reptiles appeared in a world recovering from mass extinction.
+                    </p>
+                </div>
+            </div>
+        </article>
+
+        <!-- NGC3190 -->
+        <article id="ngc3190" class="dso-section">
+            <div class="dso-image-container">
+                <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/ngc3190.jpg" alt="NGC3190" class="dso-image">
+            </div>
+            <div class="dso-content">
+                <h2 class="dso-title">NGC3190 - Hickson Compact Group 44</h2>
+                <div class="dso-meta">DISTANCE: ~70 MILLION LIGHT YEARS | TYPE: INTERACTING SPIRAL GALAXY GROUP</div>
+
+                <p class="science-text">
+                    NGC3190 is the most prominent member of Hickson Compact Group 44 (HCG 44) in Leo—a tight knot of four gravitationally bound galaxies whose mutual interactions are visibly warping their structures. NGC3190 itself is an edge-on spiral with a striking, sharply twisted dust lane, the result of tidal forces from its neighbors. Compact groups like HCG 44 are among the densest galaxy environments known, where repeated close encounters strip gas, trigger starbursts, and ultimately drive galaxies toward merger. The group serves as a local laboratory for understanding how environment accelerates galactic evolution, a process that shaped much of the large-scale structure of the universe.
+                </p>
+
+                <div class="time-travel-box">
+                    <span class="time-travel-title">On Earth: 70 Million Years Ago</span>
+                    <p>
+                        These photons left Earth during the twilight of the age of dinosaurs—roughly five million years before the Chicxulub asteroid impact that ended the Cretaceous. Tyrannosaurus rex and Triceratops were roaming what is now North America, while mosasaurs ruled shallow inland seas. Flowering plants had transformed terrestrial ecosystems over the preceding tens of millions of years, and small insectivorous mammals were quietly diversifying in the undergrowth, poised to inherit the Earth.
+                    </p>
+                </div>
+            </div>
+        </article>
+
+        <!-- NGC4565 -->
+        <article id="ngc4565" class="dso-section">
+            <div class="dso-image-container">
+                <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/ngc4565.jpg" alt="NGC4565" class="dso-image">
+            </div>
+            <div class="dso-content">
+                <h2 class="dso-title">NGC4565 - Needle Galaxy</h2>
+                <div class="dso-meta">DISTANCE: ~47 MILLION LIGHT YEARS | TYPE: SPIRAL GALAXY</div>
+
+                <p class="science-text">
+                    NGC4565 is an edge-on spiral showcasing a prominent dust lane bisecting its thin disk. Similar in size to the Milky Way, it allows detailed study of galactic structure, including bulge-to-disk ratios and dark matter halo effects through rotation curve analysis.
+                </p>
+
+                <div class="time-travel-box">
+                    <span class="time-travel-title">On Earth: 47 Million Years Ago</span>
+                    <p>
+                        During the Eocene, Earth had a greenhouse climate with palm trees in polar regions. Early whales evolved from land mammals, and primates began diversifying. Massive volcanic activity in the North Atlantic formed new ocean basins.
+                    </p>
+                </div>
+            </div>
+        </article>
+
+        <!-- NGC6339 -->
+        <article id="ngc6339" class="dso-section">
+            <div class="dso-image-container">
+                <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/ngc6339.jpg" alt="NGC6339" class="dso-image">
+            </div>
+            <div class="dso-content">
+                <h2 class="dso-title">NGC6339 - Spiral Galaxy</h2>
+                <div class="dso-meta">DISTANCE: ~94 MILLION LIGHT YEARS | TYPE: SPIRAL GALAXY</div>
+
+                <p class="science-text">
+                    NGC6339 is a barred spiral in Hercules with disturbed arms indicating possible interactions. Its kinematics show perpendicular rotation to its major axis, making it valuable for studying galactic bars and secular evolution.
+                </p>
+
+                <div class="time-travel-box">
+                    <span class="time-travel-title">On Earth: 94 Million Years Ago</span>
+                    <p>
+                        During the Late Cretaceous, dinosaurs like Tyrannosaurus roamed while flowering plants diversified. The Western Interior Seaway divided North America, and birds began evolving from theropods. The stage was set for the Chicxulub impact.
+                    </p>
+                </div>
+            </div>
+        </article>
+
         <!-- NGC6888 -->
-        <article class="dso-section">
+        <article id="ngc6888" class="dso-section">
             <div class="dso-image-container">
                 <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/ngc6888.jpg" alt="NGC6888" class="dso-image">
             </div>
@@ -527,8 +543,74 @@
             </div>
         </article>
 
+        <!-- NGC7331 -->
+        <article id="ngc7331" class="dso-section">
+            <div class="dso-image-container">
+                <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/ngc7331.jpg" alt="NGC7331" class="dso-image">
+            </div>
+            <div class="dso-content">
+                <h2 class="dso-title">NGC7331 - Deer Lick Galaxy</h2>
+                <div class="dso-meta">DISTANCE: ~40 MILLION LIGHT YEARS | TYPE: SPIRAL GALAXY</div>
+
+                <p class="science-text">
+                    NGC7331 is an unbarred spiral galaxy often compared to the Milky Way, with a prominent dust lane and active star formation in its arms. As the brightest member of its group, it showcases galactic interactions and serves as a calibrator for the cosmic distance ladder through its Cepheid variables.
+                </p>
+
+                <div class="time-travel-box">
+                    <span class="time-travel-title">On Earth: 40 Million Years Ago</span>
+                    <p>
+                        During the Eocene epoch, Earth experienced a warm climate with lush forests extending to the poles. Early primates evolved in these environments, while modern mammal orders like whales transitioned from land to sea. Antarctica began separating from Australia, initiating global cooling trends.
+                    </p>
+                </div>
+            </div>
+        </article>
+
+        <!-- NGC7635 -->
+        <article id="ngc7635" class="dso-section">
+            <div class="dso-image-container">
+                <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/ngc7635.jpg" alt="NGC7635" class="dso-image">
+            </div>
+            <div class="dso-content">
+                <h2 class="dso-title">NGC7635 - Bubble Nebula</h2>
+                <div class="dso-meta">DISTANCE: ~7,100 LIGHT YEARS | TYPE: EMISSION NEBULA</div>
+
+                <p class="science-text">
+                    NGC7635 is a spherical shell created by the stellar wind from a massive O-type star, expanding into the surrounding molecular cloud. This 7 light-year diameter bubble demonstrates wind-blown nebula formation and ionization processes in H II regions.
+                </p>
+
+                <div class="time-travel-box">
+                    <span class="time-travel-title">On Earth: ~5,100 BC</span>
+                    <p>
+                        The Neolithic period saw the rise of farming villages in the Middle East. Pottery and weaving advanced, and early metallurgy began with copper. In Europe, megalithic tombs were constructed, marking the transition from hunter-gatherer societies.
+                    </p>
+                </div>
+            </div>
+        </article>
+
+        <!-- NGC891 -->
+        <article id="ngc891" class="dso-section">
+            <div class="dso-image-container">
+                <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/ngc891.jpg" alt="NGC891" class="dso-image">
+            </div>
+            <div class="dso-content">
+                <h2 class="dso-title">NGC891 - Silver Sliver Galaxy</h2>
+                <div class="dso-meta">DISTANCE: ~30 MILLION LIGHT YEARS | TYPE: SPIRAL GALAXY</div>
+
+                <p class="science-text">
+                    NGC891 is an edge-on spiral with a thick dust lane, similar to how the Milky Way might appear from outside. It reveals vertical structures in its disk, informing models of galactic fountains and the role of magnetic fields in halo gas dynamics.
+                </p>
+
+                <div class="time-travel-box">
+                    <span class="time-travel-title">On Earth: 30 Million Years Ago</span>
+                    <p>
+                        The Oligocene featured the rise of modern mammal families. Early whales diversified in the oceans, and the first grasses appeared, transforming ecosystems. Tectonic activity continued shaping continents, with Australia separating from Antarctica.
+                    </p>
+                </div>
+            </div>
+        </article>
+
         <!-- NGC925 -->
-        <article class="dso-section">
+        <article id="ngc925" class="dso-section">
             <div class="dso-image-container">
                 <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/ngc925.jpg" alt="NGC925" class="dso-image">
             </div>
@@ -544,6 +626,28 @@
                     <span class="time-travel-title">On Earth: 30 Million Years Ago</span>
                     <p>
                         The Oligocene epoch featured the evolution of early cats and dogs. Massive birds like terror birds dominated South America. Global cooling led to the retreat of tropical forests and the rise of temperate ecosystems.
+                    </p>
+                </div>
+            </div>
+        </article>
+
+        <!-- SH2-101 -->
+        <article id="sh2-101" class="dso-section">
+            <div class="dso-image-container">
+                <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/sh2-101.jpg" alt="SH2-101" class="dso-image">
+            </div>
+            <div class="dso-content">
+                <h2 class="dso-title">SH2-101 - Tulip Nebula</h2>
+                <div class="dso-meta">DISTANCE: ~6,000 LIGHT YEARS | TYPE: EMISSION NEBULA</div>
+
+                <p class="science-text">
+                    SH2-101, the Tulip Nebula, is an H II region ionized by the young star cluster near microquasar Cygnus X-1. Spanning 70 light-years, it demonstrates stellar wind interactions and triggered star formation, with dark molecular clouds silhouetted against glowing hydrogen gas.
+                </p>
+
+                <div class="time-travel-box">
+                    <span class="time-travel-title">On Earth: ~4,000 BC</span>
+                    <p>
+                        The Neolithic Revolution was underway, with agriculture spreading in the Fertile Crescent. Megalithic structures like Göbekli Tepe were built in Anatolia. In Europe, farming communities emerged, while in China, early rice cultivation began along the Yangtze River.
                     </p>
                 </div>
             </div>
