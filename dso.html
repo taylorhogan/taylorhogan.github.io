@@ -443,7 +443,7 @@
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     document.body.appendChild(renderer.domElement);
 
     const labelRenderer = new CSS2DRenderer();
@@ -485,7 +485,7 @@
     distanceMarkers.forEach(marker => {
         const radius = distanceToRadius(marker.dist);
         const sphereWire = new THREE.LineSegments(
-            new THREE.WireframeGeometry(new THREE.SphereGeometry(radius, 24, 12)),
+            new THREE.WireframeGeometry(new THREE.SphereGeometry(radius, 16, 8)),
             new THREE.LineBasicMaterial({ color: marker.color, transparent: true, opacity: 0.15 })
         );
         scene.add(sphereWire);
@@ -566,6 +566,7 @@
                     scene.add(sprite);
                     loadedCount++;
                     document.getElementById('status').textContent = `Loaded ${loadedCount} / ${jpgFiles.length}`;
+                    needsRender = true;
                 });
 
                 // Label with distance-based border color
@@ -648,12 +649,22 @@
         }
     });
 
-    // --- Animation Loop ---
+    // --- Animation Loop (demand-based rendering) ---
+    let needsRender = true;
+
+    function scheduleRender() { needsRender = true; }
+    controls.addEventListener('change', scheduleRender);
+    controls.addEventListener('start', scheduleRender);
+
     function animate() {
         requestAnimationFrame(animate);
-        controls.update();
-        renderer.render(scene, camera);
-        labelRenderer.render(scene, camera);
+        // controls.update() returns true while damping is still settling
+        if (controls.update()) needsRender = true;
+        if (needsRender) {
+            renderer.render(scene, camera);
+            labelRenderer.render(scene, camera);
+            needsRender = false;
+        }
     }
 
     window.addEventListener('resize', () => {
@@ -661,6 +672,7 @@
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
         labelRenderer.setSize(window.innerWidth, window.innerHeight);
+        needsRender = true;
     });
 
     animate();
