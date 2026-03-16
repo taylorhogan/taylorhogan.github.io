@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>3D Deep Sky Objects Visualization</title>
     <style>
         body { margin: 0; overflow: hidden; background: #000; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
@@ -13,14 +14,26 @@
             background: rgba(0,0,0,0.75);
             padding: 15px;
             border-radius: 8px;
-            pointer-events: none;
+            pointer-events: auto;
             border: 1px solid #444;
             z-index: 100;
             max-width: 300px;
         }
-        #info h2 { margin: 0 0 10px 0; font-size: 16px; }
+        #info h2 { margin: 0; font-size: 16px; cursor: pointer; user-select: none; }
+        #info-body { margin-top: 10px; }
+        #info-body.collapsed { display: none; }
         #info .sub { color: #aaa; font-size: 12px; line-height: 1.5; }
         #info .legend { margin-top: 10px; padding-top: 10px; border-top: 1px solid #444; }
+        .mobile-hint { display: none; }
+        @media (pointer: coarse) {
+            .desktop-hint { display: none; }
+            .mobile-hint { display: inline; }
+            #info { max-width: calc(100vw - 40px); font-size: 12px; padding: 10px; }
+            #info h2 { font-size: 14px; }
+            .label-dso img { width: 36px; height: 36px; }
+            .label-dso { font-size: 10px; padding: 3px; }
+            #explanation-popup { max-width: calc(100vw - 20px); font-size: 12px; }
+        }
         #info .legend-item { display: flex; align-items: center; margin: 4px 0; font-size: 11px; }
         #info .legend-dot { width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; }
         #info .legend-dot.nearby { background: #44ff88; }
@@ -123,13 +136,16 @@
 </head>
 <body>
 <div id="info">
-    <h2>🔭 Deep Sky Navigator</h2>
-    <div class="sub">
+    <h2 id="info-toggle">🔭 Deep Sky Navigator ▾</h2>
+    <div id="info-body" class="sub">
         <b>Controls:</b><br>
-        • Left Click + Drag: Rotate<br>
+        <span class="desktop-hint">• Left Click + Drag: Rotate<br>
         • Scroll Wheel: Zoom In/Out<br>
         • Right Click + Drag: Pan<br>
-        • Double-Click Label: Show Info<br><br>
+        • Double-Click Label: Show Info</span>
+        <span class="mobile-hint">• One Finger: Rotate<br>
+        • Two Fingers: Zoom / Pan<br>
+        • Tap Label: Show Info</span><br><br>
         <b>Compass:</b> N(0h RA), E(6h), S(12h), W(18h)<br>
         <span id="status">Loading objects...</span>
         <div class="legend">
@@ -444,6 +460,7 @@
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.domElement.style.touchAction = 'none';
     document.body.appendChild(renderer.domElement);
 
     const labelRenderer = new CSS2DRenderer();
@@ -576,8 +593,22 @@
                 labelDiv.innerHTML = `<img src="${baseRawUrl + file.name}" alt="${coords.name}"><span>${coords.name}</span>`;
                 labelDiv.addEventListener('dblclick', (event) => {
                     event.stopPropagation();
-                    showExplanation(coords.name, coords.explanation, baseRawUrl + file.name, coords.distance, coords.type, event);
+                    showExplanation(coords.name, coords.explanation, baseRawUrl + file.name, coords.distance, coords.type, event.clientX, event.clientY);
                 });
+                // Touch: single tap on label shows info (tap = touchend without significant movement)
+                let touchStartX = 0, touchStartY = 0;
+                labelDiv.addEventListener('touchstart', (e) => {
+                    touchStartX = e.touches[0].clientX;
+                    touchStartY = e.touches[0].clientY;
+                }, { passive: true });
+                labelDiv.addEventListener('touchend', (e) => {
+                    const dx = e.changedTouches[0].clientX - touchStartX;
+                    const dy = e.changedTouches[0].clientY - touchStartY;
+                    if (Math.sqrt(dx*dx + dy*dy) < 10) {
+                        e.stopPropagation();
+                        showExplanation(coords.name, coords.explanation, baseRawUrl + file.name, coords.distance, coords.type, e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+                    }
+                }, { passive: true });
                 const labelObj = new CSS2DObject(labelDiv);
                 labelObj.position.set(x, y - 30, z);
                 scene.add(labelObj);
@@ -591,6 +622,19 @@
 
     loadDSOImages();
 
+    // --- Info panel toggle ---
+    const infoBody = document.getElementById('info-body');
+    const infoToggle = document.getElementById('info-toggle');
+    // Collapse by default on small/touch screens
+    if (window.innerWidth < 500 || window.matchMedia('(pointer: coarse)').matches) {
+        infoBody.classList.add('collapsed');
+        infoToggle.textContent = '🔭 Deep Sky Navigator ▸';
+    }
+    infoToggle.addEventListener('click', () => {
+        const collapsed = infoBody.classList.toggle('collapsed');
+        infoToggle.textContent = collapsed ? '🔭 Deep Sky Navigator ▸' : '🔭 Deep Sky Navigator ▾';
+    });
+
     // --- Explanation Popup ---
     const popup = document.getElementById('explanation-popup');
     const popupTitle = document.getElementById('popup-title');
@@ -599,7 +643,7 @@
     const popupText = document.getElementById('popup-text');
     let hideTimeout = null;
 
-    function showExplanation(name, explanation, imageUrl, distance, type, event) {
+    function showExplanation(name, explanation, imageUrl, distance, type, clientX, clientY) {
         popupTitle.textContent = name;
         const typeLabel = type === 'extragalactic' ? '🌌 Extragalactic' : '⭐ Milky Way';
         popupDistance.innerHTML = `📍 ${formatDistance(distance)} — ${typeLabel}`;
@@ -607,9 +651,9 @@
         popupImage.alt = name;
         popupText.textContent = explanation || 'No detailed information available for this object.';
 
-        // Position popup near the click
-        const x = event.clientX + 15;
-        const y = event.clientY + 15;
+        // Position popup near the tap/click
+        const x = clientX + 15;
+        const y = clientY + 15;
 
         // Ensure popup stays within viewport
         popup.style.display = 'block';
