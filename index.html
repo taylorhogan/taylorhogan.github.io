@@ -308,6 +308,35 @@
             font-size: 0.95em;
         }
 
+        .note pre {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            overflow-x: auto;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .note pre code {
+            background: none;
+            padding: 0;
+            font-size: inherit;
+        }
+
+        .note pre .cmt {
+            color: #8b949e;
+        }
+
+        /* A claim that needs to stay visible: what this result is not. */
+        .caveat {
+            background: rgba(245, 0, 87, 0.08);
+            border-left: 4px solid var(--secondary-accent);
+            border-radius: 0 8px 8px 0;
+            padding: 1rem 1.25rem;
+            margin: 1.5rem 0;
+        }
+
         .note a {
             color: var(--accent-color);
         }
@@ -888,6 +917,7 @@
             <ul>
                 <li><a href="#end-to-end">2026-08-04 &middot; Closing the loop: autonomy has to include the data reduction</a></li>
                 <li><a href="#hr-diagram">2026-08-02 &middot; Weighing a star cluster's age with a colour&ndash;magnitude diagram</a></li>
+                <li><a href="#transit-search">2026-06-05 &middot; Finding a planet by watching a star get 2% fainter</a></li>
             </ul>
         </nav>
 
@@ -1273,6 +1303,211 @@
                 would not on a visual one. Confirming that, and teaching the branch-finder
                 to cope with a cluster whose horizontal branch is a smear rather than a
                 clump, is the open item.
+            </p>
+        </article>
+
+        <article id="transit-search" class="note">
+            <h2 class="note-title">Finding a planet by watching a star get 2% fainter</h2>
+            <div class="note-meta"><span class="note-date">2026-06-05</span> &middot; HAT-P-32 &middot; 142 FRAMES &middot; 7-HOUR BASELINE &middot; 622 STARS SEARCHED</div>
+
+            <h3>The measurement</h3>
+
+            <p class="science-text">
+                When a planet passes in front of its star, the star gets fainter. That is
+                the whole idea, and stated that baldly it sounds like it should not work.
+                A Jupiter-sized planet crossing a Sun-sized star blocks about one percent
+                of the disc; an Earth crossing the Sun blocks less than a hundredth of
+                that. There is no image of the planet, no resolved disc, nothing spatial at
+                all &mdash; the star is a point source before, during, and after. All you
+                get is a number that dips for a few hours and comes back.
+            </p>
+
+            <p class="science-text">
+                What makes it tractable is that the shape of the dip is distinctive.
+                The planet takes a few minutes to slide fully onto the disc, then blocks a
+                nearly constant fraction of the light for hours, then slides off. So the
+                signature is a <em>flat-bottomed box</em> with steep sides, bracketed by
+                flat baseline before and after. Almost nothing else in astrophysics does
+                that. Variable stars breathe in and out smoothly, clouds and airmass drift
+                slowly, and detector artefacts rarely return to exactly the level they
+                left. A search that specifically looks for flat-bottomed boxes with
+                matching baseline on both sides is doing far better than a search for
+                &ldquo;the biggest dip&rdquo;.
+            </p>
+
+            <h3>Why the test data is not ours</h3>
+
+            <p class="science-text">
+                A detector that has never been pointed at a known answer is not a detector,
+                it is a hypothesis. Run any dip-finder over a few hundred noisy light
+                curves and it will hand you candidates &mdash; that is what a maximum does.
+                The only way to know whether the thing works is to feed it a field with a
+                planet already in it, at a known time, with a known depth, and check that
+                what comes back out is the right star.
+            </p>
+
+            <p class="science-text">
+                So this run uses an archival dataset: 142 sixty-second clear-filter frames
+                of HAT-P-32 taken on 2017-12-20 by <em>Cecilia</em>, one of the
+                Harvard-Smithsonian Center for Astrophysics MicroObservatory telescopes,
+                spanning just over seven hours. HAT-P-32b is a well-studied and rather
+                absurd planet &mdash; roughly Jupiter's mass packed into something 1.8 to 2
+                Jupiter radii wide, orbiting its F star every 2.15 days at an equilibrium
+                temperature around 1800 K. Being that inflated is exactly why it is a good
+                test: it blocks about 2% of its star, deep enough that a modest telescope
+                should see it and shallow enough to be a real test of the photometry.
+            </p>
+
+            <div class="caveat">
+                <p><strong>To be unambiguous about what this is:</strong> Iris did not
+                discover this planet, and these are not Iris's photons. This is a validation
+                run against published ground truth &mdash; the point of the exercise is that
+                the pipeline had to find the right star on its own, and it did. What Iris
+                has is a working, tested transit detector. Pointing it at a target where the
+                answer is not already known is the next piece of work.</p>
+            </div>
+
+            <h3>How the pipeline works</h3>
+
+            <p class="science-text">
+                The search rides on the same frame-preparation used everywhere else in the
+                system: reject the frames with bad seeing, register the rest so that a given
+                pixel is the same patch of sky in every frame. Then it stacks them into a
+                deep reference, runs star detection on that reference, and measures aperture
+                photometry for <em>every</em> star it found in <em>every</em> frame. Here
+                that was 1,129 stars detected and 622 with light curves clean enough to
+                search. Nothing is told which star matters.
+            </p>
+
+            <p class="science-text">
+                The critical step is what happens next, because raw brightness is useless.
+                The atmosphere is not a stable filter: transparency drifts, the target
+                climbs and sinks through more or less air, thin cloud passes. Those effects
+                can easily swamp a 2% planet. But they hit every star in the frame at once,
+                so they can be divided out &mdash; measure the target against an ensemble of
+                comparison stars in the same frames and the common-mode atmosphere cancels.
+                The pipeline builds that ensemble automatically, taking the lowest-scatter
+                stars while discarding the faintest 10% (noise-dominated) and the brightest
+                5% (possibly saturated). For this field it settled on 210 comparison stars.
+                What survives division is what happened to <em>that</em> star and not to the
+                sky.
+            </p>
+
+            <p class="science-text">
+                Each differential light curve is then scanned with a matched filter: try
+                every plausible box &mdash; every centre time, every duration from 18 minutes
+                to 4 hours &mdash; and score how well a flat-bottomed transit fits there.
+                The score is a product of four terms, and each one is there to kill a
+                specific way of being fooled
+                (<a href="https://github.com/taylorhogan/srt/blob/main/transit_search/transit.py" target="_blank" rel="noopener noreferrer">transit_search/transit.py</a>):
+            </p>
+
+<pre><code>snr      = depth * sqrt(n_in) / sigma_oot   <span class="cmt"># is the dip bigger than the noise?</span>
+shape    = sigma_oot / max(sigma_in, sigma_oot)  <span class="cmt"># is the bottom flat, or a V / a spike?</span>
+quality  = min(1, 0.01 / sigma_oot)         <span class="cmt"># is the baseline clean enough to trust?</span>
+flatness = sigma_oot / max(sigma_oot, trend) <span class="cmt"># same level before and after?</span>
+
+score    = snr * shape * quality * flatness</code></pre>
+
+            <p class="science-text">
+                <code>snr</code> alone would happily hand back the deepest artefact in the
+                field. <code>shape</code> compares the scatter inside the dip to the scatter
+                outside it, so a single bad point or a V-shaped grazing eclipse scores
+                poorly where a genuine flat bottom scores 1.0. <code>quality</code> refuses
+                to get excited about a faint, noisy star where a shallow transit could not
+                have been detected in the first place. <code>flatness</code> is the one that
+                earns its keep on real data: it compares the baseline level <em>before</em>
+                the dip with the level <em>after</em>, which is what separates a transit
+                from the slow ramps that begin and end an observing night &mdash; a ramp
+                dips and recovers to a different level, a planet returns to exactly where
+                it started.
+            </p>
+
+            <h3>What came back</h3>
+
+            <figure>
+                <a href="images/hatp32_field.jpg" target="_blank" rel="noopener noreferrer">
+                    <img src="images/hatp32_field.jpg" alt="Reference stack of the HAT-P-32 field with the top-scoring candidate circled, and a zoomed inset">
+                </a>
+                <figcaption>The top-scoring star out of 622 searched, with the pipeline's own
+                    zoom inset. It resolved the position against Gaia at RA 31.0428,
+                    Dec +46.6878, G = 11.13 &mdash; 0.2 arcseconds from the catalogue
+                    position of HAT-P-32. It picked the right star.</figcaption>
+            </figure>
+
+            <figure>
+                <a href="images/hatp32_lightcurve.jpg" target="_blank" rel="noopener noreferrer">
+                    <img src="images/hatp32_lightcurve.jpg" alt="Light curve of HAT-P-32 showing a clear 2.15 percent flat-bottomed transit">
+                </a>
+                <figcaption>The differential light curve, and a hot Jupiter in silhouette.
+                    Shading marks the recovered box; the horizontal line is the fitted depth.
+                    <em>Click for full size.</em></figcaption>
+            </figure>
+
+            <p class="science-text">
+                Depth 2.15%, duration 2.27 hours, shape exactly 1.00 &mdash; a perfectly flat
+                bottom &mdash; against a baseline scatter of 0.53%. The published depth for
+                HAT-P-32b is about 20 millimagnitudes, or roughly 1.8%, so the recovered
+                depth is right to within a couple of tenths of a percent. The duration comes
+                out shorter than the published ~3.1 hours, which is expected here: the box
+                model fits the flat part between ingress and egress, and with the observation
+                starting only an hour or so before first contact there is not much baseline
+                to anchor the shoulders.
+            </p>
+
+            <h3>Is it real, or did we just find the biggest dip?</h3>
+
+            <p class="science-text">
+                A high score on its own proves nothing &mdash; take the maximum over 622
+                stars and something has to win. Three independent tests run on the winner,
+                because no single one is sufficient.
+            </p>
+
+            <p class="science-text">
+                The first scrambles the light curve in time, five hundred times, and re-runs
+                the identical box search on each shuffle. Scrambling destroys any real
+                time-structure while preserving the exact distribution of brightness values,
+                so if random scatter alone could produce this box, the shuffles would say so.
+                None of them came close: a false-alarm probability of 0.002, the floor for
+                500 permutations. The second asks where this star's score falls among all the
+                other stars searched that night &mdash; stars that share the same atmosphere,
+                the same optics, the same systematics. It came in nearly 30 median-absolute-deviations
+                above the field, so whatever it is, the field is not doing it too. The third
+                inverts the light curve and searches for the best <em>upward</em> box. Noise
+                is symmetric and a sinusoid dips and peaks equally, so both should score
+                about the same; a transit only ever goes down. The dip beat the bump by a
+                factor of 8.3.
+            </p>
+
+            <p class="science-text">
+                Even all three together fall short of a discovery, and the code says so in
+                its own docstring: definitive confirmation needs a second transit arriving
+                at the predicted time, and one night cannot establish a period. What they do
+                establish is that this dip is real structure in the data rather than an
+                accident of noise &mdash; which, for validating a detector against a planet
+                that is already in the literature, is the question that mattered.
+            </p>
+
+            <h3>Where this goes next</h3>
+
+            <p class="science-text">
+                The detector now runs as a side channel on ordinary imaging &mdash; any
+                field Iris shoots can be swept for dips at no extra cost in telescope time,
+                and every star in every frame gets a light curve whether anyone asked for one
+                or not. That is nearly free, and it is also nearly futile as a way of finding
+                planets, for a reason worth being blunt about: a nebula observed through a
+                narrowband filter for four hours is not where transits live. The deepest
+                things the sweep turns up in those fields run to several percent and beyond,
+                which is far too deep to be planetary &mdash; they are eclipsing binaries and
+                blended photometry, not planets.
+            </p>
+
+            <p class="science-text">
+                Finding a genuinely new transit needs the telescope pointed at a rich star
+                field, in a broad filter, for most of a night, deliberately &mdash; and then
+                a second night to catch the thing again at the predicted phase. The pieces
+                are all built. What is missing is the observing plan and the nights to spend
+                on it.
             </p>
         </article>
 
