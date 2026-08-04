@@ -341,6 +341,18 @@
             color: var(--accent-color);
         }
 
+        /* Two figures side by side when there is room, stacked when there is not. */
+        .figure-pair {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .figure-pair figure {
+            flex: 1 1 260px;
+            min-width: 0;
+        }
+
         .note figcaption {
             color: #8b9bb4;
             font-size: 0.85rem;
@@ -916,6 +928,7 @@
         <nav class="note-index">
             <ul>
                 <li><a href="#end-to-end">2026-08-04 &middot; Closing the loop: autonomy has to include the data reduction</a></li>
+                <li><a href="#roof-sentry">2026-08-03 &middot; Teaching the observatory to hear its own roof failing</a></li>
                 <li><a href="#hr-diagram">2026-08-02 &middot; Weighing a star cluster's age with a colour&ndash;magnitude diagram</a></li>
                 <li><a href="#transit-search">2026-06-05 &middot; Finding a planet by watching a star get 2% fainter</a></li>
             </ul>
@@ -1138,6 +1151,221 @@
                 down is the next piece of work, and it is a good example of why the
                 convergence curve earns its keep: the stacked O III image looks fine. The
                 curve is what says it should have been better.
+            </p>
+        </article>
+
+        <article id="roof-sentry" class="note">
+            <h2 class="note-title">Teaching the observatory to hear its own roof failing</h2>
+            <div class="note-meta"><span class="note-date">2026-08-03</span> &middot; ROOF SENTRY &middot; 67 GOOD SPECTROGRAMS &middot; 38 GOOD CURRENT TRACES</div>
+
+            <h3>The thing that can actually break</h3>
+
+            <p class="science-text">
+                Every other experiment on this site is about extracting more from the data.
+                This one is about the observatory not destroying itself. The roof is a
+                motorised panel that slides off the building, and it is the only part of
+                the system with enough mass and torque to wreck the telescope. Two rules
+                are absolute: never move the scope unless the roof is confirmed open, and
+                never move the roof unless the scope is confirmed parked. A roof that
+                closes onto a telescope pointed at the zenith is the end of the telescope.
+            </p>
+
+            <p class="science-text">
+                Those rules protect against the software being <em>wrong about state</em>.
+                They do nothing about the mechanism itself degrading &mdash; a drive gear
+                that stops engaging, a wheel going out of true, ice, a bearing starting to
+                bind. Failures of that kind announce themselves for weeks before they
+                strand the roof half-open over an exposed telescope, but only to somebody
+                standing there listening. For an observatory whose entire point is that
+                nobody is standing there, the interesting question is whether the roof can
+                be made to report its own health. It turns out to have two voices: what it
+                sounds like, and what it draws from the wall.
+            </p>
+
+            <h3>Voice one: the current signature</h3>
+
+            <p class="science-text">
+                The roof motor is powered through a relay with an energy monitor, so a move
+                can be sampled at 20 Hz across its travel window and stored as a trace of
+                real power against time. The move is command-triggered, which makes this
+                much easier than it sounds &mdash; there is no need to <em>detect</em> that
+                the roof is moving, because the software is the thing that started it. The
+                trace of a healthy move is remarkably repeatable.
+            </p>
+
+            <figure>
+                <a href="images/roof_current_open_vs_close.png" target="_blank" rel="noopener noreferrer">
+                    <img src="images/roof_current_open_vs_close.png" alt="Roof motor power against time for an open and a close move, both about 12 seconds">
+                </a>
+                <figcaption>A healthy open and close. Idle draw is about 2.7 W; the motor
+                    pulls roughly 300&ndash;350 W for some eleven seconds and returns to
+                    baseline. Note the open trace's brief spike above 400 W at the start
+                    &mdash; that is breakaway, the extra torque needed to get a stationary
+                    roof moving.</figcaption>
+            </figure>
+
+            <p class="science-text">
+                Each trace is reduced to five scalars &mdash; running power, running
+                current, move duration, total energy, and peak power &mdash; and each new
+                move is checked against the mean and standard deviation of the good library
+                for that direction. Anything more than three sigma out gets flagged. The
+                features are chosen to be physically interpretable rather than merely
+                discriminative, which matters when the alert wakes you at two in the
+                morning: a roof binding on ice draws more running power, a roof that stops
+                early has a short duration, and a drive gear that never engages spins the
+                motor without doing work.
+            </p>
+
+            <p class="science-text">
+                That last one is dangerous enough to get its own live watchdog rather than
+                after-the-fact analysis. A normal move runs the motor for about eleven
+                seconds, so if it is still drawing more than 20 W thirty seconds after the
+                relay fired, the roof is not travelling. The system cuts motor power at the
+                smart plug, sends a priority-2 push notification, banks the current trace
+                and the audio as evidence, and refuses to proceed &mdash; the roof state is
+                now unknown, and unknown must not be followed by a scope move. Two
+                consecutive over-threshold readings are required so one bad sample cannot
+                cut power spuriously, and a failed read never triggers, so losing the
+                monitor degrades to a plain timed wait rather than a false emergency.
+            </p>
+
+            <h3>What it has actually caught</h3>
+
+            <figure>
+                <a href="images/roof_current_flagged.png" target="_blank" rel="noopener noreferrer">
+                    <img src="images/roof_current_flagged.png" alt="A flagged roof open overlaid on three good moves, showing an elevated startup surge but a normal plateau">
+                </a>
+                <figcaption>A flagged open (red) against three good moves from the same day.
+                    The running plateau is entirely normal; the divergence is confined to
+                    the startup surge.</figcaption>
+            </figure>
+
+            <p class="science-text">
+                This is the failure mode the envelope keeps finding, and it recurs: peak
+                power 721 W against a good mean of 398 on 19 July, 759 W against 393 on 30
+                July, 741 W against 398 on 3 August &mdash; each time with running power and
+                duration inside tolerance. A move that needs twice the normal force to
+                break away but then runs normally is the signature of something binding at
+                rest and freeing once moving: stiction, thermal contraction, debris on the
+                rail. Every capture also records observatory temperature and humidity,
+                specifically so that hypothesis can eventually be tested against the
+                weather rather than argued about.
+            </p>
+
+            <figure>
+                <a href="images/roof_current_bent_wheel.png" target="_blank" rel="noopener noreferrer">
+                    <img src="images/roof_current_bent_wheel.png" alt="Power deviation from the plateau median during a close, showing much larger ripple than the good library">
+                </a>
+                <figcaption>A different fault entirely: a bent wheel. Plotted as deviation
+                    from each move's own plateau median, so the comparison is about
+                    <em>ripple</em> rather than level. The good closes stay within roughly
+                    &plusmn;25 W; this one swings from &minus;43 W to +52 W as the damaged
+                    wheel comes round.</figcaption>
+            </figure>
+
+            <p class="science-text">
+                That one is worth dwelling on, because it is the case the scalar envelope
+                is blind to. Its running power, duration and energy are all perfectly
+                normal &mdash; the average work done is unchanged. What gives it away is the
+                <em>structure within</em> the plateau, a periodic surge as the out-of-true
+                wheel rotates. Reducing a trace to five numbers throws exactly that away.
+                Curve-shape comparison is the acknowledged next step and is not built yet.
+            </p>
+
+            <h3>Voice two: the audio</h3>
+
+            <p class="science-text">
+                Which is where the microphone comes in. The current monitor sees the motor's
+                gross mechanical load at 20 Hz; it is comprehensively deaf to grinding,
+                chattering, scraping and knocking &mdash; the sounds that a human would
+                identify instantly as a mechanism in trouble, and which barely move the
+                power draw at all. So a roof move also records audio for its duration, and
+                the recording is converted to a mel spectrogram: a picture of which
+                frequencies were present when, on a scale spaced the way human hearing is.
+                Turning sound into an image is the useful move here, because it converts
+                &ldquo;does this sound wrong&rdquo; into a question about pictures.
+            </p>
+
+            <div class="figure-pair">
+                <figure>
+                    <a href="images/roof_audio_good_open.png" target="_blank" rel="noopener noreferrer">
+                        <img src="images/roof_audio_good_open.png" alt="Mel spectrogram of a healthy roof open: one clean burst then silence">
+                    </a>
+                    <figcaption>Healthy open: one burst of broadband noise while the motor
+                        runs, then quiet.</figcaption>
+                </figure>
+                <figure>
+                    <a href="images/roof_audio_bad_close.png" target="_blank" rel="noopener noreferrer">
+                        <img src="images/roof_audio_bad_close.png" alt="Mel spectrogram of a bad roof close: a long smear plus extra bursts after the move should have ended">
+                    </a>
+                    <figcaption>A close labelled bad: the burst is longer and louder, and
+                        there are further bursts well after the move should have finished.</figcaption>
+                </figure>
+            </div>
+
+            <p class="science-text">
+                The classifier is deliberately unsophisticated: compare the new spectrogram
+                against every known-good one for that direction by pixel-wise similarity and
+                keep the best match. The interesting part is the threshold, which is not a
+                hand-tuned constant. It is derived from the library itself &mdash; take the
+                <em>worst</em> similarity between any two known-good moves, and require the
+                new move to be at least 90% as similar as that. In other words: a move is
+                acceptable if it looks about as normal as good moves look to each other.
+                The threshold retunes itself as the library grows, and there is no magic
+                number to maintain.
+            </p>
+
+            <p class="science-text">
+                The library is self-extending too. A move judged good is filed into the
+                reference set automatically, on a rolling cap of 40 per direction &mdash;
+                the cap exists because the comparison is pairwise over the whole library,
+                so an unbounded set makes every roof move slower forever. Only captures that
+                come back bad or unknown wait for a human to label them with a chat command.
+                That inverts the usual labelling burden: the system handles the common case
+                and asks for help exactly when it is confused. The library currently holds
+                44 good opens and 24 good closes.
+            </p>
+
+            <h3>Why two detectors instead of one</h3>
+
+            <p class="science-text">
+                Because they fail in opposite directions, and neither is close to sufficient
+                alone. Sampling power at 20 Hz gives an excellent account of sustained
+                mechanical load and no account whatever of transient acoustic texture; a gear
+                chattering for half a second is invisible in the power trace. The microphone
+                is exquisitely sensitive to that chatter and would happily flag a passing
+                aircraft, a rainstorm, or a neighbour's dog. Requiring the roof to look
+                normal in <em>both</em> a physical-load sense and an acoustic sense is much
+                harder to satisfy by accident than either test alone, and the two disagreeing
+                is itself informative &mdash; normal power with abnormal sound is a
+                mechanical texture problem, abnormal power with normal sound is load.
+            </p>
+
+            <h3>What does not work yet</h3>
+
+            <p class="science-text">
+                The honest list is longer than the successes. Pixel-wise image comparison of
+                spectrograms is a crude similarity measure that treats a small time shift as
+                a large difference, and it will plateau; the intended path is comparison in
+                a feature or embedding space rather than raw pixels. A scratch-trained
+                convolutional network was considered and rejected as the wrong tool &mdash;
+                this is a one-class problem with a few dozen examples, which is where small
+                networks memorise rather than generalise. The current-signature envelope
+                cannot see plateau structure, as the bent wheel demonstrates. And the
+                startup-surge anomaly has now recurred four times without a diagnosis; a
+                detector that keeps flagging the same unexplained thing is doing half its
+                job.
+            </p>
+
+            <p class="science-text">
+                The most instructive failure is not in the classifiers at all. When the stall
+                watchdog fired for real, the log records the sequence exactly as designed
+                &mdash; sustained draw detected, motor power cut, evidence banked &mdash;
+                followed by <code>roof stall: pushover emergency failed</code>. The safety
+                action succeeded and the notification did not. An unattended observatory that
+                protects itself correctly and then cannot tell anyone has solved the easier
+                half of the problem, and that alerting path is now the piece most worth
+                hardening.
             </p>
         </article>
 
