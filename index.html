@@ -266,6 +266,18 @@
             background-color: #000;
         }
 
+        .note code {
+            font-family: monospace;
+            background: rgba(62, 100, 255, 0.12);
+            border-radius: 4px;
+            padding: 0.1em 0.4em;
+            font-size: 0.95em;
+        }
+
+        .note a {
+            color: var(--accent-color);
+        }
+
         .note figcaption {
             color: #8b9bb4;
             font-size: 0.85rem;
@@ -811,15 +823,172 @@
 
     <div class="container" id="notes-panel" role="tabpanel" aria-labelledby="tab-notes">
 
-        <div class="empty-state">
-            <p>No write-ups posted yet.</p>
-            <p>This is where the experiments live: what was measured, how, and what
-               it turned out to mean &mdash; the seeing proxy, the roof audio
-               classifier, stacking convergence, transit photometry.</p>
-        </div>
+        <article id="hr-diagram" class="note">
+            <h2 class="note-title">Weighing a star cluster's age with a colour&ndash;magnitude diagram</h2>
+            <div class="note-meta">M13 &middot; HERCULES GLOBULAR CLUSTER &middot; 18 BLUE + 20 RED SUBS</div>
 
-        <!-- Template for a write-up. Copy, fill in, drop above the empty state
-             (and delete the empty state once the first one lands).
+            <figure>
+                <img src="images/m13.jpg" alt="M13, the Hercules globular cluster, imaged from the Iris observatory">
+                <figcaption>M13 as Iris sees it. Everything below is extracted from these
+                    stars &mdash; same photons, different question.</figcaption>
+            </figure>
+
+            <h3>What an H&ndash;R diagram depicts</h3>
+
+            <p class="science-text">
+                Around 1911, Ejnar Hertzsprung and Henry Norris Russell independently
+                did something that sounds trivial and turned out to be the single most
+                useful plot in stellar astronomy: they graphed stars' brightness against
+                their temperature. The result was not the shapeless cloud you would get
+                from plotting two unrelated properties. Almost every star fell on a
+                narrow diagonal band running from hot-and-brilliant down to
+                cool-and-feeble &mdash; the <em>main sequence</em> &mdash; with a sparse
+                population of cool but very luminous stars off to one side, which had to
+                be enormous to be that bright while being that cold. Those are the giants.
+            </p>
+
+            <p class="science-text">
+                The band exists because a star on the main sequence is doing one thing:
+                fusing hydrogen in its core, with its own weight setting the pressure and
+                therefore the rate. Mass fixes everything else. A star ten times the Sun's
+                mass is hotter, bluer, thousands of times more luminous &mdash; and it
+                burns through its fuel so extravagantly that it lives only tens of
+                millions of years, while a red dwarf will still be going long after the
+                galaxy stops making new stars. So position along the main sequence is
+                really a mass axis, and the fact that a star has <em>left</em> the main
+                sequence is a statement about time.
+            </p>
+
+            <p class="science-text">
+                A telescope cannot measure luminosity or temperature directly. What comes
+                out of an image is an apparent magnitude &mdash; how bright the star looks
+                from here &mdash; and, if you shoot through two filters, a colour index:
+                the difference between its brightness in blue light and in red light. Hot
+                stars put out proportionally more blue, cool stars more red, so that
+                difference is a thermometer. Apparent brightness is the harder half,
+                because a faint star may be genuinely dim or merely distant. Plotting the
+                two observable quantities instead of the two physical ones gives a
+                <em>colour&ndash;magnitude diagram</em>, the CMD: the same picture as an
+                H&ndash;R diagram, shifted by however far away the stars happen to be.
+            </p>
+
+            <h3>Why a globular cluster makes this work</h3>
+
+            <p class="science-text">
+                That distance problem is why this experiment targets M13 rather than a
+                patch of random sky. Its several hundred thousand stars sit roughly 25,000
+                light years away in a sphere about 145 light years across &mdash; which
+                means the near side and the far side differ in distance by well under a
+                percent. Every star in the frame is effectively at the same distance, so
+                every apparent magnitude is offset from the true luminosity by the
+                <em>same</em> constant. The shape of the diagram survives intact. Better
+                still, the cluster's stars all formed at about the same time, some 11.65
+                billion years ago, out of the same material.
+            </p>
+
+            <p class="science-text">
+                One age, one distance, one composition: that turns the diagram into a
+                clock. Over 11.65 billion years, every star heavier than about the Sun has
+                already exhausted its core hydrogen and moved off to the giant branch, so
+                the main sequence is not a full diagonal &mdash; it is a diagonal with the
+                top cut off. The place where it bends away, the <em>turn-off</em>, marks
+                the stars just now running out, and their mass is a direct readout of how
+                long the cluster has been running. An old cluster's turn-off sits low and
+                red; a young one's sits high and blue. Read the corner, get the age.
+            </p>
+
+            <h3>How Iris built it</h3>
+
+            <p class="science-text">
+                The observatory does this from the frames above, via the <code>hr</code> command
+                (<a href="https://github.com/taylorhogan/srt/blob/main/photometry/cmd_diagram.py" target="_blank" rel="noopener noreferrer">photometry/cmd_diagram.py</a>).
+                The blue and red subs are calibrated and stacked separately; each stack is
+                plate-solved with ASTAP to establish exactly what sky coordinate every
+                pixel corresponds to; stars are detected and aperture-photometered in both
+                stacks; and the two star lists are cross-matched by position on the sky, so
+                each star ends up with one brightness in each filter and therefore one
+                colour.
+            </p>
+
+            <p class="science-text">
+                Raw instrumental magnitudes are arbitrary &mdash; they depend on aperture,
+                exposure, and the sensor &mdash; so the field is then cone-searched against
+                the Gaia DR3 catalogue and the stars in common are used to pin the
+                instrumental scale onto Gaia's: blue onto BP, red onto RP. Here that took
+                6,260 stars in common, which is a comfortable margin. Gaia also supplies
+                proper motions and parallaxes, and cluster members betray themselves by
+                moving together and sitting at a common distance, so the foreground and
+                background field stars can be identified and stripped out rather than
+                smeared across the diagram.
+            </p>
+
+            <figure>
+                <a href="images/m13_cmd.jpg" target="_blank" rel="noopener noreferrer">
+                    <img src="images/m13_cmd.jpg" alt="Four-panel colour-magnitude diagram of M13 built from Iris photometry and calibrated against Gaia DR3">
+                </a>
+                <figcaption>
+                    <em>Click for full size.</em>
+                    M13, colour (B&minus;R) against magnitude, on the Gaia photometric
+                    scale. Brighter is up; hotter is left; each point is coloured by its
+                    own colour index. Top left: all 6,948 stars Iris measured. Top right:
+                    the 7,767 Gaia sources whose motion and parallax mark them as cluster
+                    members. Bottom left: Iris's stars with the field population stripped
+                    out &mdash; 4,772 survive. Bottom right: those overlaid on the Gaia
+                    member sequence.
+                </figcaption>
+            </figure>
+
+            <h3>What came out</h3>
+
+            <p class="science-text">
+                The main sequence is unmistakable &mdash; the dense near-vertical pile at
+                colour ~1 &mdash; and it terminates rather than continuing upward, bending
+                left and running out at around magnitude 18. Above that bend, the red giant
+                branch sweeps up and to the right for a good six magnitudes, thinning as it
+                climbs because a star crosses that region quickly. That sweep is the last
+                few hundred million years in the life of stars that spent ten billion
+                sitting quietly on the main sequence, and it is resolved here from a
+                backyard observatory.
+            </p>
+
+            <p class="science-text">
+                The comparison between the panels is the other half of the result. Stripping
+                the field costs about 2,200 of the 6,948 measured stars, and the residual
+                scatter in the top-left panel &mdash; the loose spray of red points to the
+                right of the giant branch &mdash; largely disappears with them, confirming
+                they were contaminants rather than bad photometry. Where Iris falls short of
+                Gaia is in the crowded core: the bottom-right overlay shows the measured
+                points thinning out against the Gaia sequence at the faint end, which is
+                what happens when stars blend together at this plate scale.
+            </p>
+
+            <h3>What did not work</h3>
+
+            <p class="science-text">
+                The pipeline is supposed to locate the horizontal branch and the
+                main-sequence turn-off automatically and read a rough age off the
+                magnitude gap between them. On M13 it found the giant branch and nothing
+                else &mdash; the annotated panel carries one label instead of three, and no
+                age was reported. The turn-off finder expects the horizontal branch to show
+                up as a tight clump of blue stars at one magnitude, and M13's does not
+                oblige: there is a broad blue plume running from about magnitude 14 down
+                past 18 at colour ~0, with no single pile-up to lock onto.
+            </p>
+
+            <p class="science-text">
+                That plume is worth its own investigation. It is present in the Gaia-only
+                panel as well as in the measured one, so it is not an artefact of this
+                telescope's photometry. The likely reading is that it is M13's genuinely
+                extended blue horizontal branch, stretched further by the choice of
+                plotting against RP magnitude &mdash; very hot stars emit weakly in the red,
+                so a blue horizontal-branch star slides downward on an RP axis in a way it
+                would not on a visual one. Confirming that, and teaching the branch-finder
+                to cope with a cluster whose horizontal branch is a smear rather than a
+                clump, is the open item.
+            </p>
+        </article>
+
+        <!-- Template for a write-up. Copy, fill in, and drop above the previous one.
 
         <article id="short-slug" class="note">
             <h2 class="note-title">Title of the experiment</h2>
