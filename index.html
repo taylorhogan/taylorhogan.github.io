@@ -929,6 +929,7 @@
             <ul>
                 <li><a href="#end-to-end">2026-08-04 &middot; Closing the loop: autonomy has to include the data reduction</a></li>
                 <li><a href="#roof-sentry">2026-08-03 &middot; Teaching the observatory to hear its own roof failing</a></li>
+                <li><a href="#vision-safety">2026-08-03 &middot; The camera that has to be right about the roof</a></li>
                 <li><a href="#hr-diagram">2026-08-02 &middot; Weighing a star cluster's age with a colour&ndash;magnitude diagram</a></li>
                 <li><a href="#transit-search">2026-06-05 &middot; Finding a planet by watching a star get 2% fainter</a></li>
             </ul>
@@ -1358,14 +1359,252 @@
             </p>
 
             <p class="science-text">
-                The most instructive failure is not in the classifiers at all. When the stall
-                watchdog fired for real, the log records the sequence exactly as designed
-                &mdash; sustained draw detected, motor power cut, evidence banked &mdash;
-                followed by <code>roof stall: pushover emergency failed</code>. The safety
-                action succeeded and the notification did not. An unattended observatory that
-                protects itself correctly and then cannot tell anyone has solved the easier
-                half of the problem, and that alerting path is now the piece most worth
-                hardening.
+                The most instructive failure is not in the classifiers at all. Rehearsing the
+                stall watchdog against a stub notifier produced the log line
+                <code>roof stall: pushover emergency failed</code> &mdash; the safety action
+                completing correctly and the alert not going out. The immediate cause was
+                trivial and confined to the test harness, but it prompted a look at the real
+                notifier, which turned out to have the more serious version of the same
+                problem: it posted the alert and discarded the reply.
+            </p>
+
+            <p class="science-text">
+                That matters because Pushover answers a bad token, a malformed emergency
+                request, or an exceeded quota with a perfectly healthy HTTP response whose
+                body says <code>status: 0</code>. Never reading the body made an undelivered
+                alert indistinguishable from a delivered one, and transport errors were
+                swallowed into a print, so the caller logged success either way. An
+                unattended observatory that protects itself correctly and cannot tell anyone
+                has solved the easier half of the problem &mdash; and it would have had no
+                way of knowing. Delivery is now verified, emergencies are retried, and the
+                stall path logs loudly when the roof motor has been cut but nobody could be
+                reached
+                (<a href="https://github.com/taylorhogan/srt/commit/aef2169" target="_blank" rel="noopener noreferrer">aef2169</a>).
+            </p>
+
+            <p class="science-text">
+                Which is the argument for rehearsing safety paths rather than waiting for
+                them. The watchdog has never fired on a real stall &mdash; the one genuine
+                gear-not-engaging event predates it. A drill on a path that is supposed to
+                never run is the only way to find out that the part after the emergency was
+                broken.
+            </p>
+        </article>
+
+        <article id="vision-safety" class="note">
+            <h2 class="note-title">The camera that has to be right about the roof</h2>
+            <div class="note-meta"><span class="note-date">2026-08-03</span> &middot; VISION SAFETY &middot; 14 EXPOSURE LADDERS &middot; 3 MARKERS</div>
+
+            <h3>Why a camera and not a switch</h3>
+
+            <p class="science-text">
+                The <a href="#roof-sentry" data-target="notes">roof sentry</a> watches for the
+                mechanism degrading. This is the other half of the same problem: knowing what
+                state the observatory is actually in. Two rules govern every hardware
+                movement &mdash; never move the scope unless the roof is confirmed open,
+                never move the roof unless the scope is confirmed parked &mdash; and the
+                word doing the work in both is <em>confirmed</em>. Software that believes
+                the roof is open because it sent an open command has not confirmed anything.
+                It has remembered its own intent, which is exactly the belief that gets a
+                telescope crushed.
+            </p>
+
+            <p class="science-text">
+                So the ground truth comes from a webcam bolted to the top of the telescope,
+                looking across the inside of the building. Three markers are stuck to things
+                whose positions encode the state: one on the roof panel, one visible only
+                when the roof is open, one on the mount that lines up when it is parked.
+                Confirmation is then a question about pictures &mdash; find each marker, and
+                check it is where that state requires it to be.
+            </p>
+
+            <figure>
+                <a href="images/vision_annotated.jpg" target="_blank" rel="noopener noreferrer">
+                    <img src="images/vision_annotated.jpg" alt="Annotated view from the scope-top camera showing the observatory interior with three matched marker regions boxed">
+                </a>
+                <figcaption>What the safety camera sees, with the three matches drawn on.
+                    The telescope is the black tube at bottom; the roof rail runs across the
+                    top. Green is the open marker, red the closed marker, white the parked
+                    marker. <em>Click for full size.</em></figcaption>
+            </figure>
+
+            <div class="figure-pair">
+                <figure>
+                    <img src="images/vision_tpl_open.jpg" alt="The open marker template">
+                    <figcaption>open</figcaption>
+                </figure>
+                <figure>
+                    <img src="images/vision_tpl_closed.jpg" alt="The closed marker template">
+                    <figcaption>closed</figcaption>
+                </figure>
+                <figure>
+                    <img src="images/vision_tpl_parked.png" alt="The parked marker template">
+                    <figcaption>parked</figcaption>
+                </figure>
+            </div>
+
+            <p class="science-text">
+                The matching itself is deliberately old-fashioned: normalised
+                cross-correlation of each template against the frame, which returns the
+                best-matching location and a confidence between 0 and 1. No neural network,
+                nothing learned, nothing that can be confidently wrong in a novel way. For a
+                safety interlock, a method whose failure modes are boring is worth more than
+                one with a better average score.
+            </p>
+
+            <h3>The problem: no exposure works for the whole scene</h3>
+
+            <p class="science-text">
+                This is where it stops being simple, and it is entirely a problem of camera
+                sensitivity. The scene contains, simultaneously, a marker sitting in deep
+                shade under the roof rail and &mdash; when the roof is open in daylight
+                &mdash; a hole onto a sunlit sky. That is a dynamic range no consumer webcam
+                sensor can capture in one frame. Expose for the sky and the marker is
+                black. Expose for the marker and the top half of the frame is a white
+                rectangle. There is no exposure that gets both, so "pick a good exposure"
+                is not a strategy, it is a wish.
+            </p>
+
+            <p class="science-text">
+                Worse, the obvious way to choose fails in the most dangerous direction.
+                The original code swept a range of exposures and scored each frame the way a
+                photographer would: mean brightness, contrast, how much of the image is
+                clipped. That metric picks the frame a human would call correctly exposed.
+                Look at what that means here.
+            </p>
+
+            <div class="figure-pair">
+                <figure>
+                    <a href="images/vision_ladder_exp11.jpg" target="_blank" rel="noopener noreferrer">
+                        <img src="images/vision_ladder_exp11.jpg" alt="A well-exposed frame of the open roof: trees visible through the opening, but the marker in shadow is unreadable">
+                    </a>
+                    <figcaption>Exposure &minus;11. Nicely exposed, nothing clipped, and a
+                        human can see instantly that the roof is open. The open marker, in
+                        shadow on the rafter at upper left, did not match: 565 px from where
+                        it belongs.</figcaption>
+                </figure>
+                <figure>
+                    <a href="images/vision_ladder_exp7.jpg" target="_blank" rel="noopener noreferrer">
+                        <img src="images/vision_ladder_exp7.jpg" alt="A badly overexposed frame of the same scene, but the shadowed marker is now legible">
+                    </a>
+                    <figcaption>Exposure &minus;7, same scene minutes later. 82% of the frame
+                        is clipped and it looks ruined. The marker is legible. Matched at
+                        29 px from its expected position &mdash; roof confirmed open.</figcaption>
+                </figure>
+            </div>
+
+            <p class="science-text">
+                The frame that looks worse is the one that carries the answer. Judged on
+                whole-frame quality, exposure &minus;7 scored &minus;2.34 &mdash; nearly the
+                worst rung on the ladder &mdash; so the sweep discarded it and chose a clean,
+                well-exposed frame in which the roof could not be confirmed open. The
+                observatory then declines to move the scope, which is safe but useless: an
+                autonomous telescope that cannot verify its own roof cannot observe.
+            </p>
+
+            <p class="science-text">
+                The fix was to stop scoring the photograph and start scoring the evidence.
+                The replacement metric ignores brightness and contrast entirely and asks only:
+                how many of the three markers match, near where they are expected, and how
+                strongly? Summing the confidences is the important detail &mdash; it prefers
+                the frame where the <em>most</em> markers are simultaneously readable rather
+                than the one where any single marker is sharpest. On the roof-open ladders it
+                selects exposure &minus;7 (parked 0.91 + open 0.66 = 1.57); on roof-closed
+                ladders it selects &minus;7 again (parked 0.88 + closed 0.91 = 1.79). Both
+                verdicts correct, on a metric that would horrify a photographer.
+            </p>
+
+            <h3>Confidence is not the thing that separates the states</h3>
+
+            <p class="science-text">
+                A result worth stating on its own, because it is the opposite of the obvious
+                assumption. There is a minimum match confidence in the config, and the
+                instinct when a check misbehaves is to tune it. The ladder data says that
+                instinct is wrong. On a roof-open ladder the open marker matches its true
+                position at confidence 0.66 &mdash; while on the very same ladder, at other
+                exposures, it matches <em>the wrong place entirely</em>, 568 px away, at
+                confidence 0.68 and 0.70.
+            </p>
+
+            <p class="science-text">
+                The bogus matches score <em>higher</em> than the real one. Any threshold that
+                accepts the true detection also accepts several false ones, and any threshold
+                that excludes the false ones excludes the truth. Confidence cannot separate
+                these states at all. Position does, and by an enormous margin: correct
+                matches land 17&ndash;30 px from where they belong, and wrong matches miss by
+                120&ndash;700 px. There is no ambiguous middle. So the gate is geometric, and
+                the confidence threshold has been left alone deliberately.
+            </p>
+
+            <h3>Voting the whole ladder</h3>
+
+            <p class="science-text">
+                The deeper fix was to stop choosing a frame at all. The sweep captures ten
+                exposures; every one of them is evidence. Rather than nominating a
+                representative frame and reading the verdict off it, each rung is matched
+                independently and the verdict is counted across all ten.
+            </p>
+
+            <p class="science-text">
+                The thresholds are asymmetric, and the asymmetry is measured rather than
+                assumed. A single rung is enough to call the roof open, which sounds
+                reckless until you look at the ladders: the open marker is readable in a far
+                narrower exposure band than the closed one, and in seven of eight roof-open
+                sweeps it resolves on <em>exactly one</em> rung. Requiring two votes would
+                fail nearly every roof-open check. What makes one vote safe is not the count
+                but the requirement that the opposing state score <em>zero</em> &mdash; and
+                across all fourteen ladders it does: the closed sets scored closed 3&ndash;5
+                and open 0; the open sets scored open 1&ndash;5 and closed 0. Never once did
+                both states get a vote.
+            </p>
+
+            <p class="science-text">
+                Parked needs three rungs, for the opposite reason. The sweep deliberately
+                spans exposures that are useless at both ends, and in daylight the entire
+                bright half of the ladder blows out; two real roof-open sweeps read parked on
+                exactly five of ten rungs and nothing at all on the top five. A majority rule
+                would have declared a parked scope unparked. Counting is the right test,
+                because three independent exposures putting the marker within tolerance of
+                the parked position is not a coincidence when wrong matches miss by hundreds
+                of pixels.
+            </p>
+
+            <h3>The bug that must not be fixed</h3>
+
+            <p class="science-text">
+                The function that locates a match computes its centre as
+                <code>(x + width) / 2</code> where it should be <code>x + width / 2</code>.
+                That is straightforwardly wrong, and it halves the apparent displacement of
+                anything measured with it &mdash; a marker that has really moved 300 px is
+                reported as having moved 150. The tolerance is therefore about twice as loose
+                as it reads.
+            </p>
+
+            <p class="science-text">
+                It has not been corrected, and that is the right call for now. Every
+                reference position in the config was <em>measured through the same
+                function</em>, so the error cancels: the stored expectation and the live
+                measurement are wrong in identical ways, and the comparison between them
+                holds. Fixing the formula without simultaneously re-measuring all three
+                reference positions would break a working safety check in the name of
+                correctness. The exposure scorer carries an explicit comment forbidding an
+                independent fix there, for exactly this reason. It is a real bug, it is
+                logged as one, and it is a good illustration that in a calibrated system the
+                unit of correctness is the loop, not the line.
+            </p>
+
+            <h3>Where it stands</h3>
+
+            <p class="science-text">
+                Replaying the vote over every ladder captured so far gives the right answer
+                on all fourteen, including the daylight roof-open cases that used to fail,
+                and the roof was confirmed open in full daylight for the first time on
+                3 August 2026. The honest caveats: those fourteen ladders are a small sample
+                from one camera in one building, nothing has been tested through rain, snow
+                on the marker, or a spider deciding to nest on the lens, and the whole scheme
+                depends on physical stickers staying stuck. The failure mode of a marker
+                falling off is at least the safe one &mdash; nothing matches, no state is
+                confirmed, and the observatory refuses to move.
             </p>
         </article>
 
