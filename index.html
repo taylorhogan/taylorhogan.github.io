@@ -932,6 +932,7 @@
                 <li><a href="#vision-safety">2026-08-03 &middot; The camera that has to be right about the roof</a></li>
                 <li><a href="#hr-diagram">2026-08-02 &middot; Weighing a star cluster's age with a colour&ndash;magnitude diagram</a></li>
                 <li><a href="#transit-search">2026-06-05 &middot; Finding a planet by watching a star get 2% fainter</a></li>
+                <li><a href="#optics">2026-08-04 &middot; Has anything changed, or was it just a bad night?</a></li>
             </ul>
         </nav>
 
@@ -1975,6 +1976,189 @@ score    = snr * shape * quality * flatness</code></pre>
                 a second night to catch the thing again at the predicted phase. The pieces
                 are all built. What is missing is the observing plan and the nights to spend
                 on it.
+            </p>
+        </article>
+
+        <article id="optics" class="note">
+            <h2 class="note-title">Has anything changed, or was it just a bad night?</h2>
+            <div class="note-meta"><span class="note-date">2026-08-04</span> &middot; OPTICS TREND &middot; 1,800 STARS POOLED FROM 12 FRAMES</div>
+
+            <h3>The dull command</h3>
+
+            <p class="science-text">
+                The <code>optics</code> command is the least glamorous thing in this
+                system. It takes a frame, fits every star it can find, and reports on how
+                the telescope is performing as an optical instrument rather than on
+                anything in the sky. No discoveries here. It is the equivalent of checking
+                your tyre pressures.
+            </p>
+
+            <figure>
+                <a href="images/optics_table.jpg" target="_blank" rel="noopener noreferrer">
+                    <img src="images/optics_table.jpg" alt="Optical quality summary table: CV FWHM, CV eccentricity, tilt, coma and collimation scores against good and bad thresholds">
+                </a>
+                <figcaption>The summary: 695 stars, median FWHM 1.81&Prime;, median
+                    eccentricity 0.408. Green is fine, amber is marginal, red wants
+                    attention.</figcaption>
+            </figure>
+
+            <p class="science-text">
+                The interesting part is not the summary but the maps behind it, because a
+                telescope's faults are spatial. A single median FWHM for the whole frame
+                throws away the one thing that identifies what is wrong. Split the sensor
+                into a grid and the character of the problem appears.
+            </p>
+
+            <figure>
+                <a href="images/optics_fwhm_grid.jpg" target="_blank" rel="noopener noreferrer">
+                    <img src="images/optics_fwhm_grid.jpg" alt="8x8 grid of median FWHM across the sensor, showing a gradient from 1.71 arcsec upper left to 2.16 lower right">
+                </a>
+                <figcaption>Star sharpness by position. The best patch runs 1.71&Prime; up
+                    and left of centre; the bottom-right corner reaches 2.16&Prime;.
+                    A smooth gradient across the field like this is the signature of tilt
+                    &mdash; sensor and focal plane not quite parallel &mdash; and not of
+                    the atmosphere, which has no reason to prefer one corner of a chip.
+                    <em>Click for full size.</em></figcaption>
+            </figure>
+
+            <figure>
+                <a href="images/optics_ecc_angles.jpg" target="_blank" rel="noopener noreferrer">
+                    <img src="images/optics_ecc_angles.jpg" alt="Map of star elongation direction and magnitude across the frame; stars are round at left and increasingly elongated toward the lower right">
+                </a>
+                <figcaption>Which way each star is smeared, and how much. Round and randomly
+                    oriented on the left, increasingly elongated toward the lower right, and
+                    &mdash; the diagnostic detail &mdash; the elongations there line up with
+                    each other. <em>Click for full size.</em></figcaption>
+            </figure>
+
+            <p class="science-text">
+                That distinction between <em>how much</em> and <em>which way</em> is what
+                makes the map worth having. Optical aberrations have geometry: coma smears
+                stars radially, away from the optical axis, so the pattern points outward
+                like a starburst. A mount that slipped, wind shake, or a cable dragging on
+                the pier smears every star in the <em>same</em> direction regardless of
+                where it sits on the sensor. Same blur, same eccentricity number, completely
+                different culprit &mdash; and only the angles tell them apart.
+            </p>
+
+            <h3>Why this cannot be trended as-is</h3>
+
+            <p class="science-text">
+                The obvious next thought is to log these numbers nightly and watch for
+                drift. Something changes &mdash; a mirror shifts in its cell, a focuser
+                sags, the dog eats a cable &mdash; and the trend flags it before it quietly
+                ruins a month of data. This is where the dull command becomes an actual
+                problem, because the existing metrics <em>cannot do that</em>, and the way
+                they fail is instructive.
+            </p>
+
+            <p class="science-text">
+                Take the same target through the same filter on the best night and the worst
+                night, with nothing whatsoever touched in between. Field uniformity moved
+                <strong>+88%</strong>. Coma score moved <strong>&minus;41%</strong>.
+                Collimation score moved <strong>&minus;29%</strong>. All three in the
+                direction that reads as <em>the optics got better</em>. Nothing had been
+                adjusted. That is entirely weather, and a change detector built on those
+                numbers would have cheerfully reported an improvement that did not happen
+                &mdash; or, on the reverse pair of nights, raised an alarm about a telescope
+                that was fine.
+            </p>
+
+            <p class="science-text">
+                Two mechanisms, both worth knowing about. First, the star count fell from
+                718 to 130 between those nights, so the statistics were not describing the
+                same population &mdash; bad seeing leaves only the brightest stars, which
+                are not a random sample. Second, and more subtly, seeing dilutes the very
+                contrast the optical signature lives in: blur everything enough and
+                elongation patterns wash toward randomness, dragging any
+                correlation-style metric toward its null value. The metric does not
+                measure the optics. It measures the optics multiplied by the weather.
+            </p>
+
+            <h3>Metrics built to hold still</h3>
+
+            <p class="science-text">
+                So there is now a second set, designed from the start to be trendable, and
+                every design choice in it is a defence against one of the failures above.
+                The star sample is a fixed count, brightness-matched, so the population
+                cannot move with the seeing. Field degradation is computed in quadrature
+                &mdash; subtracting the sharpest patch of field from the median in the same
+                way you would subtract noise sources &mdash; rather than as a ratio, because
+                dividing by the mean builds an inverse dependence on seeing directly into
+                the number.
+            </p>
+
+            <p class="science-text">
+                Collimation is read from the <em>position</em> of the sharpest point in the
+                field rather than from any brightness or sharpness value, and this is the
+                neatest trick of the lot: bad seeing lifts the whole FWHM surface, but it
+                does not move where that surface bottoms out. The location of the sweet spot
+                is a property of the optics almost alone. And elongation is split into a
+                radial component, which is genuinely optical, and a single-direction
+                component, which explicitly is not &mdash; the code's own docstring notes
+                that a high value there means "guiding, wind shake or a cable snag". The
+                cable-eating dog has a dedicated metric.
+            </p>
+
+            <p class="science-text">
+                Getting these stable enough to be worth logging took one more thing:
+                pooling. Measured per frame and then medianed, they still scattered 86% on
+                field excess and 123% on radial elongation across three comparable nights,
+                because a 4&times;4 grid over one frame leaves only about nine stars per
+                cell. Pooling a whole night's frames into a single measurement puts roughly
+                ten times that in each cell and brings the edge-degradation figure down to
+                13% scatter. The rest land near 50%, which is honest rather than good.
+            </p>
+
+            <p class="science-text">
+                One quiet trap fell out of that. The obvious way to decide whether a night
+                has enough data is to require a total pooled star count &mdash; and it
+                silently fails, because eleven frames of 130 stars pool to 1,489, sailing
+                past any sensible total, while not one of those frames was individually
+                good enough to measure. The gate has to count acceptable frames, not stars.
+            </p>
+
+            <h3>What one night looks like</h3>
+
+            <p class="science-text">
+                Here is the entire trend database at the time of writing, which is to say
+                one night: 2026-07-31, SH2-92 in H&alpha;, 1,800 stars pooled from 12
+                frames out of 11,726 detected. Seeing floor 1.58&Prime;. Field excess
+                0.24&Prime;, edge excess 0.86&Prime; &mdash; so the optics add very little
+                blur across the middle of the field and a great deal at its worst corner,
+                which is the tilt already visible in the grid above. The sweet spot sits
+                0.43 of the way out from centre, up and to the left, consistent with the
+                same story.
+            </p>
+
+            <p class="science-text">
+                The one number that raises an eyebrow is the single-direction elongation
+                component, at 0.69 along an axis of about 152&deg;. By the metric's own
+                definition that leans toward something non-optical &mdash; guiding, wind, or
+                the aforementioned dog. It is also exactly the sort of reading nobody should
+                act on yet, because with a single night there is no baseline to compare it
+                against, and a corner-heavy aberration can plausibly lift that number on its
+                own. It is a hypothesis with a sample size of one.
+            </p>
+
+            <h3>Deliberately doing nothing with it</h3>
+
+            <p class="science-text">
+                Which is the actual point, and the reason nothing consumes these numbers
+                yet. It would be easy to wire up thresholds this week and have a
+                change-detection command by the weekend. Those thresholds would be guesses,
+                the guesses would be wrong in both directions, and a detector that cries
+                wolf gets ignored precisely as fast as one that stays silent gets trusted.
+                The metrics are being logged every night and read by nobody, on purpose,
+                until there is enough baseline to know what normal actually looks like.
+            </p>
+
+            <p class="science-text">
+                So the answer to "has anything changed?" is currently "ask again in a couple
+                of months". The dullest note here is the one making the strongest claim:
+                that knowing what you cannot yet measure is worth more than a number that
+                looks like an answer. Meanwhile the cables remain unchewed, though the
+                observatory is now, in principle, in a position to notice.
             </p>
         </article>
 
