@@ -266,6 +266,40 @@
             background-color: #000;
         }
 
+        .note-index {
+            background-color: var(--card-bg);
+            border-left: 5px solid var(--secondary-accent);
+            border-radius: 8px;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .note-index ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .note-index li + li {
+            margin-top: 0.5rem;
+        }
+
+        .note-index a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-family: monospace;
+            font-size: 0.9rem;
+        }
+
+        .note-index a:hover {
+            color: var(--accent-color);
+        }
+
+        .note-date {
+            color: var(--secondary-accent);
+            font-weight: bold;
+        }
+
         .note code {
             font-family: monospace;
             background: rgba(62, 100, 255, 0.12);
@@ -351,6 +385,7 @@
             <li><a href="#ngc891">NGC891</a></li>
             <li><a href="#ngc925">NGC925</a></li>
             <li><a href="#sh2-101">SH2-101</a></li>
+            <li><a href="#sh2-92">SH2-92</a></li>
             <li><a href="#notes" class="nav-to-notes" data-target="notes">&rarr; The Science</a></li>
         </ul>
     </nav>
@@ -819,13 +854,266 @@
             </div>
         </article>
 
+        <!-- SH2-92 -->
+        <article id="sh2-92" class="dso-section">
+            <div class="dso-image-container">
+                <img src="images/sh2-92.jpg" alt="SH2-92" class="dso-image">
+            </div>
+            <div class="dso-content">
+                <h2 class="dso-title">SH2-92 - Emission Nebula in Vulpecula</h2>
+                <div class="dso-meta">DISTANCE: ~12,000&ndash;14,000 LIGHT YEARS | TYPE: H II REGION</div>
+
+                <p class="science-text">
+                    SH2-92 is the ninety-second entry in Stewart Sharpless's 1959 survey of galactic H II regions &mdash; vast clouds of interstellar hydrogen ionized by the ultraviolet output of nearby hot stars, glowing as their electrons recombine. Lying in Vulpecula almost exactly in the plane of the Milky Way, it spans over 200 light years, and its ionizing source is believed to be WR 127, a Wolf-Rayet star in the brief, violent phase a massive star enters as it strips away its own outer envelope. Distance estimates place it near the outer edge of the Orion Arm, though they disagree by a couple of thousand light years.
+                </p>
+
+                <p class="science-text">
+                    Its sheer size works against it visually: the same emission spread across a degree of sky is a faint wash rather than a bright object, and it is imaged far less often than showpiece nebulae a fraction of its true extent. This portrait took 27.5 hours across nine nights, split between hydrogen-alpha and doubly-ionized oxygen &mdash; the red and the teal respectively &mdash; and doubles as the first target processed end to end without human intervention. <a href="#notes" data-target="notes">The write-up is in The Science &rarr;</a>
+                </p>
+
+                <div class="time-travel-box">
+                    <span class="time-travel-title">On Earth: ~11,000 BC</span>
+                    <p>
+                        This light set out as the last ice age was releasing its grip. Ice sheets were retreating across northern Europe and North America, sea levels were beginning the rise that would drown the Bering land bridge, and mammoths, giant ground sloths and sabre-toothed cats were entering their final few millennia. Human hunter-gatherers had reached the southern tip of South America, and in the Fertile Crescent the Natufians were harvesting wild cereals from settled villages &mdash; the first hesitant step toward agriculture.
+                    </p>
+                </div>
+            </div>
+        </article>
+
     </div>
 
     <div class="container" id="notes-panel" role="tabpanel" aria-labelledby="tab-notes">
 
+        <nav class="note-index">
+            <ul>
+                <li><a href="#end-to-end">2026-08-04 &middot; Closing the loop: autonomy has to include the data reduction</a></li>
+                <li><a href="#hr-diagram">2026-08-02 &middot; Weighing a star cluster's age with a colour&ndash;magnitude diagram</a></li>
+            </ul>
+        </nav>
+
+        <article id="end-to-end" class="note">
+            <h2 class="note-title">Closing the loop: autonomy has to include the data reduction</h2>
+            <div class="note-meta"><span class="note-date">2026-08-04</span> &middot; SH2-92 &middot; 330 SUBS &middot; 9 NIGHTS &middot; 27.5 HOURS</div>
+
+            <h3>The gap</h3>
+
+            <p class="science-text">
+                Iris was already unattended in every part of the job that involves moving
+                hardware. It picks the night's target from the queue by what is actually
+                observable, waits for the sun, checks that it is safe to open, opens the
+                roof, slews, images, watches for trouble, and parks and closes at the end.
+                None of that needs a human. What it produced, though, was a directory of
+                raw FITS files &mdash; and a directory of raw FITS files is not a result.
+                The last step was still manual, which meant the observatory could run
+                itself all night and then wait days for someone to sit down with it.
+            </p>
+
+            <p class="science-text">
+                There are really two things missing in that gap, and only one of them is
+                the picture. The obvious one is reduction: calibrating, registering, and
+                stacking hundreds of subs into an image, then stretching it so the faint
+                structure is visible without blowing out the stars. The less obvious one
+                is the decision. An autonomous scheduler has to answer &ldquo;is this
+                target finished, or does it want another night?&rdquo; every single evening,
+                and until it can measure that, it is just guessing &mdash; either quitting
+                while more exposure would still have helped, or grinding away on a target
+                that stopped improving a week ago while the queue backs up behind it.
+                SH2-92 is the first target taken all the way through both.
+            </p>
+
+            <h3>The target</h3>
+
+            <p class="science-text">
+                SH2-92 is entry 92 in Stewart Sharpless's 1959 catalogue of H II regions
+                &mdash; clouds of interstellar hydrogen made to glow by nearby hot stars.
+                It sits in Vulpecula at 19h47m +28&deg;10&prime;, right down in the plane
+                of the Milky Way, and it is enormous: over 200 light years across, which
+                is one reason it is so diffuse and so rarely photographed. Distance
+                estimates disagree, putting it somewhere between about 12,000 and 14,300
+                light years, plausibly out at the far edge of the Orion Arm. The star
+                doing the ionising is thought to be WR 127 &mdash; a Wolf-Rayet star, one
+                of the short-lived, furiously hot objects a massive star becomes as it
+                sheds its outer layers &mdash; and it falls inside this frame, eleven
+                arcminutes from the catalogue centre.
+            </p>
+
+            <p class="science-text">
+                An object like this is a good test of the whole pipeline precisely because
+                it is unspectacular. There is no bright core to anchor on. The signal is
+                a faint wash spread over the entire field, so it only separates from the
+                sky background with a great deal of integration, and any error in the
+                calibration or the stretch shows up immediately as false structure in
+                what should be smooth gas.
+            </p>
+
+            <figure>
+                <a href="images/sh2-92.jpg" target="_blank" rel="noopener noreferrer">
+                    <img src="images/sh2-92.jpg" alt="SH2-92, a faint H II region in Vulpecula, imaged in hydrogen-alpha and oxygen-III">
+                </a>
+                <figcaption>
+                    SH2-92. 330 five-minute subs &mdash; 137 H&alpha; and 193 O III &mdash;
+                    over nine nights from 2026-07-11 to 2026-08-03, 27.5 hours of
+                    integration, on a 17-inch CDK at f/6.8 with a mono CMOS camera.
+                    Rendered in the HOO palette: hydrogen-alpha drives the red channel,
+                    doubly-ionised oxygen drives green and blue, so red is where hydrogen
+                    is recombining and teal is where the gas is hot enough to have stripped
+                    oxygen of two electrons. <em>Click for full size.</em>
+                </figcaption>
+            </figure>
+
+            <h3>Knowing what the night actually gave you</h3>
+
+            <p class="science-text">
+                Before any of those frames can be stacked, something has to judge them.
+                Every sub is measured as it lands and the numbers are cached, which turns
+                a nine-night run into four time series &mdash; and those series are more
+                honest about observing conditions than memory is.
+            </p>
+
+            <figure>
+                <a href="images/sh2-92_frame_stats.jpg" target="_blank" rel="noopener noreferrer">
+                    <img src="images/sh2-92_frame_stats.jpg" alt="Four-panel plot of FWHM, eccentricity, sky brightness and star count across 328 frames of SH2-92">
+                </a>
+                <figcaption>
+                    Every frame of the campaign, in order. Vertical shading separates
+                    calendar nights; red points are H&alpha;, orange are O III.
+                    <em>Click for full size.</em>
+                </figcaption>
+            </figure>
+
+            <p class="science-text">
+                <strong>FWHM</strong> &mdash; the full width at half maximum of a star's
+                profile, in arcseconds &mdash; is the seeing measurement, and it is the one
+                that decides whether a frame is worth keeping. A star is a point source;
+                anything more than a point is atmosphere. The median here is 1.99&Prime;,
+                but the panel makes the spread obvious: some nights sit flat around
+                1.7&Prime; and one runs 2.5&Prime; and rising. Those soft frames are not
+                merely less good, they are actively harmful in a stack, because averaging
+                a sharp frame with a bloated one gives you a bloated result.
+            </p>
+
+            <p class="science-text">
+                <strong>Eccentricity</strong> measures how far from circular the star
+                images are, and it separates atmosphere from mechanics. Seeing blurs stars
+                symmetrically; a mount that is tracking imperfectly, flexing, or fighting
+                wind smears them into ellipses. A night where FWHM is fine but eccentricity
+                climbs is a hardware complaint, not a weather one. The median of 0.395 with
+                excursions past 0.55 is the honest signature of a real backyard mount.
+            </p>
+
+            <p class="science-text">
+                <strong>Sky brightness</strong> in ADU per second is the background the
+                signal has to compete with &mdash; moonlight, twilight, light pollution,
+                high cloud. The sawtooth pattern is the most legible thing in the whole
+                figure: each night begins bright and decays as astronomical twilight
+                finishes draining out of the sky, then resets at the next sunset. The
+                nights riding three to four times the median are the moonlit ones, and
+                they cost real depth.
+            </p>
+
+            <p class="science-text">
+                <strong>Star count</strong> is the blunt instrument that catches everything
+                the other three miss. Detected stars fall when clouds roll through, when
+                the focus drifts, when dew forms on the corrector. The frames near zero in
+                that bottom panel are not marginal &mdash; they are frames where the sky
+                closed, and no amount of processing recovers them. Taken together the four
+                panels are what lets the stacker discard 64 of the 330 subs &mdash; nearly
+                one in five &mdash; without a human ever looking at a single frame.
+            </p>
+
+            <h3>Knowing when to stop</h3>
+
+            <p class="science-text">
+                That leaves the harder question. Stacking N frames beats stacking one,
+                everybody knows that &mdash; random noise averages down as the square root
+                of the number of frames, so four frames halve it and a hundred frames cut
+                it by ten. But square-root improvement is brutally diminishing. Going from
+                4 frames to 16 is a big visible win; going from 100 to 112, one more clear
+                night, changes almost nothing you can see. Somewhere in there is the point
+                where the telescope should move on, and eyeballing the stack is a terrible
+                way to find it.
+            </p>
+
+            <p class="science-text">
+                So the pipeline measures it directly. It stacks every good frame into a
+                reference &mdash; the &ldquo;golden&rdquo; stack, the best this data can
+                do &mdash; and then asks how close it could have got with fewer. For each
+                of a series of frame counts (1, 2, 3, 5, 8, 13, 21, 34&hellip;) it draws
+                twenty random subsets of that size, stacks each one the same way, and
+                measures the RMS difference from the golden, expressed as a percentage of
+                the sky level. Plot that against frame count and you get a curve that
+                starts high and falls toward zero, and the shape of it answers the
+                question.
+            </p>
+
+            <figure>
+                <a href="images/sh2-92_convergence_ha.jpg" target="_blank" rel="noopener noreferrer">
+                    <img src="images/sh2-92_convergence_ha.jpg" alt="Stack convergence curve for the hydrogen-alpha frames of SH2-92">
+                </a>
+                <figcaption>H&alpha;: 118 frames survived the quality cut out of 137.</figcaption>
+            </figure>
+
+            <figure>
+                <a href="images/sh2-92_convergence_oiii.jpg" target="_blank" rel="noopener noreferrer">
+                    <img src="images/sh2-92_convergence_oiii.jpg" alt="Stack convergence curve for the O-III frames of SH2-92">
+                </a>
+                <figcaption>O III: 148 of 193. Note where the blue curve sits relative to
+                    the dotted line compared with H&alpha; above.</figcaption>
+            </figure>
+
+            <p class="science-text">
+                Three things are drawn on each plot. The blue line is the measured residual,
+                with the shaded band showing the spread across the twenty random draws
+                &mdash; that band is the luck of <em>which</em> frames you happened to get,
+                and it is wide at small counts and narrow at large ones, which is itself a
+                good argument for more frames. The dashed red line is a straight fit to the
+                tail, quoted in percent per frame: that single number is the decision. It
+                is what one more sub is worth right now. When it flattens past a threshold
+                &mdash; here 0.4% per frame &mdash; the target is done and the scheduler
+                can retire it.
+            </p>
+
+            <p class="science-text">
+                The dotted yellow curve is the interesting one. It is where the measured
+                curve would sit if every frame's noise were completely independent of every
+                other frame's &mdash; pure square-root averaging, anchored to this data's
+                own single-frame noise. It is not an absolute floor; a bad night lifts both
+                curves together. It is a statement about <em>behaviour</em>. Riding that
+                line means the frames are averaging down exactly as they should. Sitting
+                above it means some component of the error is common to all the frames, and
+                a correlated error does not average away &mdash; you can shoot all year and
+                it will still be there.
+            </p>
+
+            <h3>What came out</h3>
+
+            <p class="science-text">
+                Both filters passed. H&alpha; finished at a tail slope of 0.23% per frame
+                and a residual of 6.4% of sky; O III at 0.20% per frame and 5.2%. Both are
+                inside the thresholds, so SH2-92 reads as complete and the scheduler is
+                free to move on &mdash; a judgement made from measurements rather than from
+                somebody deciding the picture looked finished.
+            </p>
+
+            <p class="science-text">
+                The two filters did not behave the same way, though, and that is the actual
+                finding. The H&alpha; curve rides the independent-noise line the whole way
+                down: those frames are averaging as well as frames can. The O III curve
+                runs 2.81&times; above it. Nearly three times more residual than independent
+                noise explains means something systematic is riding along in the O III
+                data, and the extra frames were not removing it. O III is the filter most
+                exposed to gradients &mdash; moonlight and skyglow are far stronger there
+                than at H&alpha; &mdash; so a sky gradient that shifts between nights is
+                the first suspect, with imperfect flat correction the second. Chasing that
+                down is the next piece of work, and it is a good example of why the
+                convergence curve earns its keep: the stacked O III image looks fine. The
+                curve is what says it should have been better.
+            </p>
+        </article>
+
         <article id="hr-diagram" class="note">
             <h2 class="note-title">Weighing a star cluster's age with a colour&ndash;magnitude diagram</h2>
-            <div class="note-meta">M13 &middot; HERCULES GLOBULAR CLUSTER &middot; 18 BLUE + 20 RED SUBS</div>
+            <div class="note-meta"><span class="note-date">2026-08-02</span> &middot; M13 &middot; HERCULES GLOBULAR CLUSTER &middot; 18 BLUE + 20 RED SUBS</div>
 
             <figure>
                 <img src="images/m13.jpg" alt="M13, the Hercules globular cluster, imaged from the Iris observatory">
