@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Deep Sky Objects Gallery</title>
+    <title>Iris Lab Notes</title>
     <style>
         :root {
             --bg-color: #0b0d17;
@@ -34,6 +34,77 @@
             text-transform: uppercase;
             letter-spacing: 2px;
             color: var(--accent-color);
+        }
+
+        header p {
+            margin: 0;
+            color: #8b9bb4;
+            font-family: monospace;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+        }
+
+        header p a {
+            color: #8b9bb4;
+        }
+
+        /* --- Mode switch: gallery vs. lab notes --- */
+        .mode-switch {
+            display: flex;
+            gap: 1rem;
+            max-width: 900px;
+            margin: 1.5rem auto 2.5rem;
+            padding: 0 20px;
+        }
+
+        .mode-btn {
+            flex: 1;
+            background-color: var(--card-bg);
+            border: 2px solid rgba(62, 100, 255, 0.25);
+            border-radius: 12px;
+            color: var(--text-color);
+            font-family: inherit;
+            padding: 1.25rem 1.5rem;
+            text-align: left;
+            cursor: pointer;
+            transition: border-color 0.2s, background-color 0.2s, transform 0.2s;
+        }
+
+        .mode-btn:hover {
+            transform: translateY(-3px);
+            border-color: rgba(62, 100, 255, 0.6);
+        }
+
+        .mode-btn .mode-btn-label {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #fff;
+        }
+
+        .mode-btn .mode-btn-sub {
+            display: block;
+            font-size: 0.85rem;
+            color: #8b9bb4;
+            margin-top: 0.35rem;
+        }
+
+        .mode-btn[aria-selected="true"] {
+            background-color: rgba(62, 100, 255, 0.15);
+            border-color: var(--accent-color);
+        }
+
+        .mode-btn[aria-selected="true"] .mode-btn-label {
+            color: var(--accent-color);
+        }
+
+        /* Only the selected panel is shown. */
+        body[data-mode="gallery"] #notes-panel,
+        body[data-mode="notes"] #gallery-panel,
+        body[data-mode="notes"] nav.dso-nav {
+            display: none;
         }
 
         nav.dso-nav {
@@ -67,6 +138,11 @@
 
         nav.dso-nav a:hover {
             color: var(--accent-color);
+        }
+
+        nav.dso-nav a.nav-to-notes {
+            color: var(--secondary-accent);
+            font-weight: bold;
         }
 
         .container {
@@ -147,6 +223,65 @@
             letter-spacing: 1px;
         }
 
+        /* --- Lab notes --- */
+        .note {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            scroll-margin-top: 20px;
+        }
+
+        .note-title {
+            font-size: 1.75rem;
+            margin: 0 0 0.5rem;
+            color: #fff;
+            border-left: 5px solid var(--secondary-accent);
+            padding-left: 15px;
+        }
+
+        .note-meta {
+            color: #8b9bb4;
+            font-size: 0.9rem;
+            font-family: monospace;
+            margin-bottom: 1.5rem;
+        }
+
+        .note h3 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--secondary-accent);
+            margin: 1.5rem 0 0.5rem;
+        }
+
+        .note figure {
+            margin: 1.5rem 0;
+        }
+
+        .note figure img {
+            width: 100%;
+            border-radius: 8px;
+            background-color: #000;
+        }
+
+        .note figcaption {
+            color: #8b9bb4;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+
+        .empty-state {
+            background-color: var(--card-bg);
+            border: 1px dashed rgba(62, 100, 255, 0.3);
+            border-radius: 12px;
+            padding: 3rem 2rem;
+            text-align: center;
+            color: #8b9bb4;
+        }
+
         @media (max-width: 768px) {
             .dso-image-container {
                 height: 300px;
@@ -154,14 +289,32 @@
             .dso-title {
                 font-size: 1.5rem;
             }
+            .mode-switch {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+            .mode-btn .mode-btn-label {
+                font-size: 1.2rem;
+            }
         }
     </style>
 </head>
-<body>
+<body data-mode="gallery">
     <header>
-        <h1>Cosmic Time Machine</h1>
-        <p><a href="https://github.com/taylorhogan/srt/blob/main/doc/iris_srt_paper.pdf" target="_blank" rel="noopener noreferrer">Iris Observatory</a></p>
+        <h1>Iris Lab Notes</h1>
+        <p><a href="https://github.com/taylorhogan/srt/blob/main/doc/iris_srt_paper.pdf" target="_blank" rel="noopener noreferrer">Iris Observatory</a> &middot; <a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a></p>
     </header>
+
+    <div class="mode-switch" role="tablist">
+        <button class="mode-btn" id="tab-gallery" role="tab" aria-selected="true" aria-controls="gallery-panel" data-target="gallery">
+            <span class="mode-btn-label">The Images</span>
+            <span class="mode-btn-sub">Deep sky objects shot from the observatory, and how far back you are looking</span>
+        </button>
+        <button class="mode-btn" id="tab-notes" role="tab" aria-selected="false" aria-controls="notes-panel" data-target="notes">
+            <span class="mode-btn-label">The Science</span>
+            <span class="mode-btn-sub">Experiments, measurements, and problems being worked on</span>
+        </button>
+    </div>
 
     <nav class="dso-nav">
         <ul>
@@ -186,10 +339,11 @@
             <li><a href="#ngc891">NGC891</a></li>
             <li><a href="#ngc925">NGC925</a></li>
             <li><a href="#sh2-101">SH2-101</a></li>
+            <li><a href="#notes" class="nav-to-notes" data-target="notes">&rarr; The Science</a></li>
         </ul>
     </nav>
 
-    <div class="container">
+    <div class="container" id="gallery-panel" role="tabpanel" aria-labelledby="tab-gallery">
 
         <!-- IC1318 -->
         <article id="ic1318" class="dso-section">
@@ -654,5 +808,70 @@
         </article>
 
     </div>
+
+    <div class="container" id="notes-panel" role="tabpanel" aria-labelledby="tab-notes">
+
+        <div class="empty-state">
+            <p>No write-ups posted yet.</p>
+            <p>This is where the experiments live: what was measured, how, and what
+               it turned out to mean &mdash; the seeing proxy, the roof audio
+               classifier, stacking convergence, transit photometry.</p>
+        </div>
+
+        <!-- Template for a write-up. Copy, fill in, drop above the empty state
+             (and delete the empty state once the first one lands).
+
+        <article id="short-slug" class="note">
+            <h2 class="note-title">Title of the experiment</h2>
+            <div class="note-meta">2026-08-04 | STATUS: IN PROGRESS</div>
+
+            <h3>The question</h3>
+            <p>What was actually being asked, and why it mattered.</p>
+
+            <h3>Method</h3>
+            <p>How it was measured. Link the code:
+               <a href="https://github.com/taylorhogan/srt/commit/SHA">SHA</a>.</p>
+
+            <figure>
+                <img src="images/some-plot.png" alt="">
+                <figcaption>What the plot shows.</figcaption>
+            </figure>
+
+            <h3>Result</h3>
+            <p>What came out, including what did not work.</p>
+        </article>
+
+        -->
+
+    </div>
+
+    <script>
+        (function () {
+            var buttons = document.querySelectorAll('.mode-btn');
+
+            function setMode(mode) {
+                document.body.dataset.mode = mode;
+                buttons.forEach(function (btn) {
+                    btn.setAttribute('aria-selected', btn.dataset.target === mode);
+                });
+            }
+
+            var switches = document.querySelectorAll('[data-target]');
+            switches.forEach(function (el) {
+                el.addEventListener('click', function (ev) {
+                    ev.preventDefault();
+                    var mode = el.dataset.target;
+                    setMode(mode);
+                    history.replaceState(null, '', mode === 'notes' ? '#notes' : '#');
+                    window.scrollTo(0, 0);
+                });
+            });
+
+            // A deep link to a DSO anchor must land in the gallery, not the notes.
+            if (location.hash === '#notes') {
+                setMode('notes');
+            }
+        })();
+    </script>
 </body>
 </html>
