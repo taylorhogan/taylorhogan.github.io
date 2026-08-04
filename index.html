@@ -328,6 +328,45 @@
             color: #8b949e;
         }
 
+        /* Data tables. Wide ones scroll inside their own box. */
+        .table-scroll {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+
+        .note table {
+            border-collapse: collapse;
+            width: 100%;
+            font-family: monospace;
+            font-size: 0.85rem;
+        }
+
+        .note th, .note td {
+            padding: 0.45rem 0.7rem;
+            text-align: right;
+            border-bottom: 1px solid #30363d;
+            white-space: nowrap;
+        }
+
+        .note th:first-child, .note td:first-child {
+            text-align: left;
+        }
+
+        .note thead th {
+            color: var(--secondary-accent);
+            border-bottom: 2px solid #30363d;
+        }
+
+        .note tr.highlight td {
+            background: rgba(62, 100, 255, 0.15);
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .note tr.muted td {
+            color: #8b949e;
+        }
+
         /* A claim that needs to stay visible: what this result is not. */
         .caveat {
             background: rgba(245, 0, 87, 0.08);
@@ -927,6 +966,7 @@
 
         <nav class="note-index">
             <ul>
+                <li><a href="#tonight">2026-08-04 &middot; How many hours is it actually worth? Reading the night-planning chart</a></li>
                 <li><a href="#end-to-end">2026-08-04 &middot; Closing the loop: autonomy has to include the data reduction</a></li>
                 <li><a href="#roof-sentry">2026-08-03 &middot; Teaching the observatory to hear its own roof failing</a></li>
                 <li><a href="#vision-safety">2026-08-03 &middot; The camera that has to be right about the roof</a></li>
@@ -935,6 +975,251 @@
                 <li><a href="#optics">2026-08-04 &middot; Has anything changed, or was it just a bad night?</a></li>
             </ul>
         </nav>
+
+        <article id="tonight" class="note">
+            <h2 class="note-title">How many hours is it actually worth? Reading the night-planning chart</h2>
+            <div class="note-meta"><span class="note-date">2026-08-04</span> &middot; NIGHT PLANNING &middot; 9 NIGHTS &middot; 330 FRAMES &middot; 7 SERIES, 2 GATES</div>
+
+            <h3>The question the chart answers</h3>
+
+            <p class="science-text">
+                Before the roof opens, something has to decide whether tonight is worth the
+                trouble and which target gets it. That reduces to a number &mdash; how many
+                usable hours this object has &mdash; and a verdict on whether the weather
+                permits any of them. This is the chart behind both.
+            </p>
+
+            <figure>
+                <a href="images/tonight_horizon.png" target="_blank" rel="noopener noreferrer">
+                    <img src="images/tonight_horizon.png" alt="Night planning chart for SH2-92 showing target altitude, local horizon, moon, cloud, humidity, wind, precipitation, smoke and seeing wind against time">
+                </a>
+                <figcaption>SH2-92 on a real night. Start 22:04, finish 01:57, elapsed
+                    3h53m, air mass 1.03 at best. Seven series on one pair of axes, all
+                    rescaled onto a 0&ndash;90 range so they can share the altitude axis.
+                    <em>Click for full size.</em></figcaption>
+            </figure>
+
+            <p class="science-text">
+                The heavy purple curve is the target's altitude, and the grey bands are
+                darkness. The naive answer to "how long is it up?" is where purple sits
+                above zero, which here would be most of the night. That answer is wrong by
+                a factor of two, and the reason is the thick green line.
+            </p>
+
+            <h3>The horizon is not at the horizon</h3>
+
+            <p class="science-text">
+                That green trace is the local horizon, and it is nowhere near zero &mdash; it
+                wanders between about 46&deg; and 65&deg; over the course of the night. It
+                is not a weather series at all: it is a survey of the trees and buildings
+                around this observatory, 33 measured altitude readings at fixed compass
+                bearings. As the target moves across the sky its azimuth changes, so the
+                obstruction beneath it changes, and the green line is the profile sampled
+                along the path the target actually takes.
+            </p>
+
+            <figure>
+                <a href="images/tonight_skypolar.png" target="_blank" rel="noopener noreferrer">
+                    <img src="images/tonight_skypolar.png" alt="Polar sky chart with the local horizon in red and the blocked region shaded, showing only a small usable region near the zenith and toward the south">
+                </a>
+                <figcaption>The same horizon in plan view. Centre is the zenith, the edge is
+                    the true horizon, and everything pink is blocked. The white region is the
+                    entire sky this observatory can actually see; blue dots are the target's
+                    track across the night.</figcaption>
+            </figure>
+
+            <p class="science-text">
+                It is a humbling picture. Due north the trees reach <strong>82.8&deg;</strong>
+                &mdash; less than eight degrees short of straight up &mdash; so the northern
+                sky, Polaris and the circumpolar objects with it, simply does not exist here.
+                The best direction is due south at 25.1&deg;. This is a site that observes
+                through a ragged hole, and any planning that assumed a flat horizon would
+                schedule hours of imaging into a tree.
+            </p>
+
+            <p class="science-text">
+                So the usable window is the intersection of two conditions: the target above
+                the <em>local</em> horizon, and the sky astronomically dark. For this night
+                that is 22:04 to 01:57 &mdash; 3 hours 53 minutes, against a target that
+                peaks at 76&deg;. The other number in the title, air mass 1.03, is the
+                thickness of atmosphere being looked through, relative to straight up, and
+                it is simply 1/sin(altitude): 1.0 at the zenith, 2.0 at 30&deg;, and rising
+                sharply after that. It ranks the quality of those hours where the elapsed
+                time only counts them.
+            </p>
+
+            <h3>The seven series, and which of them can actually stop the night</h3>
+
+            <p class="science-text">
+                This is the part that surprises people, including the person who wrote it.
+                Seven quantities are plotted. <strong>Two</strong> of them can veto a night.
+            </p>
+
+            <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr><th>Series</th><th>Plotted as</th><th>Gate</th><th>Effect</th></tr>
+                </thead>
+                <tbody>
+                    <tr class="highlight"><td>Cloud cover</td><td>red, % of 90</td><td>&gt; 80%</td><td>BLOCKS</td></tr>
+                    <tr class="highlight"><td>Precipitation probability</td><td>pink, % of 90</td><td>&gt; 20%</td><td>BLOCKS</td></tr>
+                    <tr class="muted"><td>Surface wind</td><td>black, % of 40 km/h</td><td>none</td><td>displayed only</td></tr>
+                    <tr class="muted"><td>Humidity</td><td>thin green, % of 90</td><td>none</td><td>displayed only</td></tr>
+                    <tr class="muted"><td>Moon altitude &amp; phase</td><td>blue</td><td>none</td><td>displayed only</td></tr>
+                    <tr class="muted"><td>Smoke (PM2.5 AQI)</td><td>brown, AQI/150</td><td>advisory at 60</td><td>warns, never blocks</td></tr>
+                    <tr class="muted"><td>Seeing wind (850 hPa)</td><td>orange, km/h &divide; 60</td><td>label at 20 / 30</td><td>describes, never blocks</td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <p class="science-text">
+                Cloud above 80% and rain above 20% are the whole gate. Everything else is
+                information for a human, and the restraint is deliberate in each case.
+                Surface wind is drawn but unused &mdash; the function that decides even
+                accepts a wind argument and never reads it, which is honest if untidy: a
+                roll-off roof observatory has a real wind limit, but it has never been
+                measured here, and a threshold invented at the keyboard would either block
+                good nights or fail to block dangerous ones.
+            </p>
+
+            <p class="science-text">
+                Smoke earns a mention because it used to gate and no longer does. It was
+                removed on 27 July 2026 after blocking a night on a composite air-quality
+                index of 102 that turned out to be almost entirely ground-level
+                <em>ozone</em> &mdash; a gas that does not scatter or absorb visible light
+                and has no effect whatsoever on transparency. The reading that mattered,
+                the PM2.5 sub-index, was 61. The report now uses the particulate sub-index
+                only, always states it, warns above 60, and blocks nothing, on the grounds
+                that the threshold was never validated against a labelled night.
+            </p>
+
+            <h3>The seeing wind, which is the interesting one</h3>
+
+            <p class="science-text">
+                Astronomical seeing &mdash; the atmospheric blurring that sets how small a
+                star can be &mdash; is the quantity an imager most wants forecast and the
+                one hardest to get. The standard amateur proxy is the jet stream, the
+                250 hPa wind about nine kilometres up, and there are websites devoted to
+                overlaying it on a map. That is what this system used.
+            </p>
+
+            <p class="science-text">
+                It was the wrong layer for this site, and nine nights of its own data say so.
+                Every sub-exposure already carries a measured star width, so 330 frames of
+                SH2-92 across nine nights could be checked against the forecast wind at every
+                available altitude. Correlating median FWHM against wind speed level by
+                level gives this:
+            </p>
+
+            <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr><th>Pressure level</th><th>Height</th><th>Spearman &rho; vs FWHM</th><th>p</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Surface</td><td>ground</td><td>+0.73</td><td>0.031</td></tr>
+                    <tr class="highlight"><td>850 hPa</td><td>~1.5 km</td><td>+0.87</td><td>0.005</td></tr>
+                    <tr><td>700 hPa</td><td>~3 km</td><td>+0.73</td><td>0.031</td></tr>
+                    <tr><td>500 hPa</td><td>~5.5 km</td><td>+0.65</td><td>0.067</td></tr>
+                    <tr><td>300 hPa</td><td>~9 km</td><td>+0.37</td><td>0.336</td></tr>
+                    <tr class="muted"><td>250 hPa &mdash; the jet stream</td><td>~10 km</td><td>+0.33</td><td>0.385</td></tr>
+                    <tr class="muted"><td>200 hPa</td><td>~12 km</td><td>&minus;0.18</td><td>0.644</td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <p class="science-text">
+                The jet stream &mdash; the thing everyone forecasts seeing from &mdash; has
+                essentially no relationship with how sharp the stars are here. The 850 hPa
+                wind, a kilometre and a half up, has a strong one.
+            </p>
+
+            <p class="science-text">
+                What makes that believable is not the top value but the <em>shape of the
+                column</em>. The correlation decays monotonically with height, from +0.87 at
+                the bottom to nothing at the top, and noise does not sort itself by altitude.
+                There is also a physical reason to expect exactly this. Jet-stream seeing
+                forecasts were developed for professional observatories on mountains, which
+                sit <em>above</em> the turbulent boundary layer, so for them the only
+                turbulence left to worry about is high aloft. A backyard observatory near
+                sea level is <em>inside</em> that boundary layer, where the turbulence that
+                bloats a star is local and low. The site determines which layer matters, and
+                the received wisdom was written for the other kind of site.
+            </p>
+
+            <h3>How the thresholds were set</h3>
+
+            <p class="science-text">
+                Having found the right variable, the labels on it were measured rather than
+                borrowed. Here is the per-night table &mdash; the one that shows what each
+                wind level actually did to the stars.
+            </p>
+
+            <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr><th>Night</th><th>Frames</th><th>Median FWHM</th><th>850 hPa</th><th>Jet 250</th><th>RH</th><th>Cloud</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>2026-07-23</td><td>46</td><td>1.75&Prime;</td><td>4.4</td><td>47.7</td><td>83%</td><td>0.0%</td></tr>
+                    <tr><td>2026-07-31</td><td>45</td><td>1.73&Prime;</td><td>8.8</td><td>63.4</td><td>93%</td><td>16.6%</td></tr>
+                    <tr><td>2026-07-12</td><td>55</td><td>1.97&Prime;</td><td>4.3</td><td>35.7</td><td>82%</td><td>12.0%</td></tr>
+                    <tr><td>2026-07-11</td><td>35</td><td>1.98&Prime;</td><td>9.5</td><td>86.0</td><td>81%</td><td>2.8%</td></tr>
+                    <tr><td>2026-07-25</td><td>48</td><td>2.00&Prime;</td><td>10.2</td><td>40.0</td><td>81%</td><td>25.5%</td></tr>
+                    <tr><td>2026-07-19</td><td>43</td><td>2.46&Prime;</td><td>9.3</td><td>60.3</td><td>59%</td><td>0.6%</td></tr>
+                    <tr class="highlight"><td>2026-08-03</td><td>36</td><td>2.74&Prime;</td><td>17.1</td><td>91.3</td><td>78%</td><td>0.8%</td></tr>
+                    <tr class="highlight"><td>2026-07-14</td><td>9</td><td>2.81&Prime;</td><td>39.9</td><td>54.0</td><td>71%</td><td>1.2%</td></tr>
+                    <tr class="highlight"><td>2026-07-13</td><td>11</td><td>2.98&Prime;</td><td>22.5</td><td>67.1</td><td>69%</td><td>15.8%</td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <p class="science-text">
+                Sorted by star width, the 850 hPa column sorts with it and the jet column
+                does not. The three worst nights are the three windiest at 1.5 km, and they
+                separate cleanly: every night under about 22 km/h landed between 1.73&Prime;
+                and 2.46&Prime;, every night above it between 2.74&Prime; and 2.98&Prime;,
+                with no overlap at all. Note the 14 July row &mdash; a jet of 54 km/h, which
+                is unremarkable, and an 850 hPa wind of 40 km/h, the highest in the set, on
+                the second-worst night. The jet-stream forecast would have called that a
+                good night.
+            </p>
+
+            <p class="science-text">
+                The published thresholds are then deliberately <em>not</em> placed at the
+                22 km/h split: "good" ends at 20 and "poor" begins at 30, with everything
+                between reported as "fair". That gap is exactly where this site has no
+                data, and labelling it "fair" says so, rather than pretending a nine-night
+                sample can locate a boundary to the kilometre per hour.
+            </p>
+
+            <h3>What the same analysis says not to trust</h3>
+
+            <p class="science-text">
+                Two results in that run are worth keeping visible because they are cautionary.
+                Relative humidity correlates with FWHM at <strong>&minus;0.88</strong> &mdash;
+                humid nights are <em>sharper</em>, and it is the single strongest weather
+                relationship in the set. It would be very easy to add a humidity gate pointing
+                the wrong way. The likely explanation is that calm, humid, hazy air is
+                thermally settled while the dry nights here arrive on wind, which is the thing
+                that actually hurts &mdash; humidity is riding along with wind rather than
+                causing anything. Detected star count correlates at &minus;0.95, which is
+                near-perfect and completely circular: blurrier stars means fewer of them clear
+                the detection threshold. It is a sanity check that the pipeline is measuring
+                what it thinks, not a finding.
+            </p>
+
+            <p class="science-text">
+                And the honest statistical caveat, which the analysis script prints itself:
+                about sixteen variables were tested against nine nights. Correcting for that
+                many comparisons puts the bar at p &lt; 0.0031, and the 850 hPa result at
+                p = 0.0045 does not clear it. The monotonic decay with altitude and the
+                boundary-layer argument are doing more work here than the p-value is. Nine
+                nights is a thin calibration; the labels are a steer, not a promise, and the
+                script that produced all of this is kept in the repository specifically so
+                the whole thing can be re-run and overturned once there are more nights.
+            </p>
+        </article>
 
         <article id="end-to-end" class="note">
             <h2 class="note-title">Closing the loop: autonomy has to include the data reduction</h2>
