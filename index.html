@@ -178,13 +178,6 @@
             color: #fff;
         }
 
-        .live-sub {
-            margin: 0.35rem 0 0;
-            color: #8b9bb4;
-            font-family: monospace;
-            font-size: 0.85rem;
-        }
-
         .container {
             max-width: 1000px;
             margin: 0 auto;
@@ -671,7 +664,7 @@
 <body data-mode="gallery">
     <header>
         <h1>Iris Lab Notes</h1>
-        <p><a href="https://github.com/taylorhogan/srt/blob/main/doc/iris_srt_paper.pdf" target="_blank" rel="noopener noreferrer">pdf</a> &middot; <a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
+        <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -3076,20 +3069,8 @@ score    = snr * shape * quality * flatness</code></pre>
 
         <div class="live-status">
             <span class="live-dot" aria-hidden="true"></span>
-            <div>
-                <h2 class="live-title">The observatory is sleeping</h2>
-                <p class="live-sub">ROOF CLOSED &middot; MOUNT PARKED</p>
-            </div>
+            <h2 class="live-title">The observatory is sleeping</h2>
         </div>
-
-        <p class="science-text" style="margin-top: 2rem;">
-            This panel will carry the most recent frame off the telescope and the
-            night's running statistics, pushed here by the observatory itself.
-            None of that is wired up yet, so the line above is a fixed placeholder
-            rather than a reading &mdash; it says the same thing whether Iris is
-            parked for the day or halfway through a session. When it does go live
-            it will carry a timestamp, so you can tell the difference.
-        </p>
 
     </div>
 
