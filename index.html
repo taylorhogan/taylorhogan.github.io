@@ -408,6 +408,108 @@
             color: #8b9bb4;
         }
 
+        /* --- Image lightbox ---
+           Figures used to open the raw image file in a new tab. On a phone that
+           is a dead end: the bare JPEG has no site nav, and the browser chrome
+           that would carry a Back button is hidden while scrolling or absent
+           entirely in an in-app browser. So enlarging a plot meant losing the
+           page. The overlay keeps the reader on the document, and offers three
+           independent ways out -- the close button, the backdrop, and Back. */
+        .lightbox {
+            position: fixed;
+            /* Longhand as well as inset: iOS Safari below 14.1 ignores inset,
+               and a full-screen overlay that is not full screen is worse than
+               none at all. */
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            inset: 0;
+            z-index: 1000;
+            display: none;
+            background: rgba(5, 6, 12, 0.97);
+        }
+
+        .lightbox[data-open="true"] {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .lightbox-bar {
+            flex: 0 0 auto;
+            display: flex;
+            justify-content: flex-end;
+            padding-top: env(safe-area-inset-top, 0px);
+        }
+
+        .lightbox-close {
+            -webkit-appearance: none;
+            appearance: none;
+            background: rgba(21, 25, 43, 0.92);
+            color: var(--text-color);
+            border: 1px solid #2c3350;
+            border-radius: 8px;
+            font-size: 1.5rem;
+            line-height: 1;
+            /* 44px: the smallest target that stays reliably tappable by thumb. */
+            min-width: 44px;
+            min-height: 44px;
+            margin: 0.75rem;
+            cursor: pointer;
+        }
+
+        .lightbox-stage {
+            flex: 1 1 auto;
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 0.5rem;
+        }
+
+        .lightbox-stage img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 6px;
+            background-color: #000;
+            cursor: zoom-in;
+        }
+
+        /* Fit-to-screen is unreadable for the dense diagnostic plots, so tapping
+           the image swaps to a width worth panning around. */
+        .lightbox[data-zoom="true"] .lightbox-stage {
+            align-items: flex-start;
+            justify-content: flex-start;
+        }
+
+        .lightbox[data-zoom="true"] .lightbox-stage img {
+            max-width: none;
+            max-height: none;
+            width: 200%;
+            cursor: zoom-out;
+        }
+
+        .lightbox-caption {
+            flex: 0 0 auto;
+            max-height: 30%;
+            overflow-y: auto;
+            margin: 0;
+            padding: 0.75rem 1rem;
+            padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+            color: #8b9bb4;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+        body.lightbox-open {
+            overflow: hidden;
+        }
+
+        .note figure img {
+            cursor: zoom-in;
+        }
+
         @media (max-width: 768px) {
             .dso-image-container {
                 height: 300px;
@@ -2499,6 +2601,107 @@ score    = snr * shape * quality * flatness</code></pre>
             if (location.hash === '#notes') {
                 setMode('notes');
             }
+        })();
+
+        (function () {
+            // Show figures in an overlay rather than navigating to the image
+            // file. The anchors are left in the markup on purpose: without JS
+            // they still work, and long-press "open image" still offers the
+            // full-resolution file.
+            var box = document.createElement('div');
+            box.className = 'lightbox';
+            box.setAttribute('role', 'dialog');
+            box.setAttribute('aria-modal', 'true');
+            box.innerHTML =
+                '<div class="lightbox-bar">' +
+                '<button type="button" class="lightbox-close" aria-label="Close image">&times;</button>' +
+                '</div>' +
+                '<div class="lightbox-stage"><img alt=""></div>' +
+                '<p class="lightbox-caption"></p>';
+            document.body.appendChild(box);
+
+            var stage = box.querySelector('.lightbox-stage');
+            var img = box.querySelector('.lightbox-stage img');
+            var caption = box.querySelector('.lightbox-caption');
+            var closeBtn = box.querySelector('.lightbox-close');
+            var lastFocus = null;
+
+            function isOpen() {
+                return box.dataset.open === 'true';
+            }
+
+            function open(src, alt, text) {
+                lastFocus = document.activeElement;
+                img.src = src;
+                img.alt = alt || '';
+                caption.textContent = text || '';
+                box.dataset.zoom = 'false';
+                box.dataset.open = 'true';
+                document.body.classList.add('lightbox-open');
+                stage.scrollTop = 0;
+                stage.scrollLeft = 0;
+                closeBtn.focus();
+                // The history entry is what makes the phone's Back gesture close
+                // the image instead of leaving the site -- the behaviour a reader
+                // will reach for first, having just "opened" something.
+                history.pushState({ lightbox: true }, '');
+            }
+
+            function close(fromPopState) {
+                if (!isOpen()) {
+                    return;
+                }
+                box.dataset.open = 'false';
+                document.body.classList.remove('lightbox-open');
+                img.removeAttribute('src');   // stop decoding a large image
+                if (lastFocus && lastFocus.focus) {
+                    lastFocus.focus();
+                }
+                if (!fromPopState && history.state && history.state.lightbox) {
+                    history.back();
+                }
+            }
+
+            document.querySelectorAll('.note figure img').forEach(function (thumb) {
+                var link = thumb.closest('a[href]');
+                // Prefer the anchor's target: it is the full-resolution file
+                // where the two differ.
+                var src = link && /\.(jpe?g|png|gif|webp)$/i.test(link.getAttribute('href'))
+                    ? link.getAttribute('href')
+                    : thumb.getAttribute('src');
+                var fig = thumb.closest('figure');
+                var cap = fig ? fig.querySelector('figcaption') : null;
+
+                (link || thumb).addEventListener('click', function (ev) {
+                    ev.preventDefault();
+                    open(src, thumb.alt, cap ? cap.textContent.trim() : '');
+                });
+            });
+
+            img.addEventListener('click', function () {
+                box.dataset.zoom = box.dataset.zoom === 'true' ? 'false' : 'true';
+            });
+
+            closeBtn.addEventListener('click', function () {
+                close(false);
+            });
+
+            // Anywhere off the image closes, so a mistap is never a trap.
+            box.addEventListener('click', function (ev) {
+                if (ev.target !== img && ev.target !== closeBtn) {
+                    close(false);
+                }
+            });
+
+            document.addEventListener('keydown', function (ev) {
+                if (ev.key === 'Escape') {
+                    close(false);
+                }
+            });
+
+            window.addEventListener('popstate', function () {
+                close(true);
+            });
         })();
     </script>
 </body>
