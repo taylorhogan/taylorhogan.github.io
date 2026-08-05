@@ -671,7 +671,7 @@
 <body data-mode="gallery">
     <header>
         <h1>Iris Lab Notes</h1>
-        <p><a href="https://github.com/taylorhogan/srt/blob/main/doc/iris_srt_paper.pdf" target="_blank" rel="noopener noreferrer">Iris Observatory</a> &middot; <a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
+        <p><a href="https://github.com/taylorhogan/srt/blob/main/doc/iris_srt_paper.pdf" target="_blank" rel="noopener noreferrer">pdf</a> &middot; <a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -1182,6 +1182,182 @@
     </div>
 
     <div class="container" id="notes-panel" role="tabpanel" aria-labelledby="tab-notes">
+
+        <article id="transient" class="note">
+            <h2 class="note-title">Looking for something that was not there last night</h2>
+            <div class="note-meta"><span class="note-date">2026-08-05</span> &middot; DIFFERENCE IMAGING &middot; RUNS UNATTENDED ON THE GPU BOX &middot; SUPERNOVAE FOUND: 0</div>
+
+            <h3>The question</h3>
+
+            <p class="science-text">
+                A galaxy photographed twice looks the same both times. That is the
+                whole difficulty. Somewhere in a spiral arm a star may have exploded
+                since the last visit, and it will be one dot among several thousand
+                dots, sitting on top of a bright, structured, wildly uneven
+                background. Blinking two images by eye is how this was done for
+                decades and it does not scale past a handful of fields.
+            </p>
+
+            <p class="science-text">
+                The <code>transient</code> command &mdash; <code>diff</code> is the
+                same thing &mdash; asks the question mechanically instead. It gathers
+                every sub ever taken of a target in one filter, splits them by night,
+                builds a deep <em>template</em> from every night except the most
+                recent, treats the most recent night as the <em>science</em> image,
+                and subtracts one from the other. What survives the subtraction is,
+                in principle, what changed.
+            </p>
+
+            <h3>Why subtracting two images is harder than it sounds</h3>
+
+            <p class="science-text">
+                The two images are never the same image. The telescope was pointed
+                slightly differently, the seeing was better on one night than the
+                other, and the sky was brighter or darker. Subtract them naively and
+                every star in the field leaves a residual, because a star that is
+                1.9&Prime; wide on one night and 2.4&Prime; on another does not
+                cancel. So before subtracting, both are registered onto a common
+                pixel grid, the sharper one is deliberately blurred to match the
+                softer one, and the background and scale are matched robustly. Only
+                then is the difference meaningful.
+            </p>
+
+            <p class="science-text">
+                Even done properly, most of what survives is not astronomy. This is
+                the part worth being honest about, because the first real run said so
+                loudly: on NGC 5907 the search returned five candidates at
+                signal-to-noise between 1200 and 7800, numbers that would be
+                extraordinary if any of them were real. All five were artifacts.
+            </p>
+
+            <p class="science-text">
+                The thousand-sigma figures were themselves the clue. Significance was
+                being measured against the noise of the whole frame, and NGC 5907 is
+                an edge-on galaxy with a bright core &mdash; a large, genuinely bright
+                structure that dragged the global noise estimate down and made every
+                residual look impossibly significant against it. Noise is now measured
+                in an annulus around each candidate, so a residual is judged against
+                its own neighbourhood rather than against an average dominated by
+                somewhere else in the picture.
+            </p>
+
+            <h3>What a supernova has to look like</h3>
+
+            <p class="science-text">
+                The rest of the tuning is a set of statements about what a real
+                transient is, each one aimed at a specific thing that was being
+                mistaken for one:
+            </p>
+
+            <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr><th>Test</th><th>Cut</th><th>What it rejects</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Local significance</td><td>&ge; 5&sigma; vs annulus</td><td>noise, and the bright-core inflation above</td></tr>
+                    <tr class="highlight"><td>Source size</td><td>semi-major 0.6&ndash;1.3 px</td><td>hot pixels below, galaxy knots above</td></tr>
+                    <tr><td>Roundness</td><td>elongation &le; 1.4</td><td>trails, edges, spiral-arm structure</td></tr>
+                    <tr class="highlight"><td>Negative lobe nearby</td><td>&ge; 4&sigma; within a scaled radius</td><td>subtraction dipoles from misregistration</td></tr>
+                    <tr><td>Bright-source mask</td><td>inside the mask</td><td>saturated-star residuals</td></tr>
+                    <tr><td>Newness</td><td>template flux &le; 50% of science</td><td>stars that were always there</td></tr>
+                    <tr class="muted"><td>Gaia cross-match</td><td>within 2&Prime;</td><td>catalogued stars &mdash; down-ranked, not deleted</td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <p class="science-text">
+                The size window is the one that carries the most weight, and it is
+                measured rather than chosen. This telescope undersamples: real stars
+                on these frames come out with a semi-major axis of about 0.7 pixels
+                and an elongation near 1.0. A supernova is a point source, so it must
+                look exactly like a star and nothing else. Anything meaningfully
+                larger is galaxy structure; anything smaller is a single hot pixel or
+                a cosmic ray. Two cuts, one measurement.
+            </p>
+
+            <p class="science-text">
+                The dipole test deserves a mention because it catches the failure that
+                looks most like a discovery. If registration is off by a fraction of a
+                pixel, subtracting a star leaves a bright crescent beside a dark one.
+                The bright half alone is a compact, round, significant, apparently new
+                source. Looking for the matching dark lobe nearby is what tells them
+                apart, and the search radius scales with the source, because the wide
+                dipoles thrown off by an edge-on galaxy's structure put their negative
+                half further out than a fixed radius would ever reach.
+            </p>
+
+            <h3>Then the harder question: what is it?</h3>
+
+            <p class="science-text">
+                Finding a new point of light is the easy half. The overwhelmingly
+                likely explanation for a star-like object that brightened is a
+                <em>variable star</em> in our own galaxy, not a supernova in a distant
+                one. So surviving candidates are cross-matched against Gaia, and
+                anything within 2&Prime; of a catalogued point source is heavily
+                down-ranked &mdash; down-ranked rather than deleted, since a supernova
+                can sit close to a foreground star by chance and silently discarding
+                it would be the one unrecoverable mistake. A SIMBAD lookup then puts a
+                human-readable name and object type on whatever matched, which usually
+                ends the question immediately.
+            </p>
+
+            <p class="science-text">
+                On NGC 5907 the tuned search returned one marginal candidate instead of
+                five spectacular ones. Identification resolved it to a magnitude-17
+                Gaia star 0.24&Prime; away. Not a supernova &mdash; but the pipeline
+                said so itself, which is the outcome that matters.
+            </p>
+
+            <h3>Where it runs</h3>
+
+            <p class="science-text">
+                None of this happens while the telescope is working. Once the night's
+                lights and calibration frames are complete they are copied across to a
+                separate NVIDIA machine, and the search runs there unattended on
+                what arrived. The observatory PC stays a real-time controller with a
+                roof and a mount to worry about; the GPU box does the arithmetic in
+                the morning, when being slow costs nothing.
+            </p>
+
+            <p class="science-text">
+                If a candidate clears signal-to-noise 8 and is not already a
+                catalogued star, a Pushover notification goes out with the position
+                and the triptych image &mdash; template, science, difference, side by
+                side, which is the view that lets a human dismiss most things in about
+                two seconds. Everything else is written to a JSON file to be looked at
+                whenever. An alert that fires for every marginal blob would be
+                switched off within a week, so the bar to interrupt somebody is
+                deliberately higher than the bar to record a candidate.
+            </p>
+
+            <h3>Result</h3>
+
+            <p class="science-text">
+                No supernovae. This is the correct and expected result: a single
+                amateur telescope revisiting a couple of dozen galaxies should
+                discover approximately none, and a pipeline that had found one in its
+                first weeks would be more likely broken than lucky. What the work
+                bought is a search that produces one honest marginal candidate instead
+                of five confident wrong ones.
+            </p>
+
+            <div class="caveat">
+                <p>
+                    <strong>A non-detection is only worth what its sensitivity is.</strong>
+                    "Nothing found" means nothing at all without knowing how bright a
+                    real transient would have had to be to survive those cuts &mdash;
+                    a set of filters tuned until the false positives went away can
+                    always be tuned until the true positives go too. There is an
+                    acceptance test that answers this by injecting fake sources of
+                    known brightness into the science frames and measuring what
+                    fraction come back, which is the only way to get the number
+                    without waiting for a real supernova. It has not been run across
+                    enough fields to quote a limiting magnitude here, so this note
+                    does not quote one.
+                </p>
+            </div>
+        </article>
 
         <article id="noise2noise" class="note">
             <h2 class="note-title">Learning to denoise without ever seeing a clean image</h2>
