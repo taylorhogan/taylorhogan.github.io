@@ -48,6 +48,35 @@
             color: #8b9bb4;
         }
 
+        /* Sits among the header links and should read as one of them, so it
+           inherits the surrounding type rather than looking like a control. */
+        .share-btn {
+            -webkit-appearance: none;
+            appearance: none;
+            background: none;
+            border: none;
+            padding: 0;
+            font: inherit;
+            letter-spacing: inherit;
+            color: #8b9bb4;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .share-btn:hover {
+            color: var(--accent-color);
+        }
+
+        .share-btn[data-state="copied"] {
+            color: #3fb950;
+            text-decoration: none;
+        }
+
+        .share-btn[data-state="failed"] {
+            color: var(--secondary-accent);
+            text-decoration: none;
+        }
+
         /* --- Mode switch: gallery vs. lab notes --- */
         .mode-switch {
             display: flex;
@@ -642,7 +671,7 @@
 <body data-mode="gallery">
     <header>
         <h1>Iris Lab Notes</h1>
-        <p><a href="https://github.com/taylorhogan/srt/blob/main/doc/iris_srt_paper.pdf" target="_blank" rel="noopener noreferrer">Iris Observatory</a> &middot; <a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a></p>
+        <p><a href="https://github.com/taylorhogan/srt/blob/main/doc/iris_srt_paper.pdf" target="_blank" rel="noopener noreferrer">Iris Observatory</a> &middot; <a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -2889,6 +2918,82 @@ score    = snr * shape * quality * flatness</code></pre>
     </div>
 
     <script>
+        (function () {
+            // Copy a link to what the reader is actually looking at, not just
+            // the site root: an open card shares as its own anchor, and a panel
+            // as its hash, both of which the deep-link code already restores.
+            var btn = document.getElementById('share-btn');
+            if (!btn) {
+                return;
+            }
+            var LABEL = btn.textContent;
+            var revert = null;
+
+            function shareUrl() {
+                var base = location.origin + location.pathname;
+                var open = document.querySelector('.note.expanded, .dso-section.expanded');
+                if (open && open.id) {
+                    return base + '#' + open.id;
+                }
+                var mode = document.body.dataset.mode;
+                return (mode && mode !== 'gallery') ? base + '#' + mode : base;
+            }
+
+            function say(text, state) {
+                btn.textContent = text;
+                btn.dataset.state = state;
+                clearTimeout(revert);
+                revert = setTimeout(function () {
+                    btn.textContent = LABEL;
+                    delete btn.dataset.state;
+                }, 2200);
+            }
+
+            // execCommand is deprecated but is the only path left when the
+            // async clipboard is unavailable, which includes any non-secure
+            // origin. Returns whether it actually worked.
+            function legacyCopy(text) {
+                var ta = document.createElement('textarea');
+                ta.value = text;
+                ta.setAttribute('readonly', '');
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.select();
+                var done = false;
+                try {
+                    done = document.execCommand('copy');
+                } catch (err) {
+                    done = false;
+                }
+                document.body.removeChild(ta);
+                return done;
+            }
+
+            btn.addEventListener('click', function (ev) {
+                // Without this the document-level collapse handler closes the
+                // very card whose link was just copied.
+                ev.stopPropagation();
+                var url = shareUrl();
+
+                // Report what actually happened rather than claiming a copy
+                // that did not occur.
+                function report(done) {
+                    say(done ? 'Link copied' : 'Copy failed', done ? 'copied' : 'failed');
+                }
+
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(url).then(function () {
+                        report(true);
+                    }, function () {
+                        report(legacyCopy(url));
+                    });
+                } else {
+                    report(legacyCopy(url));
+                }
+            });
+        })();
+
         (function () {
             var buttons = document.querySelectorAll('.mode-btn');
 
