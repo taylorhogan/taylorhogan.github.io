@@ -266,33 +266,78 @@
             background-color: #000;
         }
 
-        .note-index {
-            background-color: var(--card-bg);
-            border-left: 5px solid var(--secondary-accent);
-            border-radius: 8px;
+        /* --- The Science as a deck of cards ---
+           Nine articles at full length made the section a wall of text: you
+           could not see what was there without scrolling past all of it, which
+           is what the table of contents on top was compensating for. Collapsed
+           cards make the deck itself the index, so the contents list went. */
+        .note.collapsed {
             padding: 1.25rem 1.5rem;
-            margin-bottom: 2rem;
+            cursor: pointer;
+            transition: transform .18s ease, box-shadow .18s ease;
         }
 
-        .note-index ul {
-            list-style: none;
+        .note.collapsed:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 14px 34px rgba(0,0,0,0.6);
+        }
+
+        .note.collapsed .note-title {
+            font-size: 1.25rem;
+        }
+
+        .note.collapsed .note-meta {
+            margin-bottom: 0.6rem;
+        }
+
+        .note-title::after {
+            content: '\25B8';
+            color: var(--secondary-accent);
+            font-size: 0.75em;
+            margin-left: 0.5em;
+            display: inline-block;
+            transition: transform .18s ease;
+        }
+
+        .note.expanded > .note-title {
+            cursor: pointer;
+        }
+
+        .note.expanded > .note-title::after {
+            transform: rotate(90deg);
+        }
+
+        .note-excerpt {
+            color: #8b9bb4;
+            font-size: 0.95rem;
             margin: 0;
-            padding: 0;
         }
 
-        .note-index li + li {
-            margin-top: 0.5rem;
+        /* The excerpt is the opening of the first paragraph, so leaving it up
+           while expanded prints that sentence twice. */
+        .note.expanded > .note-excerpt {
+            display: none;
         }
 
-        .note-index a {
-            color: var(--text-color);
-            text-decoration: none;
-            font-family: monospace;
-            font-size: 0.9rem;
+        .note-body {
+            display: none;
         }
 
-        .note-index a:hover {
-            color: var(--accent-color);
+        .note.expanded > .note-body {
+            display: block;
+            animation: note-open .25s ease;
+        }
+
+        @keyframes note-open {
+            from { opacity: 0; transform: translateY(-6px); }
+            to   { opacity: 1; transform: none; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .note.collapsed,
+            .note-title::after { transition: none; }
+            .note.expanded > .note-body { animation: none; }
+            .note.collapsed:hover { transform: none; }
         }
 
         .note-date {
@@ -1065,19 +1110,6 @@
     </div>
 
     <div class="container" id="notes-panel" role="tabpanel" aria-labelledby="tab-notes">
-
-        <nav class="note-index">
-            <ul>
-                <li><a href="#noise2noise">2026-08-04 &middot; Learning to denoise without ever seeing a clean image</a></li>
-                <li><a href="#tonight">2026-08-04 &middot; How many hours is it actually worth? Reading the night-planning chart</a></li>
-                <li><a href="#end-to-end">2026-08-04 &middot; Closing the loop: autonomy has to include the data reduction</a></li>
-                <li><a href="#roof-sentry">2026-08-03 &middot; Teaching the observatory to hear its own roof failing</a></li>
-                <li><a href="#vision-safety">2026-08-03 &middot; The camera that has to be right about the roof</a></li>
-                <li><a href="#hr-diagram">2026-08-02 &middot; Weighing a star cluster's age with a colour&ndash;magnitude diagram</a></li>
-                <li><a href="#transit-search">2026-06-05 &middot; Finding a planet by watching a star get 2% fainter</a></li>
-                <li><a href="#optics">2026-08-04 &middot; Has anything changed, or was it just a bad night?</a></li>
-            </ul>
-        </nav>
 
         <article id="noise2noise" class="note">
             <h2 class="note-title">Learning to denoise without ever seeing a clean image</h2>
@@ -2911,7 +2943,11 @@ score    = snr * shape * quality * flatness</code></pre>
             });
 
             document.addEventListener('keydown', function (ev) {
-                if (ev.key === 'Escape') {
+                if (ev.key === 'Escape' && isOpen()) {
+                    // Both this and the note-card collapser listen for Escape on
+                    // document. Without stopping the rest of the chain, one press
+                    // would close the image AND the article underneath it.
+                    ev.stopImmediatePropagation();
                     close(false);
                 }
             });
@@ -2919,6 +2955,148 @@ score    = snr * shape * quality * flatness</code></pre>
             window.addEventListener('popstate', function () {
                 close(true);
             });
+        })();
+
+        (function () {
+            // Collapse each note into a card. The markup stays one article per
+            // note; everything below the title and meta line is moved into a
+            // .note-body that the collapsed state hides, so the articles need no
+            // hand-editing and still read correctly with JS off.
+            var notes = Array.prototype.slice.call(document.querySelectorAll('.note'));
+            if (!notes.length) {
+                return;
+            }
+
+            function summarize(text) {
+                var t = text.replace(/\s+/g, ' ').trim();
+                if (t.length <= 160) {
+                    return t;
+                }
+                var cut = t.slice(0, 160);
+                var space = cut.lastIndexOf(' ');
+                return (space > 100 ? cut.slice(0, space) : cut) + '…';
+            }
+
+            function collapse(note) {
+                note.classList.remove('expanded');
+                note.classList.add('collapsed');
+                var title = note.querySelector('.note-title');
+                if (title) {
+                    title.setAttribute('aria-expanded', 'false');
+                }
+            }
+
+            function expand(note, scroll) {
+                notes.forEach(function (other) {
+                    if (other !== note) {
+                        collapse(other);
+                    }
+                });
+                note.classList.remove('collapsed');
+                note.classList.add('expanded');
+                var title = note.querySelector('.note-title');
+                if (title) {
+                    title.setAttribute('aria-expanded', 'true');
+                }
+                if (scroll) {
+                    note.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }
+
+            notes.forEach(function (note) {
+                var title = note.querySelector('.note-title');
+                var meta = note.querySelector('.note-meta');
+                var body = document.createElement('div');
+                body.className = 'note-body';
+                Array.prototype.slice.call(note.children).forEach(function (child) {
+                    if (child !== title && child !== meta) {
+                        body.appendChild(child);
+                    }
+                });
+
+                var lead = body.querySelector('.science-text');
+                var excerpt = document.createElement('p');
+                excerpt.className = 'note-excerpt';
+                excerpt.textContent = lead ? summarize(lead.textContent) : '';
+                note.appendChild(excerpt);
+                note.appendChild(body);
+                collapse(note);
+
+                if (title) {
+                    // Deliberately NOT role="button": that would override the
+                    // heading role and cost screen-reader users the outline they
+                    // use to move through the deck. tabindex plus aria-expanded
+                    // makes it operable and states its condition, keeping both.
+                    title.setAttribute('tabindex', '0');
+                    // The title toggles, so an open note can be closed from the
+                    // top without hunting for empty page to click.
+                    title.addEventListener('click', function (ev) {
+                        ev.stopPropagation();
+                        if (note.classList.contains('expanded')) {
+                            collapse(note);
+                        } else {
+                            expand(note, true);
+                        }
+                    });
+                    title.addEventListener('keydown', function (ev) {
+                        if (ev.key === 'Enter' || ev.key === ' ') {
+                            ev.preventDefault();
+                            if (note.classList.contains('expanded')) {
+                                collapse(note);
+                            } else {
+                                expand(note, true);
+                            }
+                        }
+                    });
+                }
+
+                note.addEventListener('click', function () {
+                    if (!note.classList.contains('expanded')) {
+                        expand(note, true);
+                    }
+                });
+            });
+
+            document.addEventListener('click', function (ev) {
+                var open = document.querySelector('.note.expanded');
+                if (!open || open.contains(ev.target)) {
+                    return;
+                }
+                // The lightbox lives on <body>, outside the article, so without
+                // this an image tap would close the note underneath it.
+                if (ev.target.closest && ev.target.closest('.lightbox')) {
+                    return;
+                }
+                collapse(open);
+            });
+
+            document.addEventListener('keydown', function (ev) {
+                if (ev.key !== 'Escape' || document.querySelector('.lightbox[data-open="true"]')) {
+                    return;
+                }
+                var open = document.querySelector('.note.expanded');
+                if (open) {
+                    collapse(open);
+                }
+            });
+
+            // A deep link to one note still works: land in the notes tab with
+            // that card already open. Gallery anchors are left to the mode
+            // switch above, which is why this only matches .note ids.
+            var slug = location.hash.slice(1);
+            if (slug && slug !== 'notes') {
+                var target = document.getElementById(slug);
+                if (target && target.classList.contains('note')) {
+                    document.body.dataset.mode = 'notes';
+                    document.querySelectorAll('.mode-btn').forEach(function (btn) {
+                        btn.setAttribute('aria-selected', btn.dataset.target === 'notes');
+                    });
+                    expand(target, false);
+                    window.requestAnimationFrame(function () {
+                        target.scrollIntoView({ block: 'start' });
+                    });
+                }
+            }
         })();
     </script>
 </body>
