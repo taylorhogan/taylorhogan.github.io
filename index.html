@@ -1177,6 +1177,318 @@
 
     <div class="container" id="notes-panel" role="tabpanel" aria-labelledby="tab-notes">
 
+        <article id="injection" class="note">
+            <h2 class="note-title">A search that finds nothing looks exactly like a search that works</h2>
+            <div class="note-meta"><span class="note-date">2026-08-05</span> &middot; INJECTION TESTING &middot; 3 BUGS IN THE PIPELINE &middot; 4 IN THE TEST</div>
+
+            <h3>The question</h3>
+
+            <p class="science-text">
+                The supernova search had been running for weeks and had found
+                nothing. That is the correct result &mdash; one amateur telescope
+                revisiting a couple of dozen galaxies should discover approximately
+                none &mdash; and the note describing it said so with some confidence.
+            </p>
+
+            <p class="science-text">
+                But it also carried a caveat that turned out to be the only
+                interesting sentence in it: <em>a non-detection is worth exactly what
+                its sensitivity is</em>. "Nothing found" is a statement about the sky
+                only if you know how bright a real event would have had to be to
+                survive the filtering. Otherwise it is a statement about the
+                software. And the two are indistinguishable from the output, because
+                <strong>a detector that is working perfectly and a detector that is
+                completely blind both print "no candidates"</strong>.
+            </p>
+
+            <p class="science-text">
+                That is an uncomfortable position for every cut in the pipeline. Each
+                one was added because it removed false positives, and each one
+                demonstrably did. Nothing in a normal run reveals whether it also
+                removed the real thing.
+            </p>
+
+            <h3>The method: stop waiting for a supernova</h3>
+
+            <p class="science-text">
+                A supernova cannot be summoned on demand, so the answer is to inject
+                fake ones. Take the real frames from a real night, paint in synthetic
+                point sources of known position and known brightness, run the entire
+                unmodified pipeline, and count how many come back. The result is a
+                <em>completeness curve</em>: recovery fraction against brightness. It
+                is standard practice in professional surveys for exactly this reason,
+                and the script to do it had been sitting in the repository, unrun.
+            </p>
+
+            <p class="science-text">
+                Two details decide whether the exercise means anything. The
+                injections go into the real registered science frames, so they carry
+                the night's actual noise, sky and galaxy underneath &mdash; only the
+                source is synthetic. And they are injected into the science image
+                only, never the template, so they look precisely like something that
+                appeared since the last visit.
+            </p>
+
+            <h3>The first run answered the question immediately</h3>
+
+            <p class="science-text">
+                It produced this, on NGC 5907:
+            </p>
+
+            <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr><th>Injected flux (ADU)</th><th>Recovered</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>100</td><td>0 / 3</td></tr>
+                    <tr><td>200</td><td>0 / 3</td></tr>
+                    <tr class="highlight"><td>400</td><td>2 / 3</td></tr>
+                    <tr><td>800</td><td>0 / 3</td></tr>
+                    <tr><td>1600</td><td>0 / 3</td></tr>
+                    <tr><td>3200</td><td>0 / 3</td></tr>
+                    <tr class="muted"><td>6400</td><td>0 / 3</td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <p class="science-text">
+                This is not a detection limit. It is impossible. A source
+                sixteen times brighter cannot be harder to find than one at 400 ADU,
+                and no amount of noise produces that shape. The curve is not a
+                measurement of the sky; it is a bug report about the detector, and it
+                took one run to get it.
+            </p>
+
+            <h3>Three bugs, and none of them were visible in normal output</h3>
+
+            <p class="science-text">
+                <strong>The shape window was tuned backwards.</strong> A supernova is
+                a point source, so the search kept only compact round residuals
+                &mdash; semi-major axis between 0.6 and 1.3 pixels, said to match
+                "measured stellar a&nbsp;&asymp;&nbsp;0.7". That figure does not
+                describe this telescope. Measured on the stack: real stars have median
+                a&nbsp;=&nbsp;2.51 (FWHM 5.6 px), and residuals in the difference
+                image 2.83. The window was admitting <strong>15% of genuine point
+                sources</strong> and rejecting the rest as "extended" &mdash; it was
+                selecting <em>for</em> the sub-pixel artifacts it existed to exclude.
+                The 0.7 figure was almost certainly measured on hot pixels.
+            </p>
+
+            <p class="science-text">
+                Widening it to the measured stellar spread raised recovery from 2/21
+                to 8/21 <em>and lowered</em> false positives from 5 to 3. That is the
+                detail worth pausing on: this was never a trade between sensitivity
+                and purity. The cut was simply worse on both axes, and had been for
+                as long as it existed.
+            </p>
+
+            <p class="science-text">
+                <strong>Bright transients masked themselves out.</strong> Saturated
+                stars subtract badly, so the pipeline masked the top 0.1% of pixels
+                and rejected anything landing inside. It built that mask from the
+                <em>science</em> image &mdash; and a bright supernova is, by
+                definition, among the brightest pixels of the science image. Every
+                injection at or above 3200 ADU was being discarded as a saturated
+                star. The brighter the event, the more certain its rejection.
+                Saturated stars are in the template too, so building the mask from
+                the template alone loses nothing: false positives stayed at 3 while
+                recovery went from 8/21 to 14/21.
+            </p>
+
+            <p class="science-text">
+                <strong>Identification had been dead for 67 commits.</strong> A
+                refactor on 17 July changed a shared function to take a solved
+                astrometric position instead of a file path. The transient search was
+                never updated, so every call raised a type error &mdash; into a
+                <code>try/except</code> that logged it with the same bland message
+                used for a failed network lookup. For three weeks the search produced
+                no coordinates, no catalogue cross-match and no object names. And
+                because the alert rule is "notify if bright <em>and not</em> a known
+                star", the clause that suppresses alerts for catalogued variables
+                could never be true: every bright variable was paging a phone as a
+                possible discovery.
+            </p>
+
+            <p class="science-text">
+                After all three, on the same field and filter:
+            </p>
+
+            <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr><th>Injected flux (ADU)</th><th>Before</th><th>After</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>100</td><td>0 / 3</td><td>0 / 3</td></tr>
+                    <tr><td>200</td><td>0 / 3</td><td>0 / 3</td></tr>
+                    <tr><td>400</td><td>2 / 3</td><td>3 / 3</td></tr>
+                    <tr class="highlight"><td>800</td><td>0 / 3</td><td>3 / 3</td></tr>
+                    <tr class="highlight"><td>1600</td><td>0 / 3</td><td>3 / 3</td></tr>
+                    <tr class="highlight"><td>3200</td><td>0 / 3</td><td>3 / 3</td></tr>
+                    <tr class="highlight"><td>6400</td><td>0 / 3</td><td>3 / 3</td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <p class="science-text">
+                Monotonic, against one false positive on the un-injected difference.
+                The honest summary of the previous weeks is that the search could not
+                have found a supernova: anything with a normal stellar profile was
+                cut as extended, and anything bright was masked as a saturated star.
+                The narrow band where those two failures did not overlap was roughly
+                400&ndash;800 ADU, and even there recovery was about 2 in 21.
+            </p>
+
+            <h3>The discovery underneath the bugs</h3>
+
+            <p class="science-text">
+                Fixing the shape window exposed something more awkward than the bug.
+                The injected sources all have an identical profile, so their measured
+                size should be identical too. It is not:
+            </p>
+
+            <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr><th>Injected flux</th><th>400</th><th>800</th><th>1600</th><th>3200</th><th>6400</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Measured semi-major axis</td><td>1.06</td><td>1.90</td><td>2.29</td><td>2.47</td><td>2.66</td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <p class="science-text">
+                Same physical width, two and a half times the measured size. The
+                detector's size estimate is a second moment over pixels above the
+                detection threshold, and a brighter source lifts more of its wings
+                above that threshold. So <strong>size is not independent of
+                brightness, and any fixed size window is a brightness cut in
+                disguise.</strong> The window in place now is bounded by measurement
+                rather than by a mis-remembered number, which is an improvement, but
+                the right answer is a shape test that compares each candidate against
+                the frame's own stars at matched brightness. That is a redesign, not
+                a tuning change, and it has not been done.
+            </p>
+
+            <h3>Turning the same question on the exoplanet search</h3>
+
+            <p class="science-text">
+                If a detector can be structurally blind while looking healthy, the
+                transit search deserved the same treatment &mdash; more so, because it
+                carries the more prominent claim. HAT-P-32b was found and ranked
+                first, which reads as evidence the search works.
+            </p>
+
+            <p class="science-text">
+                The transit version injects the opposite sign: a box-shaped dip of
+                known depth, multiplied into a real star's raw flux before every
+                normalisation step, so a synthetic transit faces everything a real one
+                does. It has not yet produced a trustworthy depth floor, for reasons
+                given below, but it produced one number immediately that needs no
+                calibration at all: <strong>of 1055 stars detected in the field, 490
+                are searched.</strong> The edge margin, validity threshold and
+                saturation cut discard 54% of the field before any transit scoring
+                happens. A planet transiting a star in that other half is invisible at
+                any depth. Whether those cuts are right is a separate question; that
+                they halve the survey was not written down anywhere.
+            </p>
+
+            <h3>Four bugs in the test itself</h3>
+
+            <p class="science-text">
+                The instrument measuring the instrument needs the same scepticism, and
+                it earned it. Every one of these produced a confident, wrong result
+                before being caught:
+            </p>
+
+            <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr><th>Mistake</th><th>Symptom</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Injections placed on stars the search never examines</td><td>0% recovery at <em>every</em> depth, including 4%</td></tr>
+                    <tr><td>All injections given one shared epoch</td><td>correlated dip, correctly removed by the detrending it was supposed to survive</td></tr>
+                    <tr><td>Epoch rounded to five decimals when recorded</td><td>depth silently under-delivered by 10%</td></tr>
+                    <tr><td>Targets chosen by brightness, not photometric quality</td><td>same 4% dip at SNR 12.4 on one star and 1.8 on another</td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <p class="science-text">
+                The last one is why no transit depth floor is quoted here. Brightness
+                is not precision, and with targets spanning that range the curve
+                describes the noise of arbitrarily chosen stars rather than the
+                sensitivity of the search. Selecting targets by lowest scatter is the
+                fix and is not yet done.
+            </p>
+
+            <h3>The assertion that caught all of it</h3>
+
+            <p class="science-text">
+                Every failure above &mdash; three in the pipeline, four in the test
+                &mdash; announced itself the same way: recovery that did not increase
+                with signal strength. That is now asserted in both tests, and it is
+                worth being precise about what is asserted, because the obvious choice
+                is wrong.
+            </p>
+
+            <p class="science-text">
+                A conventional regression test pins current behaviour and fails when
+                it changes. One written against the supernova search the day before
+                would have recorded "recovery = 2/21" as correct, and then failed the
+                moment the shape window was fixed &mdash; reporting the repair as a
+                regression and defending the bug. Completeness is <em>supposed</em> to
+                improve, so pinning it is worse than not testing at all.
+            </p>
+
+            <p class="science-text">
+                What cannot legitimately change is the shape. A stronger signal must
+                not be recovered less often than a weaker one. That is physics rather
+                than tuning, so it survives any amount of genuine improvement while
+                still catching every failure listed here. The tests now enforce it and
+                exit non-zero when it breaks, which makes them a standing check rather
+                than a thing that was run once.
+            </p>
+
+            <p class="science-text">
+                Writing the check produced two more bugs, in the check. A real failure
+                &mdash; the deepest transit recovered zero times while a shallower one
+                was found &mdash; passed, because the drop sat exactly on the
+                tolerance. And a legitimate one-sample wobble failed, because
+                <code>2/3 &lt; 1.0 - 1/3</code> is true in floating-point arithmetic.
+                Both are fixed: comparisons are integer counts, and total failure at
+                the strongest signal is checked with no tolerance at all, since the
+                easiest case failing outright is never noise.
+            </p>
+
+            <h3>What this still does not answer</h3>
+
+            <div class="caveat">
+                <p>
+                    <strong>No limiting magnitude yet, and the reason is worse than
+                    "not done".</strong> Two identical runs of the fixed supernova
+                    search put the 50%-recovery floor at 400 ADU and then at 800 ADU,
+                    and produced 662 and 892 raw residuals from the same input frames.
+                    A factor of two in the sensitivity, run to run, with nothing
+                    changed. Until that is understood there is no stable number to
+                    convert into a magnitude, and quoting one would be inventing
+                    precision. The monotonicity invariant held in both runs, which is
+                    the argument for asserting shape rather than a remembered value.
+                </p>
+            </div>
+
+            <p class="science-text">
+                The result that survives all of this is not a detection limit. It is
+                that the pipeline spent weeks reporting a clean, plausible, entirely
+                meaningless negative, and that no amount of reading its output would
+                have revealed it. The only thing that did was giving it a question
+                whose answer was already known.
+            </p>
+        </article>
+
         <article id="transient" class="note">
             <h2 class="note-title">Looking for something that was not there last night</h2>
             <div class="note-meta"><span class="note-date">2026-08-05</span> &middot; DIFFERENCE IMAGING &middot; RUNS UNATTENDED ON THE GPU BOX &middot; SUPERNOVAE FOUND: 0</div>
@@ -1346,9 +1658,13 @@
                     acceptance test that answers this by injecting fake sources of
                     known brightness into the science frames and measuring what
                     fraction come back, which is the only way to get the number
-                    without waiting for a real supernova. It has not been run across
-                    enough fields to quote a limiting magnitude here, so this note
-                    does not quote one.
+                    without waiting for a real supernova. <strong>It has since been
+                    run, and it found that this search could not have detected a
+                    supernova at all.</strong> What happened next is its own note:
+                    <a href="#injection" data-target="notes">a search that finds
+                    nothing looks exactly like a search that works</a>. The cuts
+                    described above are the corrected ones; the note explains what
+                    they were, and why the difference was invisible.
                 </p>
             </div>
         </article>
