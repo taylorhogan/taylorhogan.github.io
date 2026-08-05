@@ -102,47 +102,8 @@
 
         /* Only the selected panel is shown. */
         body[data-mode="gallery"] #notes-panel,
-        body[data-mode="notes"] #gallery-panel,
-        body[data-mode="notes"] nav.dso-nav {
+        body[data-mode="notes"] #gallery-panel {
             display: none;
-        }
-
-        nav.dso-nav {
-            background-color: rgba(21, 25, 43, 0.95);
-            border-bottom: 1px solid rgba(62, 100, 255, 0.3);
-            padding: 1rem 2rem;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        nav.dso-nav ul {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem 1.25rem;
-            justify-content: center;
-        }
-
-        nav.dso-nav a {
-            color: #8b9bb4;
-            text-decoration: none;
-            font-size: 0.85rem;
-            font-family: monospace;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            transition: color 0.2s;
-        }
-
-        nav.dso-nav a:hover {
-            color: var(--accent-color);
-        }
-
-        nav.dso-nav a.nav-to-notes {
-            color: var(--secondary-accent);
-            font-weight: bold;
         }
 
         .container {
@@ -158,7 +119,9 @@
             margin-bottom: 3rem;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             transition: transform 0.3s ease;
-            scroll-margin-top: 70px;
+            /* Was 70px to clear the sticky object index that used to sit on
+               top. With that gone, matching the notes' 20px is right. */
+            scroll-margin-top: 20px;
         }
 
         /* Only collapsed cards lift on hover. An article you are reading should
@@ -642,34 +605,6 @@
             <span class="mode-btn-sub">Experiments, measurements, and problems being worked on</span>
         </button>
     </div>
-
-    <nav class="dso-nav">
-        <ul>
-            <li><a href="#ic1318">IC1318</a></li>
-            <li><a href="#ic5146">IC5146</a></li>
-            <li><a href="#ic727">IC727</a></li>
-            <li><a href="#m13">M13</a></li>
-            <li><a href="#m51">M51</a></li>
-            <li><a href="#m57">M57</a></li>
-            <li><a href="#m63">M63</a></li>
-            <li><a href="#m74">M74</a></li>
-            <li><a href="#m94">M94</a></li>
-            <li><a href="#m101">M101</a></li>
-            <li><a href="#m106">M106</a></li>
-            <li><a href="#ngc1275">NGC1275</a></li>
-            <li><a href="#ngc3190">NGC3190</a></li>
-            <li><a href="#ngc4565">NGC4565</a></li>
-            <li><a href="#ngc6339">NGC6339</a></li>
-            <li><a href="#ngc6888">NGC6888</a></li>
-            <li><a href="#ngc7331">NGC7331</a></li>
-            <li><a href="#ngc7635">NGC7635</a></li>
-            <li><a href="#ngc891">NGC891</a></li>
-            <li><a href="#ngc925">NGC925</a></li>
-            <li><a href="#sh2-101">SH2-101</a></li>
-            <li><a href="#sh2-92">SH2-92</a></li>
-            <li><a href="#notes" class="nav-to-notes" data-target="notes">&rarr; The Science</a></li>
-        </ul>
-    </nav>
 
     <div class="container" id="gallery-panel" role="tabpanel" aria-labelledby="tab-gallery">
 
