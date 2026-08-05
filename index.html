@@ -100,10 +100,60 @@
             color: var(--accent-color);
         }
 
-        /* Only the selected panel is shown. */
-        body[data-mode="gallery"] #notes-panel,
-        body[data-mode="notes"] #gallery-panel {
+        /* Only the selected panel is shown. Stated as hide-all-then-show-one so
+           adding a fourth panel is one line, not a growing matrix of pairs. */
+        [role="tabpanel"] {
             display: none;
+        }
+
+        body[data-mode="gallery"] #gallery-panel,
+        body[data-mode="notes"] #notes-panel,
+        body[data-mode="live"] #live-panel {
+            display: block;
+        }
+
+        /* --- Live panel --- */
+        .live-status {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            border-left: 5px solid #8b9bb4;
+            padding: 1.5rem 1.75rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .live-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #8b9bb4;
+            flex-shrink: 0;
+            /* Slow, not the urgent pulse of a running job -- this one is asleep. */
+            animation: live-breathe 3.5s ease-in-out infinite;
+        }
+
+        @keyframes live-breathe {
+            0%, 100% { opacity: 0.9; }
+            50%      { opacity: 0.25; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .live-dot { animation: none; }
+        }
+
+        .live-title {
+            font-size: 1.5rem;
+            margin: 0;
+            color: #fff;
+        }
+
+        .live-sub {
+            margin: 0.35rem 0 0;
+            color: #8b9bb4;
+            font-family: monospace;
+            font-size: 0.85rem;
         }
 
         .container {
@@ -603,6 +653,10 @@
         <button class="mode-btn" id="tab-notes" role="tab" aria-selected="false" aria-controls="notes-panel" data-target="notes">
             <span class="mode-btn-label">The Science</span>
             <span class="mode-btn-sub">Experiments, measurements, and problems being worked on</span>
+        </button>
+        <button class="mode-btn" id="tab-live" role="tab" aria-selected="false" aria-controls="live-panel" data-target="live">
+            <span class="mode-btn-label">Live</span>
+            <span class="mode-btn-sub">What the observatory is doing right now</span>
         </button>
     </div>
 
@@ -2813,6 +2867,27 @@ score    = snr * shape * quality * flatness</code></pre>
 
     </div>
 
+    <div class="container" id="live-panel" role="tabpanel" aria-labelledby="tab-live">
+
+        <div class="live-status">
+            <span class="live-dot" aria-hidden="true"></span>
+            <div>
+                <h2 class="live-title">The observatory is sleeping</h2>
+                <p class="live-sub">ROOF CLOSED &middot; MOUNT PARKED</p>
+            </div>
+        </div>
+
+        <p class="science-text" style="margin-top: 2rem;">
+            This panel will carry the most recent frame off the telescope and the
+            night's running statistics, pushed here by the observatory itself.
+            None of that is wired up yet, so the line above is a fixed placeholder
+            rather than a reading &mdash; it says the same thing whether Iris is
+            parked for the day or halfway through a session. When it does go live
+            it will carry a timestamp, so you can tell the difference.
+        </p>
+
+    </div>
+
     <script>
         (function () {
             var buttons = document.querySelectorAll('.mode-btn');
@@ -2830,14 +2905,17 @@ score    = snr * shape * quality * flatness</code></pre>
                     ev.preventDefault();
                     var mode = el.dataset.target;
                     setMode(mode);
-                    history.replaceState(null, '', mode === 'notes' ? '#notes' : '#');
+                    history.replaceState(null, '', mode === 'gallery' ? '#' : '#' + mode);
                     window.scrollTo(0, 0);
                 });
             });
 
-            // A deep link to a DSO anchor must land in the gallery, not the notes.
-            if (location.hash === '#notes') {
-                setMode('notes');
+            // A bare panel hash selects that panel. Anything else is a deep link
+            // to a single card, left to the deck code below, so that a DSO
+            // anchor still lands in the gallery.
+            var panelHash = location.hash.slice(1);
+            if (panelHash === 'notes' || panelHash === 'live') {
+                setMode(panelHash);
             }
         })();
 
@@ -3124,7 +3202,7 @@ score    = snr * shape * quality * flatness</code></pre>
             // has a contents list: land in the right tab with that card already
             // open. Each deck declares which tab it belongs to.
             var slug = location.hash.slice(1);
-            if (slug && slug !== 'notes') {
+            if (slug && slug !== 'notes' && slug !== 'live') {
                 var target = document.getElementById(slug);
                 if (target && target._deck) {
                     var mode = target._deck.mode;
