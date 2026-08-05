@@ -240,7 +240,8 @@
             transition: transform .18s ease;
         }
 
-        .dso-section.expanded .dso-title {
+        .dso-section.expanded .dso-title,
+        .dso-section.expanded .dso-image-container {
             cursor: pointer;
         }
 
@@ -2288,6 +2289,63 @@
             </p>
 
             <p class="science-text">
+                The obvious fix is a limit switch. Put one at each end of the roof travel,
+                another on the mount, and read them. They are cheap, they are what every
+                garage door in the world uses, and they answer the question directly. The
+                reason there is a camera instead comes down to a single property: <strong>a
+                switch does not know when it is broken</strong>.
+            </p>
+
+            <p class="science-text">
+                A switch has two outputs and no vocabulary for anything else. Corrode a
+                contact, shear a wire, knock the actuator out of alignment, let a spider
+                build a nest in the gap &mdash; and it does not fall silent or report an
+                error. It goes on faithfully returning <em>open</em> or <em>closed</em>,
+                with exactly the same confidence it had when it was working, and nothing
+                downstream can tell the difference. A disconnected wire is not a null
+                reading; on most wiring schemes it <em>is</em> one of the two valid states.
+                The failure mode of a switch is not silence. It is a lie told in the same
+                tone of voice as the truth.
+            </p>
+
+            <p class="science-text">
+                And the lie is discovered at the worst possible moment, because the only
+                thing that reveals it is the mechanism doing something unexpected &mdash;
+                which here means the mount slewing under a roof that a broken sensor
+                cheerfully certified as open. The interlock designed to prevent that
+                collision is the thing that caused it.
+            </p>
+
+            <p class="science-text">
+                A camera does not have that property, and not because it is more accurate.
+                It is because a camera produces <em>evidence</em>, and evidence is allowed
+                to be inconclusive. That buys a third answer the switch can never give:
+                open, closed, and <em>I cannot tell</em>. If some exposures in the ladder
+                read open and others read closed, the verdict is not a majority vote &mdash;
+                it is unknown. If the snapshot comes back unreadable, unknown. If the scope
+                is not confirmed parked, the roof is not read at all, because the marker
+                geometry only means anything in the parked position.
+            </p>
+
+            <p class="science-text">
+                That third answer is the entire point. The two rules are written in terms of
+                <em>confirmed</em>, and "I cannot tell" is simply not confirmed, so the
+                system refuses to move and says why. Refusing is a safe outcome: the worst
+                case is a clear night wasted, and a clear night is cheaper than a telescope.
+                A broken switch has no way to reach that outcome, because it never produces
+                the input that would trigger it.
+            </p>
+
+            <p class="science-text">
+                None of which makes the camera infallible &mdash; it can be confidently
+                wrong too, and later sections here are mostly about the ways it was. The
+                difference is narrower than "better sensor" and more useful than it sounds:
+                the camera's failures are the kind a system can be built to notice, and the
+                switch's are not. For an interlock, a sensor that fails loudly beats one
+                that is right more often.
+            </p>
+
+            <p class="science-text">
                 So the ground truth comes from a webcam bolted to the top of the telescope,
                 looking across the inside of the building. Three markers are stuck to things
                 whose positions encode the state: one on the roof panel, one visible only
@@ -3314,6 +3372,12 @@ score    = snr * shape * quality * flatness</code></pre>
                     keep: ['.dso-title', '.dso-meta'],
                     bodyClass: 'dso-body',
                     heading: '.dso-title',
+                    // The picture toggles as well as the heading. It is the
+                    // biggest thing on the card and the obvious thing to click
+                    // twice, so having the second click do nothing reads as
+                    // broken. Selector is resolved against the card, not the
+                    // content wrapper -- the image sits outside .dso-content.
+                    alsoToggles: ['.dso-image-container'],
                     excerpt: false,
                     mode: 'gallery'
                 }
@@ -3393,6 +3457,25 @@ score    = snr * shape * quality * flatness</code></pre>
                 content.appendChild(body);
                 collapse(note);
 
+                function toggle(scroll) {
+                    if (note.classList.contains('expanded')) {
+                        collapse(note);
+                    } else {
+                        expand(note, scroll);
+                    }
+                }
+
+                // Toggle regions must stop propagation. Without it the collapse
+                // bubbles to the card handler below, which sees a now-collapsed
+                // card and immediately re-expands it -- the click would appear
+                // to do nothing at all.
+                function makeToggle(el) {
+                    el.addEventListener('click', function (ev) {
+                        ev.stopPropagation();
+                        toggle(true);
+                    });
+                }
+
                 if (title) {
                     // Deliberately NOT role="button": that would override the
                     // heading role and cost screen-reader users the outline they
@@ -3401,25 +3484,21 @@ score    = snr * shape * quality * flatness</code></pre>
                     title.setAttribute('tabindex', '0');
                     // The title toggles, so an open note can be closed from the
                     // top without hunting for empty page to click.
-                    title.addEventListener('click', function (ev) {
-                        ev.stopPropagation();
-                        if (note.classList.contains('expanded')) {
-                            collapse(note);
-                        } else {
-                            expand(note, true);
-                        }
-                    });
+                    makeToggle(title);
                     title.addEventListener('keydown', function (ev) {
                         if (ev.key === 'Enter' || ev.key === ' ') {
                             ev.preventDefault();
-                            if (note.classList.contains('expanded')) {
-                                collapse(note);
-                            } else {
-                                expand(note, true);
-                            }
+                            toggle(true);
                         }
                     });
                 }
+
+                (deck.alsoToggles || []).forEach(function (sel) {
+                    var el = note.querySelector(sel);
+                    if (el) {
+                        makeToggle(el);
+                    }
+                });
 
                 note.addEventListener('click', function () {
                     if (!note.classList.contains('expanded')) {
