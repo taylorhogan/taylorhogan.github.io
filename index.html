@@ -161,8 +161,56 @@
             scroll-margin-top: 70px;
         }
 
-        .dso-section:hover {
+        /* Only collapsed cards lift on hover. An article you are reading should
+           not shift under the cursor. */
+        .dso-section.collapsed:hover {
             transform: translateY(-5px);
+        }
+
+        /* --- The gallery as a deck, same as The Science ---
+           The difference is what survives collapsing. A note keeps its title and
+           an excerpt of its opening; a DSO keeps its picture, because in a
+           gallery the picture is the excerpt. Only the write-up folds away. */
+        .dso-section.collapsed {
+            cursor: pointer;
+        }
+
+        .dso-section.collapsed .dso-image-container {
+            height: 260px;
+        }
+
+        .dso-section.collapsed .dso-content {
+            padding: 1.25rem 1.5rem;
+        }
+
+        .dso-section.collapsed .dso-meta {
+            margin-bottom: 0;
+        }
+
+        .dso-body {
+            display: none;
+        }
+
+        .dso-section.expanded .dso-body {
+            display: block;
+            animation: note-open .25s ease;
+        }
+
+        .dso-title::after {
+            content: '\25B8';
+            color: var(--accent-color);
+            font-size: 0.7em;
+            margin-left: 0.5em;
+            display: inline-block;
+            transition: transform .18s ease;
+        }
+
+        .dso-section.expanded .dso-title {
+            cursor: pointer;
+        }
+
+        .dso-section.expanded .dso-title::after {
+            transform: rotate(90deg);
         }
 
         .dso-image-container {
@@ -558,6 +606,12 @@
         @media (max-width: 768px) {
             .dso-image-container {
                 height: 300px;
+            }
+            /* Needs restating inside the query: the collapsed selector outranks
+               the 300px rule above on specificity, so it would otherwise keep
+               the desktop height on a phone. */
+            .dso-section.collapsed .dso-image-container {
+                height: 200px;
             }
             .dso-title {
                 font-size: 1.5rem;
@@ -2958,11 +3012,46 @@ score    = snr * shape * quality * flatness</code></pre>
         })();
 
         (function () {
-            // Collapse each note into a card. The markup stays one article per
-            // note; everything below the title and meta line is moved into a
-            // .note-body that the collapsed state hides, so the articles need no
-            // hand-editing and still read correctly with JS off.
-            var notes = Array.prototype.slice.call(document.querySelectorAll('.note'));
+            // Both panels collapse to cards. Everything below the heading is
+            // moved into a wrapper that the collapsed state hides, so no article
+            // needs hand-editing and the page still reads with JS off.
+            //
+            // The two decks differ only in what survives collapsing: a note
+            // keeps its title plus an excerpt of its opening paragraph, a DSO
+            // keeps its photograph and needs no excerpt, because in a gallery
+            // the picture already is one.
+            var DECKS = [
+                {
+                    selector: '.note',
+                    content: function (card) { return card; },
+                    keep: ['.note-title', '.note-meta'],
+                    bodyClass: 'note-body',
+                    heading: '.note-title',
+                    excerpt: true,
+                    mode: 'notes'
+                },
+                {
+                    selector: '.dso-section',
+                    // Title and text live one level down, so the body wrapper
+                    // has to be built inside .dso-content -- wrapping the
+                    // article's own children would swallow the image too.
+                    content: function (card) { return card.querySelector('.dso-content'); },
+                    keep: ['.dso-title', '.dso-meta'],
+                    bodyClass: 'dso-body',
+                    heading: '.dso-title',
+                    excerpt: false,
+                    mode: 'gallery'
+                }
+            ];
+
+            var notes = [];
+            DECKS.forEach(function (deck) {
+                Array.prototype.slice.call(document.querySelectorAll(deck.selector))
+                    .forEach(function (card) {
+                        card._deck = deck;
+                        notes.push(card);
+                    });
+            });
             if (!notes.length) {
                 return;
             }
@@ -2980,7 +3069,7 @@ score    = snr * shape * quality * flatness</code></pre>
             function collapse(note) {
                 note.classList.remove('expanded');
                 note.classList.add('collapsed');
-                var title = note.querySelector('.note-title');
+                var title = note.querySelector(note._deck.heading);
                 if (title) {
                     title.setAttribute('aria-expanded', 'false');
                 }
@@ -2994,7 +3083,7 @@ score    = snr * shape * quality * flatness</code></pre>
                 });
                 note.classList.remove('collapsed');
                 note.classList.add('expanded');
-                var title = note.querySelector('.note-title');
+                var title = note.querySelector(note._deck.heading);
                 if (title) {
                     title.setAttribute('aria-expanded', 'true');
                 }
@@ -3004,22 +3093,29 @@ score    = snr * shape * quality * flatness</code></pre>
             }
 
             notes.forEach(function (note) {
-                var title = note.querySelector('.note-title');
-                var meta = note.querySelector('.note-meta');
+                var deck = note._deck;
+                var content = deck.content(note);
+                if (!content) {
+                    return;
+                }
+                var kept = deck.keep.map(function (sel) { return content.querySelector(sel); });
+                var title = content.querySelector(deck.heading);
                 var body = document.createElement('div');
-                body.className = 'note-body';
-                Array.prototype.slice.call(note.children).forEach(function (child) {
-                    if (child !== title && child !== meta) {
+                body.className = deck.bodyClass;
+                Array.prototype.slice.call(content.children).forEach(function (child) {
+                    if (kept.indexOf(child) === -1) {
                         body.appendChild(child);
                     }
                 });
 
-                var lead = body.querySelector('.science-text');
-                var excerpt = document.createElement('p');
-                excerpt.className = 'note-excerpt';
-                excerpt.textContent = lead ? summarize(lead.textContent) : '';
-                note.appendChild(excerpt);
-                note.appendChild(body);
+                if (deck.excerpt) {
+                    var lead = body.querySelector('.science-text');
+                    var excerpt = document.createElement('p');
+                    excerpt.className = 'note-excerpt';
+                    excerpt.textContent = lead ? summarize(lead.textContent) : '';
+                    content.appendChild(excerpt);
+                }
+                content.appendChild(body);
                 collapse(note);
 
                 if (title) {
@@ -3057,8 +3153,17 @@ score    = snr * shape * quality * flatness</code></pre>
                 });
             });
 
+            function openCard() {
+                for (var i = 0; i < notes.length; i++) {
+                    if (notes[i].classList.contains('expanded')) {
+                        return notes[i];
+                    }
+                }
+                return null;
+            }
+
             document.addEventListener('click', function (ev) {
-                var open = document.querySelector('.note.expanded');
+                var open = openCard();
                 if (!open || open.contains(ev.target)) {
                     return;
                 }
@@ -3074,22 +3179,23 @@ score    = snr * shape * quality * flatness</code></pre>
                 if (ev.key !== 'Escape' || document.querySelector('.lightbox[data-open="true"]')) {
                     return;
                 }
-                var open = document.querySelector('.note.expanded');
+                var open = openCard();
                 if (open) {
                     collapse(open);
                 }
             });
 
-            // A deep link to one note still works: land in the notes tab with
-            // that card already open. Gallery anchors are left to the mode
-            // switch above, which is why this only matches .note ids.
+            // A deep link to a single card still works now that neither panel
+            // has a contents list: land in the right tab with that card already
+            // open. Each deck declares which tab it belongs to.
             var slug = location.hash.slice(1);
             if (slug && slug !== 'notes') {
                 var target = document.getElementById(slug);
-                if (target && target.classList.contains('note')) {
-                    document.body.dataset.mode = 'notes';
+                if (target && target._deck) {
+                    var mode = target._deck.mode;
+                    document.body.dataset.mode = mode;
                     document.querySelectorAll('.mode-btn').forEach(function (btn) {
-                        btn.setAttribute('aria-selected', btn.dataset.target === 'notes');
+                        btn.setAttribute('aria-selected', btn.dataset.target === mode);
                     });
                     expand(target, false);
                     window.requestAnimationFrame(function () {
