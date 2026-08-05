@@ -1068,6 +1068,7 @@
 
         <nav class="note-index">
             <ul>
+                <li><a href="#noise2noise">2026-08-04 &middot; Learning to denoise without ever seeing a clean image</a></li>
                 <li><a href="#tonight">2026-08-04 &middot; How many hours is it actually worth? Reading the night-planning chart</a></li>
                 <li><a href="#end-to-end">2026-08-04 &middot; Closing the loop: autonomy has to include the data reduction</a></li>
                 <li><a href="#roof-sentry">2026-08-03 &middot; Teaching the observatory to hear its own roof failing</a></li>
@@ -1077,6 +1078,222 @@
                 <li><a href="#optics">2026-08-04 &middot; Has anything changed, or was it just a bad night?</a></li>
             </ul>
         </nav>
+
+        <article id="noise2noise" class="note">
+            <h2 class="note-title">Learning to denoise without ever seeing a clean image</h2>
+            <div class="note-meta"><span class="note-date">2026-08-04</span> &middot; NOISE2NOISE &middot; U-NET, ~7M PARAMS &middot; STATUS: TRAINING, NOT IN THE PIPELINE</div>
+
+            <h3>The question</h3>
+
+            <p class="science-text">
+                Every sub-exposure this observatory takes is mostly noise. A 300-second
+                frame of a faint nebula carries read noise from the sensor and shot noise
+                from the photons themselves, and the target is often fainter than either.
+                The classical answer is to take a lot of frames and average them, which is
+                what the stacker does, and it works: noise falls as the square root of the
+                frame count. The question is whether a neural network can do better than
+                the square root &mdash; whether it can recognise what sensor noise looks
+                like on this camera and remove it, rather than merely averaging it away.
+            </p>
+
+            <p class="science-text">
+                The obvious way to train such a network is supervised learning: show it a
+                noisy image, show it the clean truth, and penalise the difference. That
+                approach is unavailable here, and not for want of effort. There is no clean
+                image of a galaxy. Nobody has one. No exposure is long enough, no sensor
+                cold enough; the ground truth does not exist anywhere in the universe to be
+                collected. Every supervised denoiser needs a target that astronomy
+                fundamentally cannot supply.
+            </p>
+
+            <h3>The trick, which is the interesting part</h3>
+
+            <p class="science-text">
+                Noise2Noise removes the requirement. The insight is that you can train the
+                network to map one noisy frame to <em>another noisy frame of the same
+                scene</em>, and get the same model you would have got from clean targets.
+            </p>
+
+            <p class="science-text">
+                The reason is a property of the loss function rather than of the network.
+                Training minimises the expected error against the target, and the predictor
+                that minimises squared error against a random target is that target's
+                <em>mean</em>. If the noise is zero-mean and drawn independently for each
+                frame, then the mean of the noisy target is exactly the clean signal. So
+                the network is being asked to predict something whose expected value is the
+                truth. It cannot predict the specific noise in any particular target frame
+                &mdash; that noise is independent of its input, and therefore carries no
+                learnable information &mdash; so the best it can do is output the underlying
+                signal. The noise averages out inside the loss instead of inside the stack.
+            </p>
+
+            <p class="science-text">
+                Put another way: the network learns whatever the two frames have in common
+                and discards whatever differs between them. Point it at two views of the
+                same sky and what they have in common is the sky.
+            </p>
+
+            <p class="science-text">
+                An observatory turns out to be close to the ideal case for this. The method
+                needs many independent noisy observations of an unchanging scene, which is
+                an awkward thing to arrange for photographs of the physical world &mdash;
+                and it is precisely what a telescope produces by accident. Three hundred
+                frames of the same nebula on the same filter, each with its own independent
+                draw of read and shot noise, are the by-product of a single ordinary night.
+                The training pairs cost nothing; they had already been collected and stacked
+                and archived before the idea came up.
+            </p>
+
+            <h3>What is built</h3>
+
+            <p class="science-text">
+                A four-level U-Net of about seven million parameters, single channel in and
+                out, trained per filter and per exposure time &mdash; the noise character of
+                a 90-second red frame is not that of a 300-second H-alpha frame, so they get
+                separate models. Training draws random 256-pixel patch pairs from two
+                different frames, 2000 pairs an epoch for 130 epochs, with the same random
+                flip and rotation applied to both members of a pair so they stay aligned.
+                Inference runs in 512-pixel tiles with 64 pixels of overlap, because the
+                QHY600 sensor is 9576&times;6388 and will not fit in video memory whole.
+                <a href="https://github.com/taylorhogan/srt/commit/272aa6e">272aa6e</a>
+            </p>
+
+            <h3>Four ways to get it wrong</h3>
+
+            <p class="science-text">
+                Every one of these was found the hard way, and each is a variation on the
+                same theme: the method erases whatever differs between the two frames, so
+                any difference you failed to think about is a thing it will destroy.
+            </p>
+
+            <p class="science-text">
+                <strong>Dithering deletes the stars.</strong> The telescope deliberately
+                shifts the pointing a few pixels between exposures, so that sensor defects
+                do not land in the same place every frame. This is good practice for
+                stacking and fatal for Noise2Noise. If the scene has moved between input and
+                target, then the stars are among the things that differ between the two
+                frames &mdash; and the network duly concludes that stars are noise and
+                learns to suppress them. Frames now get registered to a common reference by
+                matching star centroids before any training happens. Registration is not a
+                refinement here; it is a correctness requirement, and the failure it
+                prevents looks like a beautifully smooth image with the astronomy removed.
+                <a href="https://github.com/taylorhogan/srt/commit/8c1afd2">8c1afd2</a>,
+                <a href="https://github.com/taylorhogan/srt/commit/67a1c9a">67a1c9a</a>
+            </p>
+
+            <p class="science-text">
+                <strong>Pairs must be the same scene.</strong> Nothing in the loss function
+                knows what a scene is. Pair a frame of M13 with a frame of NGC 7331 and the
+                maths still runs &mdash; it just now describes a network learning to predict
+                the average of all sky, since that is what those two frames have in common.
+                Pairs are restricted to within one target, which then made the definition of
+                "one target" load-bearing: an early version grouped frames by directory
+                depth and grouped by <em>night</em> instead, silently splitting one object
+                across sessions.
+                <a href="https://github.com/taylorhogan/srt/commit/737e79e">737e79e</a>
+            </p>
+
+            <p class="science-text">
+                <strong>Squared error is the wrong loss for a starfield.</strong> The
+                argument above is cleanest for squared error, whose optimum is the mean.
+                But a starfield contains saturated pixels, and squared error is dominated by
+                its largest residuals, so a handful of blown-out star cores pull the model
+                around. The loss is now L1, which optimises toward the median instead and
+                barely notices outliers. The trade is real and worth stating: the median of
+                a skewed distribution is not its mean, and photon noise at low count rates
+                is skewed, so L1 buys robustness at the cost of a small bias the clean
+                theory does not have. That bias has not been measured here.
+                <a href="https://github.com/taylorhogan/srt/commit/e5c149e">e5c149e</a>
+            </p>
+
+            <p class="science-text">
+                <strong>The validation split was measuring nothing.</strong> The original
+                code used a standard random split of the dataset, which was a no-op: the
+                dataset ignores the sample index it is handed and draws a fresh random pair
+                on every access, so "train" and "val" were both sampling the same pool of
+                frames. The validation curve was real-looking and meaningless. It now holds
+                out whole targets &mdash; at least two, extended until a fifth of the frames
+                are held back &mdash; so the number measures generalisation to a sky the
+                model has never seen. That is both the honest test and the actual inference
+                condition, and it is the one that would expose a model that had memorised
+                its training scenes rather than learned this camera's noise.
+                <a href="https://github.com/taylorhogan/srt/commit/98a8ff7">98a8ff7</a>,
+                <a href="https://github.com/taylorhogan/srt/commit/2ba083d">2ba083d</a>
+            </p>
+
+            <h3>Where it runs</h3>
+
+            <p class="science-text">
+                Training happens on an NVIDIA box rather than the observatory machine, which
+                has a telescope to run and no business spending its evening on gradient
+                descent. This is the first piece of a wider move: the observatory PC stays a
+                real-time controller, and the heavy image work &mdash; denoising now,
+                stacking and the blind transit search later &mdash; migrates to the GPU as
+                an offline stage that reads the night's frames after they have been copied
+                across. Denoising is a good first tenant because it is embarrassingly
+                parallel, needs no interaction, and does not matter if it is late.
+            </p>
+
+            <h3>Result</h3>
+
+            <p class="science-text">
+                There isn't one yet, and that is the honest status. Models train, frames come
+                out denoised, and the comparison images look convincingly better &mdash; which
+                is exactly the evidence that should be trusted least. Nothing in the nightly
+                pipeline consumes any of it.
+            </p>
+
+            <div class="caveat">
+                <p>
+                    <strong>What "looks better" is not.</strong> A denoiser that makes an
+                    image prettier and a denoiser that preserves photometry are different
+                    things, and this one has not been shown to be the second. If the network
+                    subtly reshapes stellar profiles it will change measured brightnesses,
+                    and the science on this site &mdash; the cluster colour&ndash;magnitude
+                    diagram, the 2% transit &mdash; lives entirely on measured brightnesses.
+                    A smoother picture that shifts a star by half a percent would be worse
+                    than useless: it would be wrong in a way that still looks right.
+                </p>
+            </div>
+
+            <p class="science-text">
+                So the test to run before this is allowed anywhere near the pipeline is not
+                a visual comparison. It is the convergence curve already used elsewhere on
+                this site &mdash; stack error against frame count &mdash; measured with and
+                without denoising, to see whether the network genuinely buys frames or merely
+                launders noise into smoothness. Alongside it, aperture photometry on the same
+                stars before and after, which is the measurement that would catch the failure
+                the pretty picture hides.
+            </p>
+
+            <h3>The papers</h3>
+
+            <p class="science-text">
+                The original is Lehtinen, Munkberg, Hasselgren, Laine, Karras, Aittala and
+                Aila, <a href="https://arxiv.org/abs/1803.04189">Noise2Noise: Learning Image
+                Restoration without Clean Data</a> (ICML 2018) &mdash; the paper that
+                established you can drop the clean target, demonstrated on photographic
+                noise, Monte Carlo rendering and MRI reconstruction. It is unusually
+                readable for the strength of what it claims.
+            </p>
+
+            <p class="science-text">
+                Two successors push the same idea further, and are worth knowing about
+                because they remove the one requirement this observatory happens to satisfy
+                for free. Noise2Noise still needs <em>two</em> noisy views of a scene. Krull,
+                Buchholz and Jug, <a href="https://arxiv.org/abs/1811.10980">Noise2Void
+                &mdash; Learning Denoising from Single Noisy Images</a> (CVPR 2019), get
+                there with one image by predicting each pixel from its neighbours and never
+                letting the network see the pixel it is predicting. Batson and Royer,
+                <a href="https://arxiv.org/abs/1901.11365">Noise2Self: Blind Denoising by
+                Self-Supervision</a> (ICML 2019), generalise that into a framework needing no
+                prior on the signal, no noise estimate and no clean data at all. For a
+                microscopist with one irreplaceable image these are the important papers.
+                For a telescope that produces three hundred views of the same sky every
+                clear night, the original is the right tool, and its stronger assumption
+                costs nothing.
+            </p>
+        </article>
 
         <article id="tonight" class="note">
             <h2 class="note-title">How many hours is it actually worth? Reading the night-planning chart</h2>
