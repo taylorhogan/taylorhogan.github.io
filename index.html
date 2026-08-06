@@ -48,6 +48,13 @@
             color: #8b9bb4;
         }
 
+        /* Update this on every change to the site — see the id below. */
+        .last-updated {
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            opacity: 0.65;
+        }
+
         /* Sits among the header links and should read as one of them, so it
            inherits the surrounding type rather than looking like a control. */
         .share-btn {
@@ -673,6 +680,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
+        <p class="last-updated" id="last-updated">Updated 2026-08-06</p>
     </header>
 
     <div class="mode-switch" role="tablist">
