@@ -360,13 +360,39 @@
 
         .note:hover .anchor-link,
         .dso-section:hover .anchor-link,
-        .anchor-link:focus {
+        .anchor-link:focus,
+        .note:hover .card-share,
+        .dso-section:hover .card-share,
+        .card-share:focus {
             opacity: 0.75;
         }
 
-        .anchor-link:hover {
+        .anchor-link:hover,
+        .card-share:hover {
             opacity: 1;
         }
+
+        /* Copies this card's own URL. Sits beside the permalink so the two
+           readings of "link to this" -- see it, take it -- are together. */
+        .card-share {
+            -webkit-appearance: none;
+            appearance: none;
+            background: none;
+            border: none;
+            padding: 0;
+            margin-left: 0.45em;
+            font: inherit;
+            font-size: 0.6em;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--accent-color);
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity .15s ease;
+        }
+
+        .card-share[data-state="copied"] { color: #3fb950; opacity: 1; }
+        .card-share[data-state="failed"]  { color: var(--secondary-accent); opacity: 1; }
 
         .note-abstract {
             font-style: italic;
@@ -701,7 +727,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-08-06 08:43 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-08-06 11:47 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -3972,6 +3998,22 @@ score    = snr * shape * quality * flatness</code></pre>
                 }
             });
 
+            // execCommand is deprecated but is the only path left on a
+            // non-secure origin. Returns whether it actually worked.
+            function legacyCopy(text) {
+                var ta = document.createElement('textarea');
+                ta.value = text;
+                ta.setAttribute('readonly', '');
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.select();
+                var ok = false;
+                try { ok = document.execCommand('copy'); } catch (err) { ok = false; }
+                document.body.removeChild(ta);
+                return ok;
+            }
+
             function showPanel(mode) {
                 document.body.dataset.mode = mode;
                 document.querySelectorAll('.mode-btn').forEach(function (b) {
@@ -4020,6 +4062,41 @@ score    = snr * shape * quality * flatness</code></pre>
                     goToCard(card);
                 });
                 head.appendChild(a);
+
+                // Copy this card's own URL. The header Share copies whatever is
+                // currently open; this copies THIS card without opening it, so a
+                // link can be taken while scanning the deck.
+                var sh = document.createElement('button');
+                sh.type = 'button';
+                sh.className = 'card-share';
+                sh.textContent = 'share';
+                sh.setAttribute('aria-label', 'Copy a link to ' + card.id);
+                sh.setAttribute('aria-live', 'polite');
+                sh.addEventListener('click', function (ev) {
+                    ev.preventDefault();
+                    ev.stopPropagation();   // must not toggle the card
+                    var url = location.origin + location.pathname + '#' + card.id;
+                    var revert = function () {
+                        setTimeout(function () {
+                            sh.textContent = 'share';
+                            delete sh.dataset.state;
+                        }, 2000);
+                    };
+                    var done = function (ok) {
+                        // Report what happened; never claim a copy that failed.
+                        sh.textContent = ok ? 'copied' : 'failed';
+                        sh.dataset.state = ok ? 'copied' : 'failed';
+                        revert();
+                    };
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText(url).then(
+                            function () { done(true); },
+                            function () { done(legacyCopy(url)); });
+                    } else {
+                        done(legacyCopy(url));
+                    }
+                });
+                head.appendChild(sh);
             });
 
             // A deep link to a single card still works now that neither panel
