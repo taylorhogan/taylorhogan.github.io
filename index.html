@@ -340,6 +340,13 @@
             margin: 1.5rem 0 0.5rem;
         }
 
+        .note-abstract {
+            font-style: italic;
+            color: #b9c4d4;
+            border-left: 3px solid rgba(62, 100, 255, 0.35);
+            padding-left: 1rem;
+        }
+
         .note figure {
             margin: 1.5rem 0;
         }
@@ -1181,6 +1188,12 @@
             <h2 class="note-title">A search that finds nothing looks exactly like a search that works</h2>
             <div class="note-meta"><span class="note-date">2026-08-05</span> &middot; INJECTION TESTING &middot; 3 BUGS IN THE PIPELINE &middot; 4 IN THE TEST</div>
 
+            <h3>Abstract</h3>
+
+            <p class="science-text note-abstract">
+                A supernova search that had reported nothing for weeks turned out to be incapable of detecting a supernova &mdash; and no amount of reading its output would have revealed it, because a working detector and a blind one both print &ldquo;no candidates&rdquo;. Injecting fake sources of known brightness into real frames exposed three pipeline bugs in a single run: a shape cut that rejected 85% of genuine point sources, a mask that deleted the brightest transients by construction, and catalogue identification that had been dead for 67 commits. It also exposed four bugs in the test itself. The closing argument is why the standing assertion is monotonicity rather than a pinned number: a conventional regression test would have recorded the broken behaviour as correct and failed the repair.
+            </p>
+
             <h3>The question</h3>
 
             <p class="science-text">
@@ -1493,6 +1506,12 @@
             <h2 class="note-title">Looking for something that was not there last night</h2>
             <div class="note-meta"><span class="note-date">2026-08-05</span> &middot; DIFFERENCE IMAGING &middot; RUNS UNATTENDED ON THE GPU BOX &middot; SUPERNOVAE FOUND: 0</div>
 
+            <h3>Abstract</h3>
+
+            <p class="science-text note-abstract">
+                How the <code>transient</code> command hunts supernovae by subtracting a deep template built from every previous night from the most recent night&rsquo;s stack. Most of what survives a subtraction is not astronomy, so the bulk of this is about telling a real point source from misregistration dipoles, hot pixels and galaxy structure &mdash; and then from the far likelier explanation, a catalogued variable star. Runs unattended on a separate GPU machine after the night&rsquo;s frames are copied across, and raises a Pushover alert above a threshold. No supernovae found, which is the expected result.
+            </p>
+
             <h3>The question</h3>
 
             <p class="science-text">
@@ -1672,6 +1691,12 @@
         <article id="noise2noise" class="note">
             <h2 class="note-title">Learning to denoise without ever seeing a clean image</h2>
             <div class="note-meta"><span class="note-date">2026-08-04</span> &middot; NOISE2NOISE &middot; U-NET, ~7M PARAMS &middot; STATUS: TRAINING, NOT IN THE PIPELINE</div>
+
+            <h3>Abstract</h3>
+
+            <p class="science-text note-abstract">
+                Every sub-exposure is mostly noise, and the obvious fix &mdash; train a network to map noisy images to clean ones &mdash; is unavailable, because no clean image of a galaxy exists anywhere to train against. Noise2Noise removes that requirement: map one noisy frame to <em>another noisy frame of the same scene</em> and you converge on the same model, because the noise carries no learnable information. An observatory turns out to be close to the ideal case for it. Covers what was built, four ways it goes wrong &mdash; dithering teaches the network that stars are noise &mdash; and why nothing consumes the output yet.
+            </p>
 
             <h3>The question</h3>
 
@@ -1888,6 +1913,12 @@
         <article id="tonight" class="note">
             <h2 class="note-title">How many hours is it actually worth? Reading the night-planning chart</h2>
             <div class="note-meta"><span class="note-date">2026-08-04</span> &middot; NIGHT PLANNING &middot; 9 NIGHTS &middot; 330 FRAMES &middot; 7 SERIES, 2 GATES</div>
+
+            <h3>Abstract</h3>
+
+            <p class="science-text note-abstract">
+                The chart behind the question &ldquo;how many hours is this target actually worth tonight?&rdquo;. The headline is that the naive answer, time above altitude zero, is wrong by roughly a factor of two here, because trees put the local horizon at 46&ndash;65 degrees along the target&rsquo;s track. Then every plotted series and which of them can actually stop the night: only two of seven gate anything. Most of the space goes to the seeing forecast, where the standard amateur proxy &mdash; the jet stream &mdash; measurably does not work at this site, and a much lower layer does.
+            </p>
 
             <h3>The question the chart answers</h3>
 
@@ -2134,6 +2165,12 @@
             <h2 class="note-title">Closing the loop: autonomy has to include the data reduction</h2>
             <div class="note-meta"><span class="note-date">2026-08-04</span> &middot; SH2-92 &middot; 330 SUBS &middot; 9 NIGHTS &middot; 27.5 HOURS</div>
 
+            <h3>Abstract</h3>
+
+            <p class="science-text note-abstract">
+                Autonomy that stops at the shutter is not autonomy. This follows one target &mdash; 330 subs of SH2-92 over nine nights, 27.5 hours &mdash; through the half of the job that usually stays manual: knowing what the night actually delivered, and knowing when more frames stop being worth taking. Covers the per-frame statistics the observatory records about its own output, and the convergence measurement that answers when to stop.
+            </p>
+
             <h3>The gap</h3>
 
             <p class="science-text">
@@ -2353,6 +2390,12 @@
         <article id="roof-sentry" class="note">
             <h2 class="note-title">Teaching the observatory to hear its own roof failing</h2>
             <div class="note-meta"><span class="note-date">2026-08-03</span> &middot; ROOF SENTRY &middot; 67 GOOD SPECTROGRAMS &middot; 38 GOOD CURRENT TRACES</div>
+
+            <h3>Abstract</h3>
+
+            <p class="science-text note-abstract">
+                The roof is the one part of this observatory that can fail expensively and unattended, so it is watched by two independent detectors that share no failure mode: the motor&rsquo;s electrical current signature, and the sound the move makes. Built from 67 labelled spectrograms and 38 current traces. Includes what the current watchdog has actually caught, why two detectors rather than one better one, and a correction to an earlier claim about an alert that turned out never to have fired on a real stall.
+            </p>
 
             <h3>The thing that can actually break</h3>
 
@@ -2589,6 +2632,12 @@
         <article id="vision-safety" class="note">
             <h2 class="note-title">The camera that has to be right about the roof</h2>
             <div class="note-meta"><span class="note-date">2026-08-03</span> &middot; VISION SAFETY &middot; 14 EXPOSURE LADDERS &middot; 3 MARKERS</div>
+
+            <h3>Abstract</h3>
+
+            <p class="science-text note-abstract">
+                Both hardware safety rules turn on the word <em>confirmed</em>, and software that believes the roof is open because it sent an open command has confirmed nothing. Ground truth comes from a webcam and three markers. The core argument is why a limit switch cannot do this job: a switch does not know when it is broken, and a dead one keeps reporting <em>open</em> or <em>closed</em> in the same tone of voice it used when working. A camera can say &ldquo;I cannot tell&rdquo;, and that third answer is the whole point. Also: why match confidence turned out to be useless for separating the states, and a bug that is deliberately left unfixed.
+            </p>
 
             <h3>Why a camera and not a switch</h3>
 
@@ -2864,6 +2913,12 @@
             <h2 class="note-title">Weighing a star cluster's age with a colour&ndash;magnitude diagram</h2>
             <div class="note-meta"><span class="note-date">2026-08-02</span> &middot; M13 &middot; HERCULES GLOBULAR CLUSTER &middot; 18 BLUE + 20 RED SUBS</div>
 
+            <h3>Abstract</h3>
+
+            <p class="science-text note-abstract">
+                Building a colour&ndash;magnitude diagram of M13 from 18 blue and 20 red subs, calibrated against Gaia, and reading a cluster age off the main-sequence turn-off. Why a globular cluster is the right target for this &mdash; every star the same age and distance, so the only variable left is mass &mdash; how the photometry was assembled, and what did not work.
+            </p>
+
             <figure>
                 <img src="images/m13.jpg" alt="M13, the Hercules globular cluster, imaged from the Iris observatory">
                 <figcaption>M13 as Iris sees it. Everything below is extracted from these
@@ -3028,6 +3083,12 @@
         <article id="transit-search" class="note">
             <h2 class="note-title">Finding a planet by watching a star get 2% fainter</h2>
             <div class="note-meta"><span class="note-date">2026-06-05</span> &middot; HAT-P-32 &middot; 142 FRAMES &middot; 7-HOUR BASELINE &middot; 622 STARS SEARCHED</div>
+
+            <h3>Abstract</h3>
+
+            <p class="science-text note-abstract">
+                Detecting a planet by measuring a star getting 2.15% fainter for a few hours: HAT-P-32b, 142 frames, a seven-hour baseline and 622 stars searched. Includes an explicit statement that the test data is not ours and why that matters, how the differential photometry and box-fitting pipeline works, and the question that decides whether the result means anything &mdash; is this real, or simply the biggest dip in a field of 622 chances?
+            </p>
 
             <h3>The measurement</h3>
 
@@ -3234,6 +3295,12 @@ score    = snr * shape * quality * flatness</code></pre>
             <h2 class="note-title">Has anything changed, or was it just a bad night?</h2>
             <div class="note-meta"><span class="note-date">2026-08-04</span> &middot; OPTICS TREND &middot; 1,800 STARS POOLED FROM 12 FRAMES</div>
 
+            <h3>Abstract</h3>
+
+            <p class="science-text note-abstract">
+                A command for answering &ldquo;has the optical train drifted, or was that just a bad night?&rdquo;, and the reason it is harder than it looks. The obvious metrics move dramatically with seeing alone &mdash; field uniformity by +88%, coma by &minus;41%, with nothing touched between measurements &mdash; so they cannot be trended as they stand. Covers the replacement metrics designed to hold still under changing seeing, what one night looks like, and why nothing yet consumes the numbers: thresholds invented before a baseline exists are guesses.
+            </p>
+
             <h3>The dull command</h3>
 
             <p class="science-text">
@@ -3418,6 +3485,12 @@ score    = snr * shape * quality * flatness</code></pre>
         <article id="short-slug" class="note">
             <h2 class="note-title">Title of the experiment</h2>
             <div class="note-meta">2026-08-04 | STATUS: IN PROGRESS</div>
+
+            <h3>Abstract</h3>
+
+            <p class="science-text note-abstract">
+                One paragraph saying what this note found and whether it is worth reading. State the result, not the intention.
+            </p>
 
             <h3>The question</h3>
             <p>What was actually being asked, and why it mattered.</p>
