@@ -750,7 +750,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-08-07 05:47 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-08-07 06:17 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -1389,7 +1389,9 @@
 
             <p class="science-text">
                 Atmospheric turbulence produces power-law wings, so a real star has more
-                light far from its centre than a Gaussian permits. The fitting routine
+                light far from its centre than a Gaussian permits &mdash; visible in the
+                right-hand panel below, where the Gaussian hits zero while the star is
+                still clearly shining. The fitting routine
                 has to reconcile that somehow, and it does so by <strong>widening the
                 core</strong>: a broader Gaussian captures more of the wing flux at the
                 cost of misrepresenting the middle. The reported FWHM comes out too
@@ -1402,6 +1404,28 @@
                 of traded against one another. For Kolmogorov turbulence
                 &alpha; &asymp; 4.8; smaller values mean heavier wings.
             </p>
+
+            <figure>
+                <a href="images/psf_gaussian_vs_moffat.jpg" target="_blank" rel="noopener noreferrer">
+                    <img src="images/psf_gaussian_vs_moffat.jpg" alt="Three panels: a real star with both fitted FWHM circles drawn on it; the radial profile on a linear scale where both fits look identical; and the same profile on a log scale where the Gaussian falls away sharply while the measured points and the Moffat continue outward">
+                </a>
+                <figcaption>
+                    One real star from an SH2-92 sub-exposure, at pixel (1409, 6240),
+                    with both profiles fitted to the same pixels. <strong>Left:</strong>
+                    the star, with each fit&rsquo;s FWHM drawn as a circle &mdash; the
+                    Gaussian in orange is visibly the wider of the two.
+                    <strong>Centre:</strong> the measured radial profile on a linear
+                    scale, where the two fits are almost impossible to tell apart, which
+                    is exactly why this discrepancy went unnoticed for so long.
+                    <strong>Right:</strong> the same data on a log scale, where the
+                    disagreement is obvious. The Gaussian collapses to nothing beyond
+                    about 10 pixels while the star keeps emitting light out to 20 and
+                    beyond. Note that the measured points sit <em>above</em> even the
+                    Moffat in the far wings: the real profile is heavier still, so the
+                    Moffat is a better description rather than a perfect one.
+                    <em>Click for full size.</em>
+                </figcaption>
+            </figure>
 
             <h3>What it measures here</h3>
 
