@@ -394,6 +394,29 @@
         .card-share[data-state="copied"] { color: #3fb950; opacity: 1; }
         .card-share[data-state="failed"]  { color: var(--secondary-accent); opacity: 1; }
 
+        /* Centred display maths. No MathJax: the CSP is default-src 'self',
+           so a CDN script would be blocked -- correctly. */
+        .equation {
+            margin: 1.5rem 0;
+            padding: 1rem 1.25rem;
+            background: rgba(62, 100, 255, 0.07);
+            border-left: 3px solid rgba(62, 100, 255, 0.35);
+            border-radius: 0 6px 6px 0;
+            font-family: 'Cambria Math', Georgia, serif;
+            font-size: 1.15rem;
+            text-align: center;
+            overflow-x: auto;
+            line-height: 1.9;
+        }
+
+        .equation .where {
+            display: block;
+            margin-top: 0.6rem;
+            font-size: 0.85rem;
+            color: #8b9bb4;
+            font-style: italic;
+        }
+
         .note-abstract {
             font-style: italic;
             color: #b9c4d4;
@@ -727,7 +750,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-08-06 22:24 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-08-07 05:47 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -1238,6 +1261,201 @@
     </div>
 
     <div class="container" id="notes-panel" role="tabpanel" aria-labelledby="tab-notes">
+
+        <article id="psf" class="note">
+            <h2 class="note-title">What shape is a star?</h2>
+            <div class="note-meta"><span class="note-date">2026-08-07</span> &middot; POINT SPREAD FUNCTION &middot; GAUSSIAN vs MOFFAT &middot; 11.5% APART</div>
+
+            <h3>Abstract</h3>
+
+            <p class="science-text note-abstract">
+                A star is a point source, yet it lands on the sensor as a blob several
+                pixels across. The shape of that blob &mdash; the point spread function
+                &mdash; is what every measurement of &ldquo;seeing&rdquo; actually
+                measures, and the number depends on which function you fit to it. This
+                derives the FWHM from first principles for both the Gaussian and the
+                Moffat, shows where the constant 2.3548 in the code comes from, and
+                explains why the two disagree by a systematic 11.5% on this telescope:
+                1.76&Prime; against 1.56&Prime; on the same 118 stars. The Moffat wins
+                because atmospheric wings follow a power law that a Gaussian cannot
+                represent, so the Gaussian widens its core to compensate. It is also why
+                PixInsight has always reported lower seeing than this pipeline did.
+            </p>
+
+            <h3>The question</h3>
+
+            <p class="science-text">
+                A star is, for any telescope ever built, a perfect point &mdash;
+                unresolvably far away. Yet it arrives on the sensor as a smear several
+                pixels wide, and how wide it is happens to be the most-quoted number in
+                amateur astronomy. That smear is the <strong>point spread
+                function</strong>: what the atmosphere and the optics do to a point of
+                light on its way to a pixel.
+            </p>
+
+            <p class="science-text">
+                Reporting its width means choosing a function to fit, and the choice is
+                not cosmetic. Fit two different functions to the same star and you get
+                two different answers, both defensible, differing here by 11.5%. That is
+                larger than most of the effects an observatory is trying to detect.
+            </p>
+
+            <h3>The Gaussian, and where 2.3548 comes from</h3>
+
+            <p class="science-text">
+                The obvious first choice is a Gaussian, on the reasoning that many
+                independent random perturbations tend toward one:
+            </p>
+
+            <div class="equation">
+                I(r) = A&thinsp;exp( &minus;r&sup2; / 2&sigma;&sup2; )
+                <span class="where">A = peak intensity &nbsp;&middot;&nbsp; r = distance from centre &nbsp;&middot;&nbsp; &sigma; = width parameter</span>
+            </div>
+
+            <p class="science-text">
+                &sigma; means nothing to an observer at the eyepiece, so width is quoted
+                as the <strong>full width at half maximum</strong>: how wide the profile
+                is at half its peak brightness. Deriving it takes three lines. Set the
+                intensity to half the peak and solve for r:
+            </p>
+
+            <div class="equation">
+                A/2 = A&thinsp;exp( &minus;r&sup2; / 2&sigma;&sup2; )<br>
+                &frac12; = exp( &minus;r&sup2; / 2&sigma;&sup2; )<br>
+                ln(&frac12;) = &minus;r&sup2; / 2&sigma;&sup2;
+                &nbsp;&nbsp;&rarr;&nbsp;&nbsp; r&sup2; = 2&sigma;&sup2;&thinsp;ln 2
+            </div>
+
+            <p class="science-text">
+                That r is the <em>half</em> width, so the full width is twice it:
+            </p>
+
+            <div class="equation">
+                FWHM = 2&sigma;&thinsp;&radic;(2&thinsp;ln 2) = <strong>2.3548&thinsp;&sigma;</strong>
+            </div>
+
+            <p class="science-text">
+                There is the magic constant that appears unexplained in almost every
+                piece of astronomy software, this pipeline included. It is not a fudge
+                factor or a calibration &mdash; it is 2&radic;(2 ln 2), and it follows
+                from the definition of half maximum and nothing else. For an elliptical
+                star the two axes combine as a geometric mean,
+                FWHM = 2.3548&thinsp;&radic;(&sigma;<sub>x</sub>&sigma;<sub>y</sub>),
+                which is the width of the circular Gaussian covering the same area.
+            </p>
+
+            <h3>The Moffat</h3>
+
+            <p class="science-text">
+                The Gaussian has a problem that only appears far from the centre.
+                Moffat&rsquo;s 1969 profile replaces the exponential with a power law:
+            </p>
+
+            <div class="equation">
+                I(r) = A&thinsp;[ 1 + (r/&gamma;)&sup2; ]<sup>&minus;&alpha;</sup>
+                <span class="where">&gamma; sets the core width &nbsp;&middot;&nbsp; &alpha; controls how fast the wings fall away</span>
+            </div>
+
+            <p class="science-text">
+                The FWHM follows by the same three steps:
+            </p>
+
+            <div class="equation">
+                &frac12; = [ 1 + (r/&gamma;)&sup2; ]<sup>&minus;&alpha;</sup><br>
+                2<sup>1/&alpha;</sup> = 1 + (r/&gamma;)&sup2;
+                &nbsp;&nbsp;&rarr;&nbsp;&nbsp; r = &gamma;&thinsp;&radic;(2<sup>1/&alpha;</sup> &minus; 1)<br>
+                FWHM = <strong>2&gamma;&thinsp;&radic;(2<sup>1/&alpha;</sup> &minus; 1)</strong>
+            </div>
+
+            <p class="science-text">
+                Two functions, two derivations, one definition of width. And the
+                Gaussian is not a rival so much as a limiting case: as
+                &alpha; &rarr; &infin; with &gamma; = &sigma;&radic;(2&alpha;), the
+                Moffat becomes exactly the Gaussian, because
+                (1 + x/&alpha;)<sup>&minus;&alpha;</sup> &rarr; e<sup>&minus;x</sup>.
+                The Gaussian <em>is</em> the Moffat with infinitely steep wings &mdash;
+                which is precisely the assumption that fails.
+            </p>
+
+            <h3>Why they disagree: the wings</h3>
+
+            <p class="science-text">
+                Far from the centre the two behave completely differently. The Gaussian
+                falls as e<sup>&minus;r&sup2;</sup>, faster than any power law and
+                effectively zero within a few &sigma;. The Moffat falls as
+                r<sup>&minus;2&alpha;</sup> &mdash; a power law, which keeps a little
+                flux at large radii indefinitely.
+            </p>
+
+            <p class="science-text">
+                Atmospheric turbulence produces power-law wings, so a real star has more
+                light far from its centre than a Gaussian permits. The fitting routine
+                has to reconcile that somehow, and it does so by <strong>widening the
+                core</strong>: a broader Gaussian captures more of the wing flux at the
+                cost of misrepresenting the middle. The reported FWHM comes out too
+                large, systematically, for every star, on every frame.
+            </p>
+
+            <p class="science-text">
+                A Moffat has no such conflict. Its &alpha; absorbs the wings while
+                &gamma; describes the core, so the two are fitted independently instead
+                of traded against one another. For Kolmogorov turbulence
+                &alpha; &asymp; 4.8; smaller values mean heavier wings.
+            </p>
+
+            <h3>What it measures here</h3>
+
+            <p class="science-text">
+                Both functions fitted to the same 118 bright stars in one SH2-92
+                sub-exposure, on identical pixels:
+            </p>
+
+            <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr><th>Profile</th><th>FWHM (px)</th><th>FWHM (arcsec)</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Gaussian</td><td>6.77</td><td>1.76&Prime;</td></tr>
+                    <tr class="highlight"><td>Moffat</td><td>6.00</td><td>1.56&Prime;</td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <p class="science-text">
+                The Moffat reads <strong>11.5% smaller</strong>, in the direction the
+                theory predicts. This also settles a long-standing niggle: PixInsight has
+                consistently reported better seeing than this pipeline, and the reason is
+                simply that PixInsight fits a Moffat. Neither was wrong. They were
+                measuring the widths of two different functions and both calling the
+                answer FWHM.
+            </p>
+
+            <h3>What changed, and what deliberately did not</h3>
+
+            <p class="science-text">
+                The pipeline now fits <em>both</em> profiles to every star. Width comes
+                from the Moffat; shape &mdash; eccentricity and major-axis angle &mdash;
+                still comes from the Gaussian. That is not indecision. The standard
+                Moffat implementation is circularly symmetric: &gamma; and &alpha; and
+                nothing else, so it cannot express elongation at all. Swapping wholesale
+                would have silently deleted the very numbers the optics-trend metrics
+                use to detect tilt, coma and collimation drift. Two fits, each asked only
+                what it can answer.
+            </p>
+
+            <p class="science-text">
+                Historical measurements were <strong>tagged, not converted</strong>. It
+                is tempting to scale the old Gaussian numbers by 11.5% and keep one
+                continuous series, but that figure is not a constant &mdash; it depends
+                on &alpha;, which varies with the seeing on the night. Scaling would
+                manufacture a precision that was never measured. Records now carry the
+                model that produced them, the trend code refuses to mix the two
+                families, and the single night of existing baseline was recomputed from
+                its original frames rather than adjusted. The frames are the archive;
+                every derived number is only a cache.
+            </p>
+        </article>
 
         <article id="injection" class="note">
             <h2 class="note-title">A search that finds nothing looks exactly like a search that works</h2>
