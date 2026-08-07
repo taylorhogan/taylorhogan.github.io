@@ -179,6 +179,14 @@
             .live-dot { animation: none; }
         }
 
+        .live-sky h3 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--secondary-accent);
+            margin: 0 0 0.6rem;
+        }
+
         .live-sky {
             margin-top: 1.5rem;
         }
@@ -777,7 +785,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-08-07 10:20 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-08-07 10:32 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -3858,7 +3866,14 @@ score    = snr * shape * quality * flatness</code></pre>
             <h2 class="live-title" id="live-headline">The observatory is sleeping</h2>
         </div>
 
+        <div class="live-sky" id="live-latest" hidden>
+            <h3 id="live-latest-title">Last image</h3>
+            <img id="live-latest-img" alt="The most recent sub-exposure from the telescope, annotated with filter, star width, eccentricity and sky brightness">
+            <p class="live-caption" id="live-latest-caption"></p>
+        </div>
+
         <div class="live-sky" id="live-sky" hidden>
+            <h3 id="live-sky-title">Where it is pointing</h3>
             <img id="live-sky-img" alt="All-sky chart: zenith at the centre, horizon at the rim, compass points around the edge, with the region blocked by trees shaded and the current target circled">
             <p class="live-caption" id="live-caption"></p>
         </div>
@@ -4426,6 +4441,8 @@ score    = snr * shape * quality * flatness</code></pre>
                             cap.innerHTML = '<span class="live-stale">Last chart '
                                 + ago(s.generated) + ' \u2014 the feed has gone quiet.</span>';
                             wrap.hidden = false;
+                            var lwx = document.getElementById('live-latest');
+                            if (lwx) { lwx.hidden = true; }
                             return;
                         }
                         head.textContent = s.target
@@ -4445,11 +4462,33 @@ score    = snr * shape * quality * flatness</code></pre>
                         cap.innerHTML = bits.join('. ') + '.';
                         img.src = '/live/skymap.jpg?t=' + Date.now();
                         wrap.hidden = false;
+
+                        // The most recent sub, annotated by the same code the
+                        // `latest` webchat command uses, so the site and the
+                        // observatory cannot report different numbers.
+                        var lw = document.getElementById('live-latest');
+                        if (s.latest_dso) {
+                            document.getElementById('live-latest-title').textContent =
+                                'Last image \u2014 ' + s.latest_dso + ', ' + ago(s.latest_taken);
+                            var d = [];
+                            if (s.latest_filter) { d.push(s.latest_filter + ' filter'); }
+                            if (s.latest_fwhm_arcsec) { d.push('stars ' + s.latest_fwhm_arcsec + '\u2033 wide'); }
+                            if (s.latest_ecc != null) { d.push('eccentricity ' + s.latest_ecc); }
+                            document.getElementById('live-latest-caption').textContent =
+                                d.join(' \u00b7 ') + '.';
+                            document.getElementById('live-latest-img').src =
+                                '/live/latest.jpg?t=' + Date.now();
+                            lw.hidden = false;
+                        } else {
+                            lw.hidden = true;
+                        }
                     })
                     .catch(function () {
                         // No feed at all is the honest default: leave the
                         // sleeping placeholder and show nothing.
                         wrap.hidden = true;
+                        var lwy = document.getElementById('live-latest');
+                        if (lwy) { lwy.hidden = true; }
                     });
             }
 
