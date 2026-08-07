@@ -179,6 +179,33 @@
             .live-dot { animation: none; }
         }
 
+        .live-sky {
+            margin-top: 1.5rem;
+        }
+
+        .live-sky img {
+            width: 100%;
+            max-width: 720px;
+            border-radius: 10px;
+            background: #080a14;
+            display: block;
+        }
+
+        .live-caption {
+            color: #8b9bb4;
+            font-size: 0.85rem;
+            margin-top: 0.6rem;
+            max-width: 720px;
+        }
+
+        .live-caption strong {
+            color: var(--text-color);
+        }
+
+        .live-stale {
+            color: var(--secondary-accent);
+        }
+
         .live-title {
             font-size: 1.5rem;
             margin: 0;
@@ -750,7 +777,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-08-07 06:17 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-08-07 08:52 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -3828,7 +3855,12 @@ score    = snr * shape * quality * flatness</code></pre>
 
         <div class="live-status">
             <span class="live-dot" aria-hidden="true"></span>
-            <h2 class="live-title">The observatory is sleeping</h2>
+            <h2 class="live-title" id="live-headline">The observatory is sleeping</h2>
+        </div>
+
+        <div class="live-sky" id="live-sky" hidden>
+            <img id="live-sky-img" alt="All-sky chart: zenith at the centre, horizon at the rim, compass points around the edge, with the region blocked by trees shaded and the current target circled">
+            <p class="live-caption" id="live-caption"></p>
         </div>
 
     </div>
@@ -4359,6 +4391,70 @@ score    = snr * shape * quality * flatness</code></pre>
                     });
                 }
             }
+        })();
+
+        (function () {
+            // The chart and its status are written straight into /live/ on the
+            // web host by the observatory, never through git: it is a reading
+            // regenerated every few minutes, not authored content, and a commit
+            // per frame would grow the repo without bound.
+            var img = document.getElementById('live-sky-img');
+            var wrap = document.getElementById('live-sky');
+            var cap = document.getElementById('live-caption');
+            var head = document.getElementById('live-headline');
+            if (!img) {
+                return;
+            }
+            var STALE_MIN = 20;   // generator runs every 5; 20 allows a few misses
+
+            function ago(iso) {
+                var mins = (Date.now() - new Date(iso).getTime()) / 60000;
+                if (mins < 1.5) { return 'just now'; }
+                if (mins < 90) { return Math.round(mins) + ' minutes ago'; }
+                return Math.round(mins / 60) + ' hours ago';
+            }
+
+            function refresh() {
+                fetch('/live/status.json', { cache: 'no-store' })
+                    .then(function (r) { return r.ok ? r.json() : null; })
+                    .then(function (s) {
+                        if (!s || !s.generated) { throw new Error('no status'); }
+                        var age = (Date.now() - new Date(s.generated).getTime()) / 60000;
+                        if (age > STALE_MIN) {
+                            // Say nothing rather than present a stale sky as current.
+                            head.textContent = 'The observatory is sleeping';
+                            cap.innerHTML = '<span class="live-stale">Last chart '
+                                + ago(s.generated) + ' \u2014 the feed has gone quiet.</span>';
+                            wrap.hidden = false;
+                            return;
+                        }
+                        head.textContent = s.target
+                            ? 'Tracking ' + s.target
+                            : 'No target selected';
+                        var bits = [];
+                        if (s.target) {
+                            bits.push('<strong>' + s.target + '</strong> is '
+                                + s.state + ', at altitude ' + s.alt_deg
+                                + '\u00b0 and azimuth ' + s.az_deg + '\u00b0');
+                            if (s.good_hours != null) {
+                                bits.push(s.good_hours
+                                    + ' usable hours tonight, counted against the tree line rather than the horizon');
+                            }
+                        }
+                        bits.push('chart generated ' + ago(s.generated));
+                        cap.innerHTML = bits.join('. ') + '.';
+                        img.src = '/live/skymap.jpg?t=' + Date.now();
+                        wrap.hidden = false;
+                    })
+                    .catch(function () {
+                        // No feed at all is the honest default: leave the
+                        // sleeping placeholder and show nothing.
+                        wrap.hidden = true;
+                    });
+            }
+
+            refresh();
+            setInterval(refresh, 5 * 60 * 1000);
         })();
     </script>
 </body>
