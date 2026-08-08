@@ -785,7 +785,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-08-07 10:42 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-08-08 03:20 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -3878,6 +3878,12 @@ score    = snr * shape * quality * flatness</code></pre>
             <p class="live-caption" id="live-latest-caption"></p>
         </div>
 
+        <div class="live-sky" id="live-skycam" hidden>
+            <h3 id="live-skycam-title">The sky right now</h3>
+            <img id="live-skycam-img" alt="Wide-angle photograph of the whole sky from a camera beside the telescope, looking straight up, with trees around the edges of the frame">
+            <p class="live-caption" id="live-skycam-caption"></p>
+        </div>
+
     </div>
 
     <script>
@@ -4489,6 +4495,79 @@ score    = snr * shape * quality * flatness</code></pre>
                         wrap.hidden = true;
                         var lwy = document.getElementById('live-latest');
                         if (lwy) { lwy.hidden = true; }
+                    });
+            }
+
+            refresh();
+            setInterval(refresh, 5 * 60 * 1000);
+        })();
+
+        (function () {
+            // The all-sky camera, published every 15 minutes into its own
+            // sky.json rather than the status.json above. The skymap generator
+            // rewrites that file wholesale on a 5-minute timer, so sharing one
+            // would mean whichever job finished last deleted the other's
+            // fields.
+            var img = document.getElementById('live-skycam-img');
+            var wrap = document.getElementById('live-skycam');
+            var cap = document.getElementById('live-skycam-caption');
+            if (!img) {
+                return;
+            }
+            var STALE_MIN = 45;   // publisher runs every 15; 45 allows two misses
+
+            function ago(iso) {
+                var mins = (Date.now() - new Date(iso).getTime()) / 60000;
+                if (mins < 1.5) { return 'just now'; }
+                if (mins < 90) { return Math.round(mins) + ' minutes ago'; }
+                return Math.round(mins / 60) + ' hours ago';
+            }
+
+            function refresh() {
+                fetch('/live/sky.json', { cache: 'no-store' })
+                    .then(function (r) { return r.ok ? r.json() : null; })
+                    .then(function (s) {
+                        if (!s || !s.generated) { throw new Error('no sky status'); }
+                        if ((Date.now() - new Date(s.generated).getTime()) / 60000 > STALE_MIN) {
+                            throw new Error('stale');
+                        }
+                        if (s.camera !== 'ok') {
+                            wrap.hidden = true;
+                            return;
+                        }
+                        var bits = [];
+                        if (!s.night) {
+                            bits.push('Daylight — the sun is '
+                                + Math.abs(Math.round(s.sun_alt_deg))
+                                + '° '
+                                + (s.sun_alt_deg >= 0 ? 'above' : 'below')
+                                + ' the horizon, so no stars are counted');
+                        } else if (s.trustworthy === false) {
+                            // Rain and cloud fill the frame with fragments that
+                            // pass a point-source cut, so the raw number can be
+                            // high on the worst sky of the night. Say so rather
+                            // than publish it as a reading.
+                            bits.push('<strong>Star count unreliable</strong> in this frame '
+                                + '— ' + s.false_positives + ' of ' + s.stars
+                                + ' detections are false by the negative-image control, '
+                                + 'which is what rain or heavy cloud looks like');
+                        } else {
+                            bits.push('<strong>' + s.stars + ' stars</strong> detected');
+                            if (s.purity != null) {
+                                bits.push('measured against a negative-image control that found '
+                                    + s.false_positives + ' false '
+                                    + (s.false_positives === 1 ? 'detection' : 'detections'));
+                            }
+                        }
+                        bits.push('photographed ' + ago(s.captured || s.generated));
+                        cap.innerHTML = bits.join('. ') + '.';
+                        img.src = '/live/sky.jpg?t=' + Date.now();
+                        wrap.hidden = false;
+                    })
+                    .catch(function () {
+                        // No feed, or one too old to describe the sky outside
+                        // now: show nothing rather than a stale sky as current.
+                        wrap.hidden = true;
                     });
             }
 
