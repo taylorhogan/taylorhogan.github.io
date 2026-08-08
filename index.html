@@ -785,7 +785,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-08-08 04:20 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-08-08 05:05 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -4514,7 +4514,7 @@ score    = snr * shape * quality * flatness</code></pre>
             if (!img) {
                 return;
             }
-            var STALE_MIN = 45;   // publisher runs every 15; 45 allows two misses
+            var STALE_MIN = 20;   // publisher runs every 5; 20 allows a few misses
 
             function ago(iso) {
                 var mins = (Date.now() - new Date(iso).getTime()) / 60000;
