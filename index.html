@@ -785,7 +785,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-08-09 03:35 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-08-09 03:45 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -4500,6 +4500,18 @@ score    = snr * shape * quality * flatness</code></pre>
 
             refresh();
             setInterval(refresh, 5 * 60 * 1000);
+
+            // Phone browsers freeze timers in a backgrounded tab, so returning
+            // to the page can show a reading several minutes old with no
+            // obvious way to ask for a fresh one. These fire at the moment
+            // someone is actually looking. pageshow matters separately from
+            // visibilitychange: iOS Safari restores from the back/forward
+            // cache without ever firing a visibility change, so without it a
+            // page reached with the back button stays frozen indefinitely.
+            document.addEventListener('visibilitychange', function () {
+                if (!document.hidden) { refresh(); }
+            });
+            window.addEventListener('pageshow', function () { refresh(); });
         })();
 
         (function () {
@@ -4588,6 +4600,18 @@ score    = snr * shape * quality * flatness</code></pre>
 
             refresh();
             setInterval(refresh, 5 * 60 * 1000);
+
+            // Phone browsers freeze timers in a backgrounded tab, so returning
+            // to the page can show a reading several minutes old with no
+            // obvious way to ask for a fresh one. These fire at the moment
+            // someone is actually looking. pageshow matters separately from
+            // visibilitychange: iOS Safari restores from the back/forward
+            // cache without ever firing a visibility change, so without it a
+            // page reached with the back button stays frozen indefinitely.
+            document.addEventListener('visibilitychange', function () {
+                if (!document.hidden) { refresh(); }
+            });
+            window.addEventListener('pageshow', function () { refresh(); });
         })();
     </script>
 </body>
