@@ -785,7 +785,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-08-08 05:05 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-08-09 03:25 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -4554,14 +4554,20 @@ score    = snr * shape * quality * flatness</code></pre>
                         } else {
                             bits.push('<strong>' + s.stars + ' stars</strong> detected');
                             if (s.limiting_mag != null) {
-                                // The better sky reading of the two. A star
-                                // count also falls when a branch grows into
-                                // the field; how faint the sky lets us see is
-                                // a property of the sky.
-                                bits.push('faintest visible around <strong>magnitude '
-                                    + s.limiting_mag.toFixed(1) + '</strong>, from '
-                                    + s.stars_matched + ' of ' + s.stars_expected
-                                    + ' catalogue stars that should have been in view');
+                                // NOT the faintest star seen. It is the 50%
+                                // completeness point: the brightness at which
+                                // half the catalogue stars in view get picked
+                                // up. Most detections are fainter than the
+                                // catalogue itself goes (V=6), which is why the
+                                // total count runs well above the matched
+                                // count -- saying "faintest visible" here was
+                                // simply wrong.
+                                bits.push('clarity reaches <strong>magnitude '
+                                    + s.limiting_mag.toFixed(1)
+                                    + '</strong> — the brightness at which half of the '
+                                    + s.stars_expected + ' catalogue stars in view are detected');
+                                bits.push('the full count runs higher because most stars seen '
+                                    + 'are fainter than the catalogue records');
                             }
                             if (s.purity != null) {
                                 bits.push('measured against a negative-image control that found '
