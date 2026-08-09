@@ -785,7 +785,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-08-09 03:25 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-08-09 03:35 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -4564,10 +4564,9 @@ score    = snr * shape * quality * flatness</code></pre>
                                 // simply wrong.
                                 bits.push('clarity reaches <strong>magnitude '
                                     + s.limiting_mag.toFixed(1)
-                                    + '</strong> — the brightness at which half of the '
-                                    + s.stars_expected + ' catalogue stars in view are detected');
-                                bits.push('the full count runs higher because most stars seen '
-                                    + 'are fainter than the catalogue records');
+                                    + '</strong> — the brightness where the detection rate '
+                                    + 'falls through half, catching nearly every brighter '
+                                    + 'star and few fainter ones');
                             }
                             if (s.purity != null) {
                                 bits.push('measured against a negative-image control that found '
