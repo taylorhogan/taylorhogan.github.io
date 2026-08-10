@@ -821,7 +821,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-08-10 15:05 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-08-10 16:45 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -1361,13 +1361,95 @@
             <h3>The observation</h3>
 
             <p class="science-text">
-                The data are a single night, 2026-08-08, on the Soap Bubble Nebula
-                (PN&nbsp;G75.5+1.7) at RA 20<sup>h</sup>15<sup>m</sup>22<sup>s</sup>,
-                Dec +38&deg;02&prime;58&Prime;: twenty 300-second H&alpha; exposures from
-                21:34 to 23:13 local, then twenty-nine 300-second O&nbsp;III exposures
-                from 23:28 to 02:07. CDK17 at f/6.8, QHY600M, 0.2639&Prime;/px, measured
-                FWHM 6.38 px.
+                The data are a <strong>single night</strong>, 2026-08-08, on the Soap
+                Bubble Nebula (PN&nbsp;G75.5+1.7, a planetary nebula in Cygnus; referred
+                to as &ldquo;bubble&rdquo; in this observatory's target list, and not to
+                be confused with NGC&nbsp;7635, the Bubble Nebula, which lies 43&deg;
+                away in Cassiopeia). The field centre is RA
+                20<sup>h</sup>15<sup>m</sup>22<sup>s</sup>, Dec
+                +38&deg;02&prime;58&Prime;. Twenty 300-second H&alpha; exposures from
+                21:34 to 23:13 local, then thirty 300-second O&nbsp;III exposures from
+                23:28 to 02:07, of which twenty-nine were stacked &mdash; 4 hours 5
+                minutes of integration in total. CDK17 at f/6.8, QHY600M,
+                0.2639&Prime;/px.
             </p>
+
+            <p class="science-text">
+                One night is the single most important caveat on everything below.
+                Four hours is a short exposure for a target of this surface brightness,
+                and the feature under discussion sits close to the noise as a direct
+                consequence. Several of the errors recorded at the end of this note are
+                errors of reading structure into data that did not have the
+                signal-to-noise to support it. A second night would change the
+                arithmetic more than any amount of reanalysis of this one.
+            </p>
+
+            <p class="science-text">
+                The rendering is <strong>HOO</strong>, a two-filter narrowband palette.
+                Rather than record red, green and blue, the telescope images through two
+                narrow filters isolating single emission lines: hydrogen-alpha at
+                656.3&nbsp;nm, emitted by ionised hydrogen, and doubly-ionised oxygen at
+                500.7&nbsp;nm. The H&alpha; frame is mapped to the red channel and the
+                O&nbsp;III frame to <em>both</em> green and blue, which is where the name
+                comes from &mdash; H, O, O. Oxygen therefore renders as cyan rather than
+                green, and the colours in the image are a map of which gas is emitting
+                where, not what the eye would see. The practical reason for narrowband
+                is that a 3&nbsp;nm filter rejects essentially all moonlight and light
+                pollution while passing the line, so a nebula can be recorded on nights
+                that would be useless for broadband work.
+            </p>
+
+            <p class="science-text">
+                All stacking, calibration and colour processing here was done locally in
+                Python &mdash; registration, sigma-clipped combination, background
+                modelling and the stretch &mdash; rather than in commercial astronomy
+                software. That matters for this note only in that every intermediate
+                product was available for inspection, which is what made the substitution
+                tests in the next section possible.
+            </p>
+
+            <p class="science-text">
+                Conditions across the night, measured per frame by the pipeline's own
+                Moffat fitter:
+            </p>
+
+            <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr><th></th><th>Frames</th><th>Median FWHM</th><th>Median eccentricity</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>H&alpha;</td><td>20</td><td>1.72&Prime;</td><td>0.37</td></tr>
+                    <tr><td>O&nbsp;III</td><td>30</td><td>1.89&Prime;</td><td>0.39</td></tr>
+                    <tr class="highlight"><td>All</td><td>50</td><td>1.78&Prime;</td><td>0.39</td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <p class="science-text">
+                These figures agree with PixInsight's measurements of the same frames to
+                the second decimal place. That agreement is worth stating because it is
+                not automatic: the number depends on which profile is fitted, and a
+                Gaussian fit of the same stars returns a systematically larger width
+                &mdash; the two disagree by 11.5% on this telescope. The pipeline fits a
+                Moffat profile for width while continuing to take eccentricity and
+                position angle from a Gaussian, and it is that combination which
+                reproduces the independent result.
+            </p>
+
+            <div class="figure-pair">
+                <figure>
+                    <a href="images/bubble_session_stats.png" target="_blank" rel="noopener noreferrer">
+                        <img src="images/bubble_session_stats.png" alt="Four-panel plot of FWHM, eccentricity, sky brightness and star count for all 50 frames of the session">
+                    </a>
+                    <figcaption>All fifty frames of the night. Seeing drifts from
+                        1.5&Prime; to 2.25&Prime; and the detected star count falls with
+                        it; the step in sky brightness at frame 21 is the filter change
+                        from H&alpha; to O&nbsp;III. The final frame's sky value reads
+                        zero because its background fell below the calibrated pedestal
+                        &mdash; a measurement limit rather than a dark sky.</figcaption>
+                </figure>
+            </div>
 
             <p class="science-text">
                 Both stacks contain a thin linear feature. In O&nbsp;III it spans
@@ -2065,6 +2147,95 @@
                 frame registered as moving. Gating on sun altitude below &minus;10&deg;
                 &mdash; the same definition of night the scheduler already uses &mdash;
                 removes it.
+            </p>
+
+            <h3>Postscript: the camera moved, and the calibration went with it</h3>
+
+            <p class="science-text">
+                Reading the memory card meant taking the camera down. It went back
+                pointing somewhere slightly different, and that single physical act
+                invalidated everything geometric built on top of it: the compass headings
+                drawn on the published frame, the outline of the region the star
+                statistics are measured inside, and limiting magnitude, which cannot be
+                computed without knowing which catalogue stars should have been in view.
+                The pipeline notices &mdash; it verifies the stored solution against every
+                capture and reports when it stops fitting &mdash; but noticing is not
+                fixing.
+            </p>
+
+            <p class="science-text">
+                The recovery had been a manual procedure, which is the wrong shape for
+                something that will happen again. It is now a single web-chat command
+                that captures a frame, blind-solves it, and saves the result only if it
+                verifies at least as well as the solution it would replace, keeping the
+                old file alongside. It refuses to run on anything it cannot solve
+                honestly: daylight, too few stars, or a frame the negative-image control
+                calls untrustworthy, which is what cloud and rain look like and would
+                have it matching noise. It reports how far the axis moved and posts the
+                re-annotated frame so the new compass headings can be checked by eye.
+            </p>
+
+            <p class="science-text">
+                The general lesson is worth separating from the incident. A solved
+                instrument carries a calibration that a physical act can invalidate
+                silently, and the cost of that calibration being wrong is not an error
+                message but a set of plausible-looking numbers that are no longer about
+                the sky. The recovery path deserves to be one command, available at the
+                moment conditions allow it, rather than a procedure to be remembered.
+            </p>
+
+            <h3>What it is good for next: an artificial horizon that maintains itself</h3>
+
+            <p class="science-text">
+                This observatory does not plan against the geometric horizon. It plans
+                against the tree line, which reaches 83&deg; altitude in the worst
+                direction and has a median of 49&deg; &mdash; the site is heavily
+                obstructed, and the difference between the two horizons is most of the
+                observable sky. That tree line currently lives in a hand-measured file of
+                thirty-three azimuth and altitude pairs.
+            </p>
+
+            <p class="science-text">
+                A hand-measured horizon has two problems. It is coarse, at roughly one
+                sample every eleven degrees of azimuth. And it is a snapshot: trees grow,
+                limbs come down, trees are removed, and the file does not change unless
+                somebody remembers to change it. An observatory that plans four hours of
+                imaging against a horizon measured years ago will quietly lose frames to
+                branches that were not there at the time.
+            </p>
+
+            <p class="science-text">
+                The all-sky camera already produces the raw material for a better one. It
+                segments foliage in every capture &mdash; on level rather than texture,
+                because at night exposure the trees are too dim to be rough but sit
+                10&ndash;22 ADU above a ~2 ADU sky &mdash; and that mask covers
+                15&ndash;33% of the frame depending on conditions. With the plate solve,
+                every masked pixel has an altitude and azimuth. The mask <em>is</em> a
+                horizon profile, already measured, several hundred times a night, in sky
+                coordinates.
+            </p>
+
+            <p class="science-text">
+                Accumulating those masks over many clear nights and taking a high
+                percentile per azimuth bin would give a dense profile that is robust to a
+                passing cloud or a bird, updates itself as the vegetation changes, and
+                needs no ladder. The camera sits beside the telescope rather than on it,
+                so the horizon it sees is very nearly the horizon the telescope sees.
+            </p>
+
+            <p class="science-text">
+                Two limits should be established before such a profile replaces the
+                hand-made one. The first is parallax: the offset between camera and
+                telescope subtends an angle of roughly arctan(<em>d</em>/<em>D</em>) at a
+                tree line distance <em>D</em>, which for a two-metre offset and trees
+                thirty metres away is about 4&deg;. That is small, but it is the same
+                order as the improvement being sought, so it wants measuring rather than
+                assuming. The second is coverage: the camera's optical axis sits 4&deg;
+                off zenith and its field reaches about 52&deg; from that axis, so it
+                cannot see below roughly 34&deg; altitude. It can refine the parts of the
+                tree line that reach high &mdash; which are the parts that cost the most
+                observing time &mdash; but the lowest sections of the existing profile,
+                down at 25&deg;, are outside its view and would have to stay as measured.
             </p>
 
             <p class="science-text">
