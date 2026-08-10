@@ -564,12 +564,15 @@
                 the 95th percentile of an ordinary population, not an outlier. In a field
                 this dense with filamentary H&alpha; and O&nbsp;III emission the most
                 economical reading is that it is faint nebulosity, which fits every
-                established fact without strain. This note is therefore mostly a record
-                of a methodological failure: excluding exotic explanations one at a time
-                for a feature whose ordinariness a single measurement would have shown at
-                the outset.
+                established fact without strain. The one measurement that appeared to show the feature
+                varying with time turned out to be tracking the sky background, which fell
+                48% through each filter block and reset at the filter change
+                (r = &minus;0.705). This note is therefore mostly a record of a
+                methodological failure: excluding exotic explanations one at a time for a
+                feature whose ordinariness a single measurement would have shown at the
+                outset.
             </p>
-        <p class="last-updated" id="last-updated">Updated 2026-08-10 19:40 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-08-10 20:30 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -1550,20 +1553,18 @@
                 exotic. They are what nebulosity does.
             </p>
 
-            <h3>The evidence that does not fit</h3>
+            <h3>The apparent time variation, and what it really was</h3>
 
             <p class="science-text">
-                Everything above points to a feature present in every exposure. Two
-                measurements contradict that, and they are the reason this note has no
-                conclusion.
-            </p>
-
-            <p class="science-text">
-                First, the feature is visible in a <em>single</em> 300-second exposure.
-                Frame <code>2026-08-08_23-54-05_O-III</code> shows it plainly at pixel
-                (5637,&nbsp;5257) &mdash; that exposure is the stack's registration
-                reference, so the mapping from stack to frame is a pure crop offset of
-                +127,&nbsp;+127, verified by cross-correlation at 87.8&sigma;.
+                One measurement resisted every explanation above, and it kept this note
+                open longer than anything else. Aperture photometry along the feature's
+                axis, exposure by exposure, is not constant: the first eighteen O&nbsp;III
+                frames read consistent with zero or negative, the last twelve read
+                positive at 2.4&ndash;7.7&sigma;. Taken at face value the feature appeared
+                partway through the night, which nothing static explains &mdash; and which
+                sits badly against survival of a thirty-frame median, and against the fact
+                that the one exposure where the feature is plainly visible by eye falls in
+                the null group and measures &minus;0.8&sigma;.
             </p>
 
             <div class="figure-pair">
@@ -1572,45 +1573,65 @@
                         <img src="images/strand_stack_vs_sub.png" alt="Side by side: the 29-frame O-III stack and a single 300-second exposure, both showing the strand inside a red circle">
                     </a>
                     <figcaption>Left: the 29-frame stack. Right: one 300-second exposure,
-                        identically calibrated. The feature is present in both, at the
-                        same position relative to the stars.</figcaption>
+                        identically calibrated &mdash; the feature is present in both, at
+                        the same position relative to the stars. This exposure is the one
+                        the photometry reads as negative.</figcaption>
                 </figure>
             </div>
 
             <p class="science-text">
-                Second, and against that, aperture photometry along the feature's axis in
-                each exposure separately gives a series that is not constant:
+                The obvious hypothesis, raised by the observatory's owner, was pointing
+                geometry: the target transits 3.7&deg; from the zenith, reaching 86.30&deg;
+                altitude, and the flux turns positive at 77.07&deg; as the tube tips over
+                past the meridian. Flexure or a light leak that opens at a particular tube
+                angle would look exactly like that.
+            </p>
+
+            <p class="science-text">
+                The H&alpha; sequence refutes it, and is able to because it ran
+                <em>before</em> transit with the target rising, which separates altitude
+                from time:
             </p>
 
             <div class="table-scroll">
             <table>
                 <thead>
-                    <tr><th>Exposures (local)</th><th>Count</th><th>Flux along the axis</th></tr>
+                    <tr><th>Sequence</th><th>Altitude below 78&deg;</th><th>Altitude above 78&deg;</th></tr>
                 </thead>
                 <tbody>
-                    <tr><td>23:28 &ndash; 00:56</td><td>18</td><td>consistent with zero or negative</td></tr>
-                    <tr class="highlight"><td>01:01 &ndash; 02:07</td><td>12</td><td>positive, 2.4&ndash;7.7&sigma;</td></tr>
+                    <tr><td>H&alpha; (rising, pre-transit)</td><td>&minus;0.48</td><td>+0.61</td></tr>
+                    <tr><td>O&nbsp;III (setting, post-transit)</td><td>positive</td><td>null / negative</td></tr>
                 </tbody>
             </table>
             </div>
 
             <p class="science-text">
-                Twelve consecutive positive measurements after eighteen that show nothing
-                is not a plausible noise excursion. Taken at face value the feature
-                appeared partway through the sequence. That cannot be reconciled with
-                survival of a thirty-frame median, which requires presence in a majority.
-                Worse, the single exposure in which the feature is plainly visible by eye
-                falls in the <em>first</em> group, and measures &minus;0.13 at
-                &minus;0.8&sigma; &mdash; the eye and the photometry disagree about the
-                same frame.
+                The two filters have <em>opposite</em> altitude dependence. The same
+                feature cannot brighten with altitude in one and dim with it in the other,
+                so neither altitude nor tube orientation is responsible.
             </p>
 
             <p class="science-text">
-                The photometry is the weaker of the two. The systematically negative
-                values in the first group indicate that the background annuli are
-                contaminated, so the zero point is untrustworthy even though the step
-                between the groups is clear. But that is an explanation for the sign, not
-                for the step.
+                What the two sequences do share is a flux that climbs monotonically with
+                time <em>within</em> each block and resets at the filter change. The frame
+                statistics name the cause: the sky was darkening through each block and
+                jumping back up at the changeover &mdash; 0.00792 to 0.00415&nbsp;ADU/s
+                across H&alpha;, a 48% decline, then reset for O&nbsp;III. A
+                strip-minus-annulus measurement is sensitive to that, and the correlation
+                is direct:
+            </p>
+
+            <div class="equation">
+                r = &minus;0.705
+                <span class="where">measured strand flux against sky brightness, H&alpha;, n = 20</span>
+            </div>
+
+            <p class="science-text">
+                The step at exposure nineteen is the sky background declining, not the
+                feature appearing. The single piece of evidence that anything unusual was
+                happening was an artefact of the measurement, and the eye and the
+                photometry were never really in conflict: the photometry was measuring the
+                sky.
             </p>
 
             <h3>Errors made in reaching this point</h3>
@@ -1633,6 +1654,7 @@
                     <tr><td>&ldquo;It is uncorrected hot pixels&rdquo;</td><td>A defect map removed many genuine artefacts and left this feature untouched.</td></tr>
                     <tr><td>&ldquo;It is a minor planet at ~20&Prime;/hour&rdquo;</td><td>Derived from apparent motion of a 3&sigma; peak between co-added groups &mdash; peak-hunting in noise.</td></tr>
                     <tr><td>&ldquo;The two filters show it in different places&rdquo;</td><td>Asserted from eyeballing two separately-stretched crops. Measured, the two ridges lie 14 px apart &mdash; less than the strand's own width. The claim had already been used as supporting detail when framing later hypotheses.</td></tr>
+                    <tr><td>&ldquo;It appeared partway through the sequence&rdquo;</td><td>A strip-minus-annulus flux series drifting with the sky background, which fell 48% through each filter block and reset at the changeover (r = &minus;0.705). Presented as the one fact no static explanation could accommodate.</td></tr>
                     <tr class="highlight"><td>Treating the feature as singular</td><td>Never measured how many comparable features the frame held. One matched-filter pass shows 387 above 4&sigma; with the strand 20th. Every exclusion that follows was work spent on a false premise.</td></tr>
                     <tr><td>&ldquo;It is settled real structure&rdquo;</td><td>Stated before the photometric series was examined, which contradicts it.</td></tr>
                 </tbody>
@@ -1671,35 +1693,39 @@
             <h3>Status</h3>
 
             <p class="science-text">
-                The feature is fixed with respect to the stars, is not attributable to the
-                optics, the detector, the calibration, a diffraction spike, dust or a chip,
-                and is not a solar system object. All of those exclusions stand. What does
-                not stand is the conclusion that was drawn from them, because the frame
-                contains several hundred comparable linear features and this one ranks
-                twentieth. The most economical explanation is faint nebulosity in a field
-                full of it.
+                Nothing about this feature now requires an unusual explanation. Every
+                exclusion holds &mdash; not the optics, the detector, dust, a chip, the
+                flats, the bias, the dark, a satellite, a meteor, an asteroid, a comet, a
+                diffraction spike, nor altitude or tube flexure. What has changed is that
+                the two facts which made those exclusions seem to point at something have
+                both dissolved.
             </p>
 
             <p class="science-text">
-                Two loose ends remain, and both are the same measurement. The per-frame
-                photometric series along the axis reads consistent with zero for the first
-                eighteen exposures and positive at 2.4&ndash;7.7&sigma; for the last
-                twelve, which nothing static explains &mdash; but its background annuli
-                are demonstrably contaminated, its zero point is untrustworthy, and the
-                single exposure in which the feature is plainly visible by eye falls in
-                the null group and measures &minus;0.8&sigma;. It is the weakest evidence
-                in this note and it is the only evidence for anything unusual. The
-                feature is also absent from an independent reduction of the same data,
-                which is most simply explained by that reduction's gentler stretch.
+                The feature is not statistically distinctive: a matched-filter sweep of
+                its own frame returns 387 comparable linear features above 4&sigma; and
+                ranks this one twentieth. And it did not vary with time: the apparent step
+                partway through the sequence was a strip-minus-annulus measurement
+                tracking a sky background that fell 48% through each filter block and
+                reset at the changeover.
             </p>
 
             <p class="science-text">
-                One observation settles both: repeat the field on a second night. Real
-                nebulosity reappears at the same coordinates at the same brightness;
-                correlated noise does not. That was the recommended next step when this
-                looked like a mystery, and it remains the recommended next step now that
-                it looks like a filament. Four hours on one night was never enough to tell
-                the difference, which is the more general lesson here.
+                What remains is an ordinary faint filament in a field dense with them,
+                recorded on a single night of four hours that was never deep enough to say
+                more. The recommended observation has not changed and is now the only
+                thing that would add information: repeat the field on a second night.
+                Real nebulosity reappears at the same coordinates at the same brightness;
+                correlated noise does not.
+            </p>
+
+            <p class="science-text">
+                The reservation recorded at the head of this note stands, and the
+                investigation supports rather than weakens it. Every anomaly here was
+                eventually located in the analysis &mdash; a threshold chosen without a
+                null distribution, a photometric series contaminated by the sky, a
+                position claimed from eyeballing two crops &mdash; and never in the sky or
+                in the instrument. That is the finding most worth carrying forward.
             </p>
         </article>
 
