@@ -821,7 +821,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-08-10 17:10 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-08-10 17:45 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -1517,6 +1517,93 @@
                 one whether it is real or not. The test had no discriminating power in
                 either direction. This was pointed out by the observatory's owner and is
                 recorded here as a correction.
+            </p>
+
+            <h3>Nor is it a diffraction spike</h3>
+
+            <p class="science-text">
+                This hypothesis deserves separate treatment, because it is the one
+                instrumental explanation that none of the tests above can exclude. The
+                mount is equatorial, so the field does not rotate: a diffraction spike
+                keeps a fixed position angle and a fixed offset from its parent star in
+                every exposure, and therefore in the registered stack. It would survive a
+                median of thirty frames, and its signal-to-noise would grow with frame
+                count, exactly as the observed feature does. It also offers a tidy
+                account of the one detail otherwise unexplained &mdash; that the H&alpha;
+                and O&nbsp;III features share a position angle to within 2&deg; while
+                lying in different places, which is what spikes from two different stars
+                would look like.
+            </p>
+
+            <p class="science-text">
+                It looked promising. Searching the bright stars around the feature found
+                one at (5750,&nbsp;5625) whose separation from the strand's infinite axis
+                is only 34 px over a 528 px baseline &mdash; a misalignment of 3.7&deg;,
+                with the strand lying 416 to 640 px radially outward from it.
+            </p>
+
+            <p class="science-text">
+                Three tests reject it. A spike is brightest at the star and fades
+                outward, so it cannot begin four hundred pixels away; sampling the profile
+                along the strand's own bearing from that star shows the opposite of what
+                is required:
+            </p>
+
+            <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr><th>Distance from the star</th><th>Mean excess</th><th>Expected for a spike</th></tr>
+                </thead>
+                <tbody>
+                    <tr class="highlight"><td>40 &ndash; 380 px</td><td>&minus;0.0504 ADU</td><td>strongest here</td></tr>
+                    <tr><td>380 &ndash; 660 px (the strand)</td><td>+0.2364 ADU</td><td>weaker than the inner region</td></tr>
+                    <tr><td>beyond 660 px</td><td>+0.0225 ADU</td><td>weaker still</td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <p class="science-text">
+                The feature is detached from the star, with nothing in between. Sampling
+                at 90&deg; intervals for the four-fold pattern a vane spider would produce
+                gives +0.236, +0.002 and +0.008 ADU in the three usable quadrants; the
+                fourth ray leaves the frame and returned an edge artefact, so that
+                quadrant is void rather than negative.
+            </p>
+
+            <p class="science-text">
+                The decisive test is more general: does this telescope produce spikes at
+                all? Stacking the 63 brightest stars in the field, each normalised to its
+                own peak, and measuring mean flux by position angle in the 25&ndash;100 px
+                annulus where a spike would be most prominent:
+            </p>
+
+            <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr><th>Position angle</th><th>Mean normalised flux</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>15&deg; &ndash; 30&deg;</td><td>+0.003155 &nbsp;(highest)</td></tr>
+                    <tr><td>median across all twelve bins</td><td>+0.001031</td></tr>
+                    <tr class="highlight"><td>60&deg; &ndash; 75&deg; &nbsp;(the strand's angle)</td><td>+0.000051 &nbsp;(lowest)</td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <p class="science-text">
+                There is no coherent spike system, and the strand's own position angle is
+                the <em>weakest</em> of the twelve bins &mdash; the opposite of the
+                prediction. What mild variation exists peaks near 20&deg; and 140&deg;,
+                which are 120&deg; apart rather than the 90&deg; a four-vane spider would
+                impose.
+            </p>
+
+            <p class="science-text">
+                The apparent alignment was therefore coincidence. With eighteen bright
+                stars in the search box, one falling within 4&deg; of any chosen line is
+                unremarkable, and it should have been treated as a hypothesis to test
+                rather than as evidence &mdash; the same error recorded at the end of this
+                note, committed once more.
             </p>
 
             <h3>It is not a satellite, meteor, asteroid or comet</h3>
