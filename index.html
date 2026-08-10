@@ -538,290 +538,30 @@
             transition: transform .18s ease;
         }
 
-        .note.expanded > .note-title {
-            cursor: pointer;
-        }
-
-        .note.expanded > .note-title::after {
-            transform: rotate(90deg);
-        }
-
-        .note-excerpt {
-            color: #8b9bb4;
-            font-size: 0.95rem;
-            margin: 0;
-        }
-
-        /* The excerpt is the opening of the first paragraph, so leaving it up
-           while expanded prints that sentence twice. */
-        .note.expanded > .note-excerpt {
-            display: none;
-        }
-
-        .note-body {
-            display: none;
-        }
-
-        .note.expanded > .note-body {
-            display: block;
-            animation: note-open .25s ease;
-        }
-
-        @keyframes note-open {
-            from { opacity: 0; transform: translateY(-6px); }
-            to   { opacity: 1; transform: none; }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            .note.collapsed,
-            .note-title::after { transition: none; }
-            .note.expanded > .note-body { animation: none; }
-            .note.collapsed:hover { transform: none; }
-        }
-
-        .note-date {
-            color: var(--secondary-accent);
-            font-weight: bold;
-        }
-
-        .note code {
-            font-family: monospace;
-            background: rgba(62, 100, 255, 0.12);
-            border-radius: 4px;
-            padding: 0.1em 0.4em;
-            font-size: 0.95em;
-        }
-
-        .note pre {
-            background: #0d1117;
-            border: 1px solid #30363d;
-            border-radius: 8px;
-            padding: 1rem 1.25rem;
-            overflow-x: auto;
-            font-size: 0.85rem;
-            line-height: 1.5;
-        }
-
-        .note pre code {
-            background: none;
-            padding: 0;
-            font-size: inherit;
-        }
-
-        .note pre .cmt {
-            color: #8b949e;
-        }
-
-        /* Data tables. Wide ones scroll inside their own box. */
-        .table-scroll {
-            overflow-x: auto;
-            margin: 1.5rem 0;
-        }
-
-        .note table {
-            border-collapse: collapse;
-            width: 100%;
-            font-family: monospace;
-            font-size: 0.85rem;
-        }
-
-        .note th, .note td {
-            padding: 0.45rem 0.7rem;
-            text-align: right;
-            border-bottom: 1px solid #30363d;
-            white-space: nowrap;
-        }
-
-        .note th:first-child, .note td:first-child {
-            text-align: left;
-        }
-
-        .note thead th {
-            color: var(--secondary-accent);
-            border-bottom: 2px solid #30363d;
-        }
-
-        .note tr.highlight td {
-            background: rgba(62, 100, 255, 0.15);
-            font-weight: bold;
-            color: #fff;
-        }
-
-        .note tr.muted td {
-            color: #8b949e;
-        }
-
-        /* A claim that needs to stay visible: what this result is not. */
-        .caveat {
-            background: rgba(245, 0, 87, 0.08);
-            border-left: 4px solid var(--secondary-accent);
-            border-radius: 0 8px 8px 0;
-            padding: 1rem 1.25rem;
-            margin: 1.5rem 0;
-        }
-
-        .note a {
-            color: var(--accent-color);
-        }
-
-        /* Two figures side by side when there is room, stacked when there is not. */
-        .figure-pair {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-        }
-
-        .figure-pair figure {
-            flex: 1 1 260px;
-            min-width: 0;
-        }
-
-        .note figcaption {
-            color: #8b9bb4;
-            font-size: 0.85rem;
-            margin-top: 0.5rem;
-            text-align: center;
-        }
-
-        .empty-state {
-            background-color: var(--card-bg);
-            border: 1px dashed rgba(62, 100, 255, 0.3);
-            border-radius: 12px;
-            padding: 3rem 2rem;
-            text-align: center;
-            color: #8b9bb4;
-        }
-
-        /* --- Image lightbox ---
-           Figures used to open the raw image file in a new tab. On a phone that
-           is a dead end: the bare JPEG has no site nav, and the browser chrome
-           that would carry a Back button is hidden while scrolling or absent
-           entirely in an in-app browser. So enlarging a plot meant losing the
-           page. The overlay keeps the reader on the document, and offers three
-           independent ways out -- the close button, the backdrop, and Back. */
-        .lightbox {
-            position: fixed;
-            /* Longhand as well as inset: iOS Safari below 14.1 ignores inset,
-               and a full-screen overlay that is not full screen is worse than
-               none at all. */
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            inset: 0;
-            z-index: 1000;
-            display: none;
-            background: rgba(5, 6, 12, 0.97);
-        }
-
-        .lightbox[data-open="true"] {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .lightbox-bar {
-            flex: 0 0 auto;
-            display: flex;
-            justify-content: flex-end;
-            padding-top: env(safe-area-inset-top, 0px);
-        }
-
-        .lightbox-close {
-            -webkit-appearance: none;
-            appearance: none;
-            background: rgba(21, 25, 43, 0.92);
-            color: var(--text-color);
-            border: 1px solid #2c3350;
-            border-radius: 8px;
-            font-size: 1.5rem;
-            line-height: 1;
-            /* 44px: the smallest target that stays reliably tappable by thumb. */
-            min-width: 44px;
-            min-height: 44px;
-            margin: 0.75rem;
-            cursor: pointer;
-        }
-
-        .lightbox-stage {
-            flex: 1 1 auto;
-            overflow: auto;
-            -webkit-overflow-scrolling: touch;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0 0.5rem;
-        }
-
-        .lightbox-stage img {
-            max-width: 100%;
-            max-height: 100%;
-            border-radius: 6px;
-            background-color: #000;
-            cursor: zoom-in;
-        }
-
-        /* Fit-to-screen is unreadable for the dense diagnostic plots, so tapping
-           the image swaps to a width worth panning around. */
-        .lightbox[data-zoom="true"] .lightbox-stage {
-            align-items: flex-start;
-            justify-content: flex-start;
-        }
-
-        .lightbox[data-zoom="true"] .lightbox-stage img {
-            max-width: none;
-            max-height: none;
-            width: 200%;
-            cursor: zoom-out;
-        }
-
-        .lightbox-caption {
-            flex: 0 0 auto;
-            max-height: 30%;
-            overflow-y: auto;
-            margin: 0;
-            padding: 0.75rem 1rem;
-            padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
-            color: #8b9bb4;
-            font-size: 0.85rem;
-            text-align: center;
-        }
-
-        body.lightbox-open {
-            overflow: hidden;
-        }
-
-        .note figure img {
-            cursor: zoom-in;
-        }
-
-        @media (max-width: 768px) {
-            .dso-image-container {
-                height: 300px;
-            }
-            /* Needs restating inside the query: the collapsed selector outranks
-               the 300px rule above on specificity, so it would otherwise keep
-               the desktop height on a phone. */
-            .dso-section.collapsed .dso-image-container {
-                height: 200px;
-            }
-            .dso-title {
-                font-size: 1.5rem;
-            }
-            .mode-switch {
-                flex-direction: column;
-                gap: 0.75rem;
-            }
-            .mode-btn .mode-btn-label {
-                font-size: 1.2rem;
-            }
-        }
-    </style>
-</head>
-<body data-mode="gallery">
-    <header>
-        <h1>Iris Lab Notes</h1>
-        <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-08-10 18:30 EDT</p>
+        .note.expanded >
+                A faint linear feature roughly 55&Prime; long and 5&Prime; wide appears in
+                deep stacks of the Soap Bubble field, at the same sky position and
+                position angle in both the H&alpha; and the O&nbsp;III channels. A long
+                sequence of tests established what it is not: it is fixed with respect to
+                the stars rather than the sensor, which excludes the optics, the detector
+                and dust or a chip in the optical path; it survives a median of thirty
+                frames, which excludes a satellite or meteor; its signal-to-noise
+                <em>rises</em> with the number of frames combined, which excludes an
+                asteroid or comet, because stacking dilutes anything that moves; and a
+                stack of 63 bright stars shows the telescope produces no diffraction
+                spikes at all. Each exclusion held. The conclusion drawn from them did
+                not, because one question had never been asked: <strong>how many
+                comparable features does the frame contain?</strong> A matched-filter
+                search finds 387 above 4&sigma;, and the strand ranks twentieth &mdash;
+                the 95th percentile of an ordinary population, not an outlier. In a field
+                this dense with filamentary H&alpha; and O&nbsp;III emission the most
+                economical reading is that it is faint nebulosity, which fits every
+                established fact without strain. This note is therefore mostly a record
+                of a methodological failure: excluding exotic explanations one at a time
+                for a feature whose ordinariness a single measurement would have shown at
+                the outset.
+            </p>
+        <p class="last-updated" id="last-updated">Updated 2026-08-10 19:15 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -1334,8 +1074,8 @@
     <div class="container" id="notes-panel" role="tabpanel" aria-labelledby="tab-notes">
 
         <article id="strands" class="note">
-            <h2 class="note-title">Strands in the stack: an unsolved observation</h2>
-            <div class="note-meta"><span class="note-date">2026-08-10</span> &middot; SOAP BUBBLE FIELD &middot; 20 Ha + 29 O-III &times; 300 s &middot; UNRESOLVED</div>
+            <h2 class="note-title">Strands in the stack: a feature that was never unusual</h2>
+            <div class="note-meta"><span class="note-date">2026-08-10</span> &middot; SOAP BUBBLE FIELD &middot; 20 Ha + 29 O-III &times; 300 s &middot; 20th OF 387 SUCH FEATURES</div>
 
             <h3>Abstract</h3>
 
@@ -1720,6 +1460,63 @@
                 exposures.
             </p>
 
+            <h3>Nor a chip, nor a ghost</h3>
+
+            <p class="science-text">
+                A chip or scratch in a mirror or corrector belongs to the same class as
+                dust: fixed in the optical train, therefore fixed to the detector, and
+                excluded by the same 9&times; result. The one variant that escapes that
+                test is a defect which <em>scatters light from a bright star</em>, since
+                the resulting artefact would be anchored to the star and, on a mount that
+                does not rotate the field, would be sky-fixed. Reflecting each of the 25
+                brightest stars through the optical centre puts the nearest candidate
+                ghost 704 px &mdash; 3.1&prime; &mdash; from the strand. Nothing lands on
+                it.
+            </p>
+
+            <h3>The question that should have come first</h3>
+
+            <p class="science-text">
+                Every exclusion above treats the feature as though it were singular. None
+                of them tests that assumption. The test is one matched-filter pass: sweep
+                the whole stack for lines of the strand's own length and width at every
+                position angle, and count what comes back.
+            </p>
+
+            <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr><th>Quantity</th><th>Value</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Strand response</td><td>8.0&sigma;</td></tr>
+                    <tr><td>Peaks above 4&sigma; in the frame</td><td>387</td></tr>
+                    <tr class="highlight"><td>Rank of the strand</td><td>20th of 387 &mdash; 95th percentile</td></tr>
+                    <tr><td>Population median / 90th / max</td><td>6.2&sigma; / 7.5&sigma; / 9.8&sigma;</td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <p class="science-text">
+                The strand is not distinctive. Nineteen linear features in the same frame
+                are stronger, several hundred are comparable, and they lie at every
+                position angle across the field. It is an unremarkable member of a large
+                population, and it drew attention only because it happened to fall in a
+                part of the image that was being examined closely, at a stretch that
+                showed it well.
+            </p>
+
+            <p class="science-text">
+                That population has an obvious source. This is the Soap Bubble field in
+                Cygnus, dense with filamentary H&alpha; and O&nbsp;III emission, and a
+                filter tuned to 55&Prime; lines will respond to real nebular filaments
+                across the whole frame. Faint nebulosity accounts for every established
+                property without strain: sky-fixed, identical in both filters, surviving
+                the median, gaining signal-to-noise with frame count, and untouched by
+                every calibration substitution. Those are not the signatures of something
+                exotic. They are what nebulosity does.
+            </p>
+
             <h3>The evidence that does not fit</h3>
 
             <p class="science-text">
@@ -1803,6 +1600,7 @@
                     <tr><td>&ldquo;It is uncorrected hot pixels&rdquo;</td><td>A defect map removed many genuine artefacts and left this feature untouched.</td></tr>
                     <tr><td>&ldquo;It is a minor planet at ~20&Prime;/hour&rdquo;</td><td>Derived from apparent motion of a 3&sigma; peak between co-added groups &mdash; peak-hunting in noise.</td></tr>
                     <tr><td>&ldquo;The two filters show it in different places&rdquo;</td><td>Asserted from eyeballing two separately-stretched crops. Measured, the two ridges lie 14 px apart &mdash; less than the strand's own width. The claim had already been used as supporting detail when framing later hypotheses.</td></tr>
+                    <tr class="highlight"><td>Treating the feature as singular</td><td>Never measured how many comparable features the frame held. One matched-filter pass shows 387 above 4&sigma; with the strand 20th. Every exclusion that follows was work spent on a false premise.</td></tr>
                     <tr><td>&ldquo;It is settled real structure&rdquo;</td><td>Stated before the photometric series was examined, which contradicts it.</td></tr>
                 </tbody>
             </table>
@@ -1841,21 +1639,34 @@
 
             <p class="science-text">
                 The feature is fixed with respect to the stars, is not attributable to the
-                optics, the detector, the calibration or a diffraction spike, and is not a
-                solar system object.
-                It is also apparently absent from the first eighteen exposures of the
-                sequence in which it is measured, and absent from an independent reduction
-                of the same data. These statements are not currently reconcilable.
+                optics, the detector, the calibration, a diffraction spike, dust or a chip,
+                and is not a solar system object. All of those exclusions stand. What does
+                not stand is the conclusion that was drawn from them, because the frame
+                contains several hundred comparable linear features and this one ranks
+                twentieth. The most economical explanation is faint nebulosity in a field
+                full of it.
             </p>
 
             <p class="science-text">
-                The problem is open. The next steps that would carry information, in
-                order of cost: repeat the field on a separate night, since a feature fixed
-                on the sky must reappear at the same coordinates and nothing else will;
-                obtain the same field from a second instrument; and re-measure the
-                photometric series with a properly fitted axis and uncontaminated
-                background annuli, since the present series is the only evidence for the
-                step and its zero point is known to be unreliable.
+                Two loose ends remain, and both are the same measurement. The per-frame
+                photometric series along the axis reads consistent with zero for the first
+                eighteen exposures and positive at 2.4&ndash;7.7&sigma; for the last
+                twelve, which nothing static explains &mdash; but its background annuli
+                are demonstrably contaminated, its zero point is untrustworthy, and the
+                single exposure in which the feature is plainly visible by eye falls in
+                the null group and measures &minus;0.8&sigma;. It is the weakest evidence
+                in this note and it is the only evidence for anything unusual. The
+                feature is also absent from an independent reduction of the same data,
+                which is most simply explained by that reduction's gentler stretch.
+            </p>
+
+            <p class="science-text">
+                One observation settles both: repeat the field on a second night. Real
+                nebulosity reappears at the same coordinates at the same brightness;
+                correlated noise does not. That was the recommended next step when this
+                looked like a mystery, and it remains the recommended next step now that
+                it looks like a filament. Four hours on one night was never enough to tell
+                the difference, which is the more general lesson here.
             </p>
         </article>
 
