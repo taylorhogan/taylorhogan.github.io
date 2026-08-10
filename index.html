@@ -495,6 +495,14 @@
             padding-left: 1rem;
         }
 
+        .note-dissent {
+            color: #d8c9a8;
+            border-left: 3px solid rgba(230, 168, 62, 0.55);
+            background: rgba(230, 168, 62, 0.05);
+            padding: 0.9rem 1rem;
+            border-radius: 0 6px 6px 0;
+        }
+
         .note figure {
             margin: 1.5rem 0;
         }
@@ -561,7 +569,7 @@
                 for a feature whose ordinariness a single measurement would have shown at
                 the outset.
             </p>
-        <p class="last-updated" id="last-updated">Updated 2026-08-10 19:15 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-08-10 19:40 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -1076,6 +1084,31 @@
         <article id="strands" class="note">
             <h2 class="note-title">Strands in the stack: a feature that was never unusual</h2>
             <div class="note-meta"><span class="note-date">2026-08-10</span> &middot; SOAP BUBBLE FIELD &middot; 20 Ha + 29 O-III &times; 300 s &middot; 20th OF 387 SUCH FEATURES</div>
+
+            <p class="science-text note-dissent">
+                <strong>Reservation recorded by the observatory&rsquo;s owner.</strong>
+                I am not as confident as this analysis is that a software or an optical
+                cause has been excluded. The conclusions below should be read with that
+                reservation standing.
+            </p>
+
+            <p class="science-text">
+                The reservation is well founded, and it is worth setting out the grounds
+                rather than leaving it as a difference of opinion. Every exclusion in this
+                note was computed by this observatory&rsquo;s own bespoke pipeline, or by
+                analysis scripts written alongside it during the investigation, and
+                several of those scripts returned demonstrably wrong numbers on the way
+                &mdash; a registration measurement that reported no dithering when the
+                mount dithers every exposure, and a displacement measurement that
+                contradicted the images it was measuring. The optical exclusions in
+                particular rest on drift and registration geometry derived from that same
+                software, so they are not independent of the tool that produced them. The
+                independent reduction which does <em>not</em> show the feature is
+                attributed here to a gentler stretch, and that is an assumption rather
+                than a measurement. None of this overturns the tests below, but a reader
+                should weigh them knowing that the instrument, the pipeline and the
+                analysis share an author.
+            </p>
 
             <h3>Abstract</h3>
 
