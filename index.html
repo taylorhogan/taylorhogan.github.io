@@ -821,7 +821,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-08-10 16:45 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-08-10 17:10 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -1453,8 +1453,8 @@
 
             <p class="science-text">
                 Both stacks contain a thin linear feature. In O&nbsp;III it spans
-                approximately 210 px &mdash; about 55&Prime; &mdash; at a position angle
-                of 75&deg;, and is roughly 5 px wide, which is one seeing disc: it is
+                about 55&Prime; &mdash; roughly 210 px &mdash; at a position angle
+                of 75&deg;, and is roughly 1.3&Prime; wide, which is one seeing disc: it is
                 unresolved across its width. The H&alpha; stack carries a comparable
                 feature at 73&deg;, in a different place in the field.
             </p>
@@ -1484,7 +1484,7 @@
                 <em>pixel</em> position. Registration aligns each exposure to the stars,
                 so such a feature is dragged along the field's drift track and smeared.
                 The drift on this night was substantial and independently measured &mdash;
-                36.8 px across the H&alpha; sequence and 85.2 px across the O&nbsp;III,
+                36.8 px (9.7&Prime;) across the H&alpha; sequence and 85.2 px (22.5&Prime;) across the O&nbsp;III,
                 in different directions &mdash; so a detector-fixed artefact would have
                 been smeared by tens of pixels in a direction that does not match the
                 observed feature.
@@ -1578,8 +1578,8 @@
                 bias in a peak-of-profile statistic at low <em>N</em>, so no exponent
                 should be read from these four points; but sub-&radic;<em>N</em> growth is
                 also the expected signature of noise that does not average down, and the
-                dither on this night was measured at a median step of 3 px against a
-                6.38 px seeing disc &mdash; too small to decorrelate fixed pattern between
+                dither on this night was measured at a median step of 0.79&Prime; against a
+                1.78&Prime; seeing disc &mdash; under half a star width &mdash; too small to decorrelate fixed pattern between
                 exposures.
             </p>
 
@@ -1934,7 +1934,7 @@
 
             <p class="science-text">
                 Two independent details agree. The trail is 23 px wide against a stellar
-                PSF of 2.74 px &mdash; eight times too fat, so badly out of focus, so very
+                PSF of 2.74 px &mdash; 5.8&prime; against 49&Prime; at this camera's 128&Prime;/px &mdash; eight times too fat, so badly out of focus, so very
                 close. And it is <em>beaded</em>: brightness modulated along its length at
                 a regular pitch, which is a wingbeat strobing against the exposure.
             </p>
@@ -2219,23 +2219,40 @@
                 Accumulating those masks over many clear nights and taking a high
                 percentile per azimuth bin would give a dense profile that is robust to a
                 passing cloud or a bird, updates itself as the vegetation changes, and
-                needs no ladder. The camera sits beside the telescope rather than on it,
-                so the horizon it sees is very nearly the horizon the telescope sees.
+                needs no ladder.
             </p>
 
             <p class="science-text">
-                Two limits should be established before such a profile replaces the
-                hand-made one. The first is parallax: the offset between camera and
-                telescope subtends an angle of roughly arctan(<em>d</em>/<em>D</em>) at a
-                tree line distance <em>D</em>, which for a two-metre offset and trees
-                thirty metres away is about 4&deg;. That is small, but it is the same
-                order as the improvement being sought, so it wants measuring rather than
-                assuming. The second is coverage: the camera's optical axis sits 4&deg;
-                off zenith and its field reaches about 52&deg; from that axis, so it
-                cannot see below roughly 34&deg; altitude. It can refine the parts of the
-                tree line that reach high &mdash; which are the parts that cost the most
-                observing time &mdash; but the lowest sections of the existing profile,
-                down at 25&deg;, are outside its view and would have to stay as measured.
+                Two limits apply to the all-sky camera doing this job, and together they
+                argue for a different camera. The first is parallax: it sits beside the
+                telescope rather than on it, and an offset <em>d</em> subtends roughly
+                arctan(<em>d</em>/<em>D</em>) at a tree line distance <em>D</em> &mdash;
+                about 4&deg; for a two-metre offset and trees thirty metres away. Small,
+                but the same order as the improvement being sought. The second is
+                coverage: its optical axis sits 4&deg; off zenith and its field reaches
+                about 52&deg; from that axis, so it cannot see below roughly 34&deg;
+                altitude, while the existing profile runs down to 25&deg;.
+            </p>
+
+            <p class="science-text">
+                The intended solution is the webcam already mounted on the CDK tube
+                itself &mdash; the same camera the observatory uses for its parked-scope
+                and roof-open safety checks. Being on the tube, it is effectively
+                co-located with the aperture, so the parallax term vanishes: the horizon
+                it sees <em>is</em> the horizon the telescope sees, which is the quantity
+                the scheduler actually needs. It also looks along the optical axis, so it
+                reaches the low bearings the all-sky camera cannot.
+            </p>
+
+            <p class="science-text">
+                This changes the method rather than the principle. A tube-mounted camera
+                points wherever the telescope points, so instead of one all-sky mask per
+                capture it gives a narrow view of a single bearing at a time, and the
+                profile has to be assembled from many pointings &mdash; accumulated
+                opportunistically as the mount works through a night, or swept
+                deliberately in azimuth once. The foliage segmentation and the
+                pixel-to-sky mapping are the same problem either way; only the sampling
+                strategy differs.
             </p>
 
             <p class="science-text">
