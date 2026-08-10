@@ -821,7 +821,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-08-10 05:56 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-08-10 14:10 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -1332,6 +1332,442 @@
     </div>
 
     <div class="container" id="notes-panel" role="tabpanel" aria-labelledby="tab-notes">
+
+        <article id="skycam" class="note">
+            <h2 class="note-title">A security camera as a scientific instrument</h2>
+            <div class="note-meta"><span class="note-date">2026-08-10</span> &middot; ALL-SKY CAMERA &middot; 104&deg; FOV &middot; SOLVED TO 1.5 px &middot; RAIN DETECTOR</div>
+
+            <h3>Abstract</h3>
+
+            <p class="science-text note-abstract">
+                A $40 Kasa security camera pointed at the zenith turns out to be a
+                usable instrument, but only after it is plate solved: with the geometry
+                known, every pixel maps to an altitude and azimuth and limiting magnitude
+                becomes measurable. Three things came out of using it. Its sensitivity is
+                strongly radial &mdash; star completeness runs 24&ndash;39% out to 800 px
+                from the optical axis and then falls to <em>exactly zero</em>, because the
+                same star delivers five times less signal at the frame edge; ignoring that
+                made the completeness table read upside down, finding 43% of
+                magnitude&#8209;2 stars while magnitude&#8209;6 stars came through. A trail
+                that looked exactly like a Starlink pass was an insect, settled by
+                arithmetic rather than opinion: 4.22&deg; in &le;66 ms is &ge;64&deg;/s and
+                low Earth orbit tops out near 1&deg;/s. And seven days of continuous
+                footage off its own memory card turned it into a rain detector that caught
+                a six-hour storm the gridded forecast recorded as zero precipitation.
+            </p>
+
+            <h3>The camera did not change. The geometry did.</h3>
+
+            <p class="science-text">
+                The camera is a Kasa KC420WS, a consumer security camera, bolted looking
+                up. It has no manual exposure, no RTSP, and sends H.264 whatever you ask
+                it for. On its own it produces a picture with dots in it.
+            </p>
+
+            <p class="science-text">
+                What makes it an instrument is a blind plate solve &mdash; the same
+                method astrometry.net uses, shrunk to fit. Orientation plus focal length
+                is four unknowns, so two correct correspondences between a detected dot
+                and a catalogue star pin all four; try every pairing of the brightest
+                detections against the brightest stars that are up, and keep whichever
+                hypothesis puts the <em>rest</em> of the catalogue on top of the
+                <em>rest</em> of the detections. No initial guess needed.
+            </p>
+
+            <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr><th>Solved parameter</th><th>Value</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Focal length</td><td>1616.85 px/rad</td></tr>
+                    <tr><td>Projection</td><td>equidistant fisheye</td></tr>
+                    <tr><td>Optical axis</td><td>4&deg; off zenith (alt 85.9&deg;)</td></tr>
+                    <tr><td>Field of view</td><td>104&deg; corner to corner</td></tr>
+                    <tr><td>Plate scale</td><td>0.0354&deg;/px (128&Prime;/px)</td></tr>
+                    <tr class="highlight"><td>Match residual</td><td>1.3&ndash;1.5 px</td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <p class="science-text">
+                The sanity check that matters is not the residual, it is that the named
+                stars come out as <em>neighbours</em>. A correct solve names one
+                contiguous patch of sky. A coincidence names stars scattered across
+                unrelated constellations.
+            </p>
+
+            <p class="science-text">
+                With that in hand the useful quantity stops being &ldquo;how many dots did
+                we count&rdquo; and becomes <strong>limiting magnitude</strong>: the
+                brightness at which the detection rate falls through half. A star count
+                also drops when a branch grows into the field or more of the frame is
+                masked. How faint the sky lets you see is a property of the sky.
+            </p>
+
+            <h3>Sensitivity is a function of radius, and ignoring it inverts the answer</h3>
+
+            <p class="science-text">
+                The completeness table &mdash; how many catalogue stars of each magnitude
+                were recovered &mdash; came out backwards. Only 43% of magnitude&#8209;2
+                stars were found, while magnitude&#8209;6 stars, four hundred times
+                fainter, were coming through. Brightness plainly was not the variable.
+            </p>
+
+            <p class="science-text">
+                Splitting the same measurement by distance from the optical axis explains
+                it in one step:
+            </p>
+
+            <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr><th>Radius from axis (px)</th><th>Catalogue stars</th><th>Detected</th><th>Completeness</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>0 &ndash; 200</td><td>31</td><td>12</td><td>39%</td></tr>
+                    <tr><td>200 &ndash; 400</td><td>86</td><td>24</td><td>28%</td></tr>
+                    <tr><td>400 &ndash; 600</td><td>102</td><td>29</td><td>28%</td></tr>
+                    <tr><td>600 &ndash; 800</td><td>117</td><td>28</td><td>24%</td></tr>
+                    <tr class="highlight"><td>800 &ndash; 1000</td><td>41</td><td>0</td><td>0%</td></tr>
+                    <tr class="highlight"><td>1000 &ndash; 1200</td><td>54</td><td>0</td><td>0%</td></tr>
+                    <tr class="highlight"><td>1200 &ndash; 1500</td><td>30</td><td>0</td><td>0%</td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <p class="science-text">
+                Not a gradual falloff &mdash; a wall. One hundred and twenty-five
+                catalogue stars beyond 800 px, none of them recovered. The cause is
+                off-axis attenuation, and two stars of nearly identical brightness make
+                it concrete:
+            </p>
+
+            <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr><th>Star</th><th>Radius (px)</th><th>Peak above background</th><th>Result</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>V = 2.20</td><td>106</td><td>125 ADU</td><td>found</td></tr>
+                    <tr class="highlight"><td>V = 2.23</td><td>1214</td><td>26 ADU</td><td>missed</td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <p class="science-text">
+                Same star brightness, five times less signal, and the fainter one falls
+                under the detection threshold. So a bright star that happened to land near
+                the edge was lost while a faint one near the centre was found, and with
+                only seven magnitude&#8209;2 stars in the frame, four of them landing
+                outside 970 px was enough to invert the table.
+            </p>
+
+            <p class="science-text">
+                The fix is to stop counting stars the optics cannot deliver. Those beyond
+                800 px are dropped from the denominator &mdash; the same reasoning already
+                applied to stars sitting on masked foliage, where counting them would
+                measure how much of the frame is trees rather than how clear the sky is.
+                Restricted to the region where the instrument actually works, the table
+                becomes monotonic:
+            </p>
+
+            <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr><th>Magnitude</th><th colspan="2">Before (whole frame)</th><th colspan="2">After (r &lt; 800 px)</th></tr>
+                    <tr><th></th><th>found / total</th><th>%</th><th>found / total</th><th>%</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>2</td><td>3 / 7</td><td>43%</td><td colspan="2">&mdash; too few to bin</td></tr>
+                    <tr><td>3</td><td>7 / 11</td><td>64%</td><td>7 / 8</td><td>88%</td></tr>
+                    <tr><td>4</td><td>36 / 56</td><td>64%</td><td>37 / 47</td><td>79%</td></tr>
+                    <tr><td>5</td><td>31 / 186</td><td>17%</td><td>32 / 133</td><td>24%</td></tr>
+                    <tr><td>6</td><td>12 / 206</td><td>6%</td><td>13 / 144</td><td>9%</td></tr>
+                    <tr class="highlight"><td>Limiting magnitude</td><td colspan="2">4.40</td><td colspan="2">4.59</td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <p class="science-text">
+                The published frame now draws the boundary it measures inside, so the
+                picture and the numbers beside it cannot drift apart. It is not a circle:
+                at 800 px radius the disc overshoots the top and bottom of a
+                2560&thinsp;&times;&thinsp;1440 frame by 80 px, so what is measured is the
+                disc intersected with the frame &mdash; a disc with both caps sliced flat.
+                Drawing only the arc left the shape open exactly where it leaves the
+                picture, which read as though the strips above and below were excluded
+                when they are counted.
+            </p>
+
+            <div class="figure-pair">
+                <figure>
+                    <a href="images/skycam_measured_region.jpg" target="_blank" rel="noopener noreferrer">
+                        <img src="images/skycam_measured_region.jpg" alt="All-sky frame with detected stars circled and the measured region outlined; foliage shaded red at the edges">
+                    </a>
+                    <figcaption>Detections circled, foliage shaded, and the outline of the
+                        region the statistics are measured inside. Detections outside it
+                        &mdash; along the left and right edges &mdash; are the ones now
+                        excluded.</figcaption>
+                </figure>
+                <figure>
+                    <a href="images/skycam_platesolve.png" target="_blank" rel="noopener noreferrer">
+                        <img src="images/skycam_platesolve.png" alt="The all-sky frame with catalogue stars overlaid at their solved positions">
+                    </a>
+                    <figcaption>The solve, checked the way that matters: catalogue
+                        positions land on detections, and the named stars come out as
+                        neighbours rather than scattered.</figcaption>
+                </figure>
+            </div>
+
+            <h3>The Starlink pass that was an insect</h3>
+
+            <p class="science-text">
+                On 2026-08-08 a long bright trail crossed the frame. It looked exactly
+                like a satellite pass, and that was the first reading of it. Arithmetic
+                disagreed.
+            </p>
+
+            <p class="science-text">
+                The camera runs at a measured 15.1 fps, so a single frame integrates for
+                at most 66 ms. The trail spans 4.22&deg;. That gives a lower bound on
+                angular rate:
+            </p>
+
+            <div class="equation">
+                &omega; &ge; 4.22&deg; / 0.066 s &nbsp;=&nbsp; <strong>64&deg;/s</strong>
+                <span class="where">and a satellite in low Earth orbit tops out near 1&deg;/s</span>
+            </div>
+
+            <p class="science-text">
+                Sixty-four times too fast, and that is a <em>lower</em> bound &mdash; the
+                true exposure may be shorter still. Nothing in orbit moves like that.
+                Something very close to the lens does.
+            </p>
+
+            <p class="science-text">
+                Two independent details agree. The trail is 23 px wide against a stellar
+                PSF of 2.74 px &mdash; eight times too fat, so badly out of focus, so very
+                close. And it is <em>beaded</em>: brightness modulated along its length at
+                a regular pitch, which is a wingbeat strobing against the exposure.
+            </p>
+
+            <div class="figure-pair">
+                <figure>
+                    <a href="images/skycam_insect_full.jpg" target="_blank" rel="noopener noreferrer">
+                        <img src="images/skycam_insect_full.jpg" alt="Full all-sky frame showing a long bright trail crossing the upper part of the sky">
+                    </a>
+                    <figcaption>The full frame. At a glance, a textbook satellite pass.</figcaption>
+                </figure>
+                <figure>
+                    <a href="images/skycam_insect_zoom.png" target="_blank" rel="noopener noreferrer">
+                        <img src="images/skycam_insect_zoom.png" alt="Zoom on the trail showing regular scalloped beading along its length">
+                    </a>
+                    <figcaption>Zoomed: the beading. Regular modulation along the track is
+                        a wingbeat, not a spacecraft.</figcaption>
+                </figure>
+            </div>
+
+            <p class="science-text">
+                The general lesson is that the whole chain rested on one measured number,
+                the frame rate. Because the insect identification was later confirmed
+                independently, it also became indirect evidence that 15 fps holds in full
+                darkness &mdash; the frame rate had only ever been measured near dawn.
+            </p>
+
+            <h3>From counting stars to detecting rain</h3>
+
+            <p class="science-text">
+                The camera records continuously to its own memory card, which turned out
+                to hold seven and a half days of one-minute video segments &mdash; roughly
+                11,000 minutes, 2560&thinsp;&times;&thinsp;1440 at 15 fps. Rain history
+                that would have taken a season to collect deliberately already existed.
+            </p>
+
+            <p class="science-text">
+                Rain is not subtle on this camera, because its infrared illuminator lights
+                raindrops a few centimetres from the lens. What arrives is not a picture
+                of weather at a distance; it is near-field, wildly defocused streaks
+                filling the frame.
+            </p>
+
+            <div class="figure-pair">
+                <figure>
+                    <a href="images/skycam_rain_heavy.jpg" target="_blank" rel="noopener noreferrer">
+                        <img src="images/skycam_rain_heavy.jpg" alt="All-sky frame during heavy rain: thick bright defocused streaks covering the frame">
+                    </a>
+                    <figcaption>Heavy rain, 2026-08-06 03:45. The gridded forecast recorded
+                        zero precipitation for this hour.</figcaption>
+                </figure>
+                <figure>
+                    <a href="images/skycam_clear_night.jpg" target="_blank" rel="noopener noreferrer">
+                        <img src="images/skycam_clear_night.jpg" alt="All-sky frame on a clear night: dark sky with point-like stars">
+                    </a>
+                    <figcaption>The same camera on a clear night. Mean level 16.7 ADU
+                        against 89 in rain &mdash; but that difference is the illuminator,
+                        not the weather.</figcaption>
+                </figure>
+            </div>
+
+            <p class="science-text">
+                Absolute brightness is the wrong signal precisely because of that
+                illuminator, and because auto-exposure renormalises every frame. The
+                measurement has to be scale-invariant. What works is <strong>motion
+                between adjacent video frames</strong>: the fraction of pixels whose value
+                changes by more than 12 ADU from one frame to the next, 66 ms apart.
+            </p>
+
+            <p class="science-text">
+                Sidereal drift over 66 ms is 0.0078 px, so stars are static to a
+                hundredth of a pixel. Anything that moves is not a star, with a hundredfold
+                margin. The metric is computed only inside the 800 px region established
+                above, which excludes the tree line entirely, so wind cannot fake it.
+            </p>
+
+            <div class="figure-pair">
+                <figure>
+                    <a href="images/skycam_rain.gif" target="_blank" rel="noopener noreferrer">
+                        <img src="images/skycam_rain.gif" alt="Animated sequence of 24 consecutive frames of heavy rain showing drops falling through the frame">
+                    </a>
+                    <figcaption>Twenty-four consecutive frames, 1.6 seconds. This is what
+                        the detector is measuring &mdash; not brightness, but how much of
+                        the frame changes between one frame and the next.</figcaption>
+                </figure>
+                <figure>
+                    <a href="images/skycam_rain_daylight.jpg" target="_blank" rel="noopener noreferrer">
+                        <img src="images/skycam_rain_daylight.jpg" alt="All-sky frame in daylight during heavy rain, showing an ordinary bright overcast sky with no visible streaks">
+                    </a>
+                    <figcaption>23.4 mm of rain falling, in daylight. No illuminator, so no
+                        lit drops, and the detector reads 7%. This is its hard limit.</figcaption>
+                </figure>
+            </div>
+
+            <p class="science-text">
+                The separation is not marginal:
+            </p>
+
+            <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr><th>Condition</th><th>Pixels changing between frames</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Clear night</td><td>0.1 &ndash; 1.1%</td></tr>
+                    <tr class="highlight"><td>Rain</td><td>16 &ndash; 100%</td></tr>
+                    <tr><td>Daylight rain</td><td>3 &ndash; 7% &mdash; not detected</td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <h3>It found a storm the forecast did not have</h3>
+
+            <p class="science-text">
+                Scanning the whole card at 15-minute sampling and scoring every hour
+                against Open-Meteo's hourly precipitation gives the honest test. Night
+                rain is caught reliably, and the hour-by-hour profile tracks the storm
+                ending: 85% &rarr; 100% &rarr; 16% &rarr; 39% &rarr; 19% &rarr; 1.8%
+                across the 22:00 hour on 2026-08-07.
+            </p>
+
+            <p class="science-text">
+                The interesting result is a disagreement. For six consecutive hours on
+                2026-08-06, midnight to 05:00, the detector read 40&ndash;69% while the
+                gridded model reported <strong>zero</strong> precipitation. The frames
+                settle it &mdash; that is the heavy rain pictured above. The observatory
+                sits on a hilltop, and this is the case where a local instrument beats a
+                model interpolated from distant stations.
+            </p>
+
+            <p class="science-text">
+                That is also the argument for wiring it to the roof. A forecast that
+                misses the storm entirely cannot protect anything.
+            </p>
+
+            <h3>How much warning does it give?</h3>
+
+            <p class="science-text">
+                Rain onset is a ramp, not a step, which means a lower threshold buys
+                warning. Measured at two-minute cadence through two storms, using three
+                consecutive samples over threshold so that isolated spikes do not fire:
+            </p>
+
+            <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr><th>Storm</th><th>&gt;1%</th><th>&gt;3%</th><th>&gt;10%</th><th>&gt;30%</th><th>1% &rarr; 10%</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>2026-08-06</td><td>23:44</td><td>23:56</td><td>00:10</td><td>00:36</td><td>26 min</td></tr>
+                    <tr><td>2026-08-07</td><td>19:52</td><td>20:20</td><td>20:30</td><td>20:32</td><td>38 min</td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <p class="science-text">
+                Two caveats keep this honest. The 08-07 storm arrived at dusk, and its 1%
+                crossing happened while the camera was still in daylight mode where the
+                detector does not work; the trustworthy figure there is the 3% crossing at
+                20:20 once the illuminator came on, which is <strong>10 minutes</strong>,
+                not 38. So useful warning is 25&ndash;40 minutes for a storm arriving in
+                full darkness, and close to none for one arriving at sunset.
+            </p>
+
+            <p class="science-text">
+                And escalation is not gradual. Going from 10% to 30% took 26 minutes on
+                one storm and <strong>two minutes</strong> on the other. The early ramp is
+                a reliable warning; what happens after the threshold is not. A 10%
+                crossing should be read as &ldquo;already raining hard&rdquo;, never as
+                &ldquo;getting worse slowly&rdquo;.
+            </p>
+
+            <p class="science-text">
+                Two other signals were tested as precursors and both failed. Star count
+                collapses when cloud arrives &mdash; on 08-06 stars went from 13 to
+                near zero at 21:40 &mdash; but rain did not start for another two and a
+                quarter hours. Cloud precedes rain by far too much, and too unreliably, to
+                trigger on. Frame level was flat across the run-up. The working model is
+                single-signal: motion, with persistence.
+            </p>
+
+            <h3>Where the ceiling is</h3>
+
+            <p class="science-text">
+                Two limits are structural, both because this is a consumer camera, and
+                neither is worth planning around as fixable.
+            </p>
+
+            <p class="science-text">
+                <strong>No manual exposure.</strong> Auto-exposure renormalises every
+                frame, so absolute brightness carries no information and every metric must
+                be scale-invariant. This is exactly why limiting magnitude works where
+                mean luminance does not, and why the rain detector counts changed pixels
+                rather than measuring how bright the frame got.
+            </p>
+
+            <p class="science-text">
+                <strong>H.264 everywhere.</strong> Stacking twelve frames gave a 1.04&times;
+                noise reduction against an ideal of 3.46&times;, because only 1.6% of
+                pixels genuinely change between adjacent frames &mdash; the encoder's skip
+                blocks reproduce the previous frame bit-identically and hand back copies of
+                noise that was already discarded. Photometry on such frames is suspect, and
+                V &asymp; 4.4 is about where the instrument stops.
+            </p>
+
+            <p class="science-text">
+                There is also a false-positive mode worth naming: twilight. At sun
+                altitude &minus;9.4&deg; the frame level drifted 8.4 ADU <em>within a
+                single burst</em> as dawn came up and auto-exposure hunted, and the whole
+                frame registered as moving. Gating on sun altitude below &minus;10&deg;
+                &mdash; the same definition of night the scheduler already uses &mdash;
+                removes it.
+            </p>
+
+            <p class="science-text">
+                None of this needed better hardware. It needed knowing where the camera
+                was pointing, which region of it works, and which of its numbers mean
+                anything.
+            </p>
+        </article>
 
         <article id="psf" class="note">
             <h2 class="note-title">What shape is a star?</h2>
