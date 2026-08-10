@@ -821,7 +821,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-08-09 07:05 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-08-10 05:56 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -3911,7 +3911,6 @@ score    = snr * shape * quality * flatness</code></pre>
         <div class="live-sky" id="live-latest" hidden>
             <h3 id="live-latest-title">Last image</h3>
             <img id="live-latest-img" alt="The most recent sub-exposure from the telescope, annotated with filter, star width, eccentricity and sky brightness">
-            <p class="live-caption" id="live-latest-caption"></p>
         </div>
 
         <div class="live-sky" id="live-skycam" hidden>
@@ -4512,12 +4511,6 @@ score    = snr * shape * quality * flatness</code></pre>
                         if (s.latest_dso) {
                             document.getElementById('live-latest-title').textContent =
                                 'Last image \u2014 ' + s.latest_dso + ', ' + ago(s.latest_taken);
-                            var d = [];
-                            if (s.latest_filter) { d.push(s.latest_filter + ' filter'); }
-                            if (s.latest_fwhm_arcsec) { d.push('stars ' + s.latest_fwhm_arcsec + '\u2033 wide'); }
-                            if (s.latest_ecc != null) { d.push('eccentricity ' + s.latest_ecc); }
-                            document.getElementById('live-latest-caption').textContent =
-                                d.join(' \u00b7 ') + '.';
                             document.getElementById('live-latest-img').src =
                                 '/live/latest.jpg?t=' + Date.now();
                             lw.hidden = false;
