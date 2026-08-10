@@ -821,7 +821,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-08-10 14:10 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-08-10 15:05 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -1332,6 +1332,311 @@
     </div>
 
     <div class="container" id="notes-panel" role="tabpanel" aria-labelledby="tab-notes">
+
+        <article id="strands" class="note">
+            <h2 class="note-title">Strands in the stack: an unsolved observation</h2>
+            <div class="note-meta"><span class="note-date">2026-08-10</span> &middot; SOAP BUBBLE FIELD &middot; 20 Ha + 29 O-III &times; 300 s &middot; UNRESOLVED</div>
+
+            <h3>Abstract</h3>
+
+            <p class="science-text note-abstract">
+                A faint linear feature roughly 55&Prime; long and one seeing disc wide
+                appears in deep stacks of the Soap Bubble field, in both the H&alpha; and
+                the O&nbsp;III channels, at different positions but nearly the same
+                position angle. This records what has been established about it and what
+                has not. It is fixed with respect to the stars rather than the sensor,
+                which excludes the optics and the detector; it survives a median of
+                thirty frames, which excludes a satellite or meteor; and its
+                signal-to-noise <em>rises</em> with the number of frames combined, which
+                excludes an asteroid or comet, because stacking dilutes anything that
+                moves. Against that, a per-frame photometric series along its axis is
+                consistent with zero for the first eighteen exposures and positive at
+                2.4&ndash;7.7&sigma; for the last twelve, which no static interpretation
+                explains. The two lines of evidence are in direct tension and the feature
+                remains unidentified. The investigation also produced a number of
+                incorrect conclusions on the way, which are documented here because the
+                manner of the errors is instructive.
+            </p>
+
+            <h3>The observation</h3>
+
+            <p class="science-text">
+                The data are a single night, 2026-08-08, on the Soap Bubble Nebula
+                (PN&nbsp;G75.5+1.7) at RA 20<sup>h</sup>15<sup>m</sup>22<sup>s</sup>,
+                Dec +38&deg;02&prime;58&Prime;: twenty 300-second H&alpha; exposures from
+                21:34 to 23:13 local, then twenty-nine 300-second O&nbsp;III exposures
+                from 23:28 to 02:07. CDK17 at f/6.8, QHY600M, 0.2639&Prime;/px, measured
+                FWHM 6.38 px.
+            </p>
+
+            <p class="science-text">
+                Both stacks contain a thin linear feature. In O&nbsp;III it spans
+                approximately 210 px &mdash; about 55&Prime; &mdash; at a position angle
+                of 75&deg;, and is roughly 5 px wide, which is one seeing disc: it is
+                unresolved across its width. The H&alpha; stack carries a comparable
+                feature at 73&deg;, in a different place in the field.
+            </p>
+
+            <div class="figure-pair">
+                <figure>
+                    <a href="images/strand_context.jpg" target="_blank" rel="noopener noreferrer">
+                        <img src="images/strand_context.jpg" alt="The finished HOO composite of the Soap Bubble field with a red box marking where the strand lies">
+                    </a>
+                    <figcaption>The finished composite, with the region containing the
+                        O&nbsp;III strand boxed.</figcaption>
+                </figure>
+                <figure>
+                    <a href="images/strand_zoom.jpg" target="_blank" rel="noopener noreferrer">
+                        <img src="images/strand_zoom.jpg" alt="High-pass view of the O-III stack with the strand marked between two red lines">
+                    </a>
+                    <figcaption>High-pass view of the O&nbsp;III stack. The strand lies
+                        between the markers: about 55&Prime; long, one seeing disc
+                        wide.</figcaption>
+                </figure>
+            </div>
+
+            <h3>It is not in the optics or the detector</h3>
+
+            <p class="science-text">
+                Anything fixed to the sensor or to the optical train sits at a constant
+                <em>pixel</em> position. Registration aligns each exposure to the stars,
+                so such a feature is dragged along the field's drift track and smeared.
+                The drift on this night was substantial and independently measured &mdash;
+                36.8 px across the H&alpha; sequence and 85.2 px across the O&nbsp;III,
+                in different directions &mdash; so a detector-fixed artefact would have
+                been smeared by tens of pixels in a direction that does not match the
+                observed feature.
+            </p>
+
+            <p class="science-text">
+                Four calibration hypotheses were tested by substitution, and all four
+                were eliminated:
+            </p>
+
+            <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr><th>Hypothesis</th><th>Test</th><th>Result</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Flat-field residual</td><td>Re-stack with no flats at all</td><td>Feature unchanged</td></tr>
+                    <tr><td>Bias or dark residual</td><td>Independent reduction, same masters</td><td>Feature absent from that reduction</td></tr>
+                    <tr><td>Hot or defective pixels</td><td>Defect map from the master dark</td><td>Feature unchanged</td></tr>
+                    <tr><td>Filter or window debris</td><td>Inspection of the master flats</td><td>Not present &mdash; but see below</td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <p class="science-text">
+                The last of those deserves a correction rather than a tick. Searching the
+                flats for the feature was proposed as a test and reported as evidence.
+                It is not evidence: a flat records the detector's response to uniform
+                illumination, so a feature fixed with respect to the sky cannot appear in
+                one whether it is real or not. The test had no discriminating power in
+                either direction. This was pointed out by the observatory's owner and is
+                recorded here as a correction.
+            </p>
+
+            <h3>It is not a satellite, meteor, asteroid or comet</h3>
+
+            <p class="science-text">
+                A satellite or meteor crosses the field within a single exposure. The
+                feature survives a median combination of thirty frames, and a median
+                discards anything present in fewer than half of them. That excludes both.
+            </p>
+
+            <p class="science-text">
+                Excluding a minor planet or comet requires a different argument, and it is
+                the argument that settled the question. It arose from a question put by
+                the observatory's owner: if the object is moving with respect to the
+                stars, how can stacking make it <em>more</em> prominent?
+            </p>
+
+            <p class="science-text">
+                The arithmetic is decisive. Consider a pixel on the object's track where
+                it is present in one exposure out of <em>N</em>. The mean of the stack
+                holds signal <em>S</em>/<em>N</em> at that pixel, while the noise falls as
+                &sigma;/&radic;<em>N</em>. The resulting ratio is
+            </p>
+
+            <div class="equation">
+                SNR = (S/N) &divide; (&sigma;/&radic;N) = (S/&sigma;) &divide; &radic;N
+                <span class="where">a moving object gets &radic;N WORSE as frames are added</span>
+            </div>
+
+            <p class="science-text">
+                whereas a feature present at the same registered pixel in every exposure
+                gains &radic;<em>N</em>. The two predictions differ by a factor of
+                <em>N</em>, and they are trivially separable by measurement. Combining
+                random subsets of the O&nbsp;III exposures gives:
+            </p>
+
+            <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr><th>Frames combined</th><th>Measured peak SNR</th><th>If static (&radic;N)</th><th>If moving (1/&radic;N)</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>2</td><td>2.69</td><td>2.69</td><td>2.69</td></tr>
+                    <tr><td>7</td><td>2.94</td><td>5.04</td><td>1.44</td></tr>
+                    <tr><td>18</td><td>3.66</td><td>8.08</td><td>0.90</td></tr>
+                    <tr class="highlight"><td>29</td><td>4.53</td><td>10.25</td><td>0.71</td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <p class="science-text">
+                The measured ratio rises. A moving object would have fallen to 0.71. The
+                feature is therefore fixed with respect to the stars, and no solar system
+                body can produce it.
+            </p>
+
+            <p class="science-text">
+                The growth is nonetheless slower than &radic;<em>N</em>. Part of that is
+                bias in a peak-of-profile statistic at low <em>N</em>, so no exponent
+                should be read from these four points; but sub-&radic;<em>N</em> growth is
+                also the expected signature of noise that does not average down, and the
+                dither on this night was measured at a median step of 3 px against a
+                6.38 px seeing disc &mdash; too small to decorrelate fixed pattern between
+                exposures.
+            </p>
+
+            <h3>The evidence that does not fit</h3>
+
+            <p class="science-text">
+                Everything above points to a feature present in every exposure. Two
+                measurements contradict that, and they are the reason this note has no
+                conclusion.
+            </p>
+
+            <p class="science-text">
+                First, the feature is visible in a <em>single</em> 300-second exposure.
+                Frame <code>2026-08-08_23-54-05_O-III</code> shows it plainly at pixel
+                (5637,&nbsp;5257) &mdash; that exposure is the stack's registration
+                reference, so the mapping from stack to frame is a pure crop offset of
+                +127,&nbsp;+127, verified by cross-correlation at 87.8&sigma;.
+            </p>
+
+            <div class="figure-pair">
+                <figure>
+                    <a href="images/strand_stack_vs_sub.png" target="_blank" rel="noopener noreferrer">
+                        <img src="images/strand_stack_vs_sub.png" alt="Side by side: the 29-frame O-III stack and a single 300-second exposure, both showing the strand inside a red circle">
+                    </a>
+                    <figcaption>Left: the 29-frame stack. Right: one 300-second exposure,
+                        identically calibrated. The feature is present in both, at the
+                        same position relative to the stars.</figcaption>
+                </figure>
+            </div>
+
+            <p class="science-text">
+                Second, and against that, aperture photometry along the feature's axis in
+                each exposure separately gives a series that is not constant:
+            </p>
+
+            <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr><th>Exposures (local)</th><th>Count</th><th>Flux along the axis</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>23:28 &ndash; 00:56</td><td>18</td><td>consistent with zero or negative</td></tr>
+                    <tr class="highlight"><td>01:01 &ndash; 02:07</td><td>12</td><td>positive, 2.4&ndash;7.7&sigma;</td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <p class="science-text">
+                Twelve consecutive positive measurements after eighteen that show nothing
+                is not a plausible noise excursion. Taken at face value the feature
+                appeared partway through the sequence. That cannot be reconciled with
+                survival of a thirty-frame median, which requires presence in a majority.
+                Worse, the single exposure in which the feature is plainly visible by eye
+                falls in the <em>first</em> group, and measures &minus;0.13 at
+                &minus;0.8&sigma; &mdash; the eye and the photometry disagree about the
+                same frame.
+            </p>
+
+            <p class="science-text">
+                The photometry is the weaker of the two. The systematically negative
+                values in the first group indicate that the background annuli are
+                contaminated, so the zero point is untrustworthy even though the step
+                between the groups is clear. But that is an explanation for the sign, not
+                for the step.
+            </p>
+
+            <h3>Errors made in reaching this point</h3>
+
+            <p class="science-text">
+                The route to the above included at least six incorrect conclusions,
+                each stated with more confidence than the evidence supported. They are
+                recorded because the pattern is more useful than the individual mistakes.
+            </p>
+
+            <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr><th>Claim made</th><th>What was wrong with it</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>&ldquo;Not present in any single exposure&rdquo;</td><td>Rested on a line-detection routine returning nothing. Absence of detection was treated as evidence of absence; the feature is plainly visible in a single frame.</td></tr>
+                    <tr><td>&ldquo;The mount is not dithering&rdquo;</td><td>A defect in a single-use analysis script. The mount dithers every exposure.</td></tr>
+                    <tr><td>&ldquo;It is a satellite trail&rdquo;</td><td>Excluded by median survival, which was not tested until much later.</td></tr>
+                    <tr><td>&ldquo;It is uncorrected hot pixels&rdquo;</td><td>A defect map removed many genuine artefacts and left this feature untouched.</td></tr>
+                    <tr><td>&ldquo;It is a minor planet at ~20&Prime;/hour&rdquo;</td><td>Derived from apparent motion of a 3&sigma; peak between co-added groups &mdash; peak-hunting in noise.</td></tr>
+                    <tr><td>&ldquo;It is settled real structure&rdquo;</td><td>Stated before the photometric series was examined, which contradicts it.</td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <p class="science-text">
+                The common failure is straightforward: repeatedly believing three-sigma
+                structure produced by single-use scripts that had not been validated
+                against a known answer. A faint feature close to the noise will generate
+                spurious peaks, spurious trends and spurious apparent motion, and it did
+                so here more than once. The working rule adopted afterwards is that when a
+                picture and a number disagree, the number is the one to distrust until the
+                code that produced it has been checked.
+            </p>
+
+            <p class="science-text">
+                A second observation concerns sequencing. The single most discriminating
+                test available &mdash; how the feature's SNR scales with the number of
+                frames combined &mdash; is also among the cheapest, and it was run last.
+                Run first, it would have eliminated the satellite, hot-pixel and minor
+                planet hypotheses in one step and saved the majority of the work.
+            </p>
+
+            <p class="science-text">
+                It should also be recorded that the two decisive contributions came from
+                the observatory's owner rather than from the analysis. The first was an
+                independent reduction of the same exposures in PixInsight, using the same
+                bias and dark frames and no flats, which does not show the feature; that
+                single control eliminated the entire calibration branch of the
+                investigation. The second was the question about stacking and moving
+                objects quoted above, which produced the argument that settled the largest
+                remaining question. Neither required new data.
+            </p>
+
+            <h3>Status</h3>
+
+            <p class="science-text">
+                The feature is fixed with respect to the stars, is not attributable to the
+                optics, the detector or the calibration, and is not a solar system object.
+                It is also apparently absent from the first eighteen exposures of the
+                sequence in which it is measured, and absent from an independent reduction
+                of the same data. These statements are not currently reconcilable.
+            </p>
+
+            <p class="science-text">
+                The problem is open. The next steps that would carry information, in
+                order of cost: repeat the field on a separate night, since a feature fixed
+                on the sky must reappear at the same coordinates and nothing else will;
+                obtain the same field from a second instrument; and re-measure the
+                photometric series with a properly fitted axis and uncontaminated
+                background annuli, since the present series is the only evidence for the
+                step and its zero point is known to be unreliable.
+            </p>
+        </article>
 
         <article id="skycam" class="note">
             <h2 class="note-title">A security camera as a scientific instrument</h2>
