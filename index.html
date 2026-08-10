@@ -821,7 +821,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-08-10 17:45 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-08-10 18:30 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -1340,16 +1340,19 @@
             <h3>Abstract</h3>
 
             <p class="science-text note-abstract">
-                A faint linear feature roughly 55&Prime; long and one seeing disc wide
+                A faint linear feature roughly 55&Prime; long and 5&Prime; wide
                 appears in deep stacks of the Soap Bubble field, in both the H&alpha; and
-                the O&nbsp;III channels, at different positions but nearly the same
-                position angle. This records what has been established about it and what
+                the O&nbsp;III channels, at the same sky position and the same
+                position angle in each. This records what has been established about it and what
                 has not. It is fixed with respect to the stars rather than the sensor,
                 which excludes the optics and the detector; it survives a median of
                 thirty frames, which excludes a satellite or meteor; and its
                 signal-to-noise <em>rises</em> with the number of frames combined, which
                 excludes an asteroid or comet, because stacking dilutes anything that
-                moves. A diffraction spike &mdash; the one instrumental explanation those
+                moves. Dust or dirt in the optical path is excluded by making that
+                logic explicit: the feature is 9&times; stronger stacked on the stars than
+                in detector coordinates, whereas an obstruction must be the reverse. A
+                diffraction spike &mdash; the one instrumental explanation those
                 tests cannot reach on an equatorial mount &mdash; is excluded separately:
                 the feature is detached from any star, and a stack of 63 bright stars
                 shows this telescope produces no spike system at all, with the strand's
@@ -1458,9 +1461,14 @@
             <p class="science-text">
                 Both stacks contain a thin linear feature. In O&nbsp;III it spans
                 about 55&Prime; &mdash; roughly 210 px &mdash; at a position angle
-                of 75&deg;, and is roughly 1.3&Prime; wide, which is one seeing disc: it is
-                unresolved across its width. The H&alpha; stack carries a comparable
-                feature at 73&deg;, in a different place in the field.
+                of 73&deg;, and is 19&ndash;23 px across &mdash; about 5&Prime;, or roughly
+                three seeing discs, so it is resolved across its width rather than being
+                a knife-edge line. A matched-filter search of the H&alpha; stack finds
+                the same feature at position angle 78&deg;, its ridge centre 14 px
+                (3.7&Prime;) from the O&nbsp;III one. That is closer together than the
+                strand's own width: the two filters show one feature in one place, as a
+                sky-fixed feature must, since every filter is registered to a single
+                shared reference.
             </p>
 
             <div class="figure-pair">
@@ -1476,8 +1484,8 @@
                         <img src="images/strand_zoom.jpg" alt="High-pass view of the O-III stack with the strand marked between two red lines">
                     </a>
                     <figcaption>High-pass view of the O&nbsp;III stack. The strand lies
-                        between the markers: about 55&Prime; long, one seeing disc
-                        wide.</figcaption>
+                        between the markers: about 55&Prime; long and
+                        5&Prime; wide.</figcaption>
                 </figure>
             </div>
 
@@ -1509,6 +1517,7 @@
                     <tr><td>Bias or dark residual</td><td>Independent reduction, same masters</td><td>Feature absent from that reduction</td></tr>
                     <tr><td>Hot or defective pixels</td><td>Defect map from the master dark</td><td>Feature unchanged</td></tr>
                     <tr><td>Filter or window debris</td><td>Inspection of the master flats</td><td>Not present &mdash; but see below</td></tr>
+                    <tr class="highlight"><td>Dust or dirt in the optical path</td><td>Stack in detector coordinates instead of sky coordinates</td><td>9&times; weaker &mdash; see below</td></tr>
                 </tbody>
             </table>
             </div>
@@ -1523,6 +1532,43 @@
                 recorded here as a correction.
             </p>
 
+            <p class="science-text">
+                Dust or dirt somewhere in the optical path is the strongest version of
+                this family of hypotheses, and it makes a testable prediction. Such an
+                obstruction is fixed to the <em>detector</em>, not the sky. Registration
+                aligns the stars, so it would be dragged backwards along the field's drift
+                track and smeared &mdash; by 85 px in O&nbsp;III, at a position angle
+                56&deg; from the strand's own axis, which would broaden a thin feature
+                across its width by some 71 px. The observed width is 19&ndash;23 px.
+            </p>
+
+            <p class="science-text">
+                The direct test is to stack the same exposures both ways and ask which
+                frame the feature is sharp in:
+            </p>
+
+            <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr><th>Combination</th><th>Peak</th><th>Integrated flux</th></tr>
+                </thead>
+                <tbody>
+                    <tr class="highlight"><td>Registered to the stars</td><td>+0.685</td><td>+19.27</td></tr>
+                    <tr><td>Detector coordinates, unregistered</td><td>+0.174</td><td>+2.15</td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <p class="science-text">
+                The feature is 3.9&times; stronger in peak and 9&times; stronger in
+                integrated flux when the frames are aligned on the stars. It accumulates
+                coherently in the sky frame and washes out in the detector frame, which is
+                the opposite of what any obstruction in the optical path can do. The
+                residual in the detector frame is not zero only because the drift, 85 px,
+                is smaller than the feature's own 225 px length, so the smeared copies
+                partly overlap.
+            </p>
+
             <h3>Nor is it a diffraction spike</h3>
 
             <p class="science-text">
@@ -1532,11 +1578,11 @@
                 keeps a fixed position angle and a fixed offset from its parent star in
                 every exposure, and therefore in the registered stack. It would survive a
                 median of thirty frames, and its signal-to-noise would grow with frame
-                count, exactly as the observed feature does. It also offers a tidy
-                account of the one detail otherwise unexplained &mdash; that the H&alpha;
-                and O&nbsp;III features share a position angle to within 2&deg; while
-                lying in different places, which is what spikes from two different stars
-                would look like.
+                count, exactly as the observed feature does. When this hypothesis was raised, the two filters were
+                believed to show the feature in different places, which spikes from two
+                different stars would have explained neatly. That belief later proved
+                wrong &mdash; they are co-located &mdash; but the tests below stand on
+                their own.
             </p>
 
             <p class="science-text">
@@ -1756,6 +1802,7 @@
                     <tr><td>&ldquo;It is a satellite trail&rdquo;</td><td>Excluded by median survival, which was not tested until much later.</td></tr>
                     <tr><td>&ldquo;It is uncorrected hot pixels&rdquo;</td><td>A defect map removed many genuine artefacts and left this feature untouched.</td></tr>
                     <tr><td>&ldquo;It is a minor planet at ~20&Prime;/hour&rdquo;</td><td>Derived from apparent motion of a 3&sigma; peak between co-added groups &mdash; peak-hunting in noise.</td></tr>
+                    <tr><td>&ldquo;The two filters show it in different places&rdquo;</td><td>Asserted from eyeballing two separately-stretched crops. Measured, the two ridges lie 14 px apart &mdash; less than the strand's own width. The claim had already been used as supporting detail when framing later hypotheses.</td></tr>
                     <tr><td>&ldquo;It is settled real structure&rdquo;</td><td>Stated before the photometric series was examined, which contradicts it.</td></tr>
                 </tbody>
             </table>
