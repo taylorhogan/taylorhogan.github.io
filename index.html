@@ -546,33 +546,290 @@
             transition: transform .18s ease;
         }
 
-        .note.expanded >
-                A faint linear feature roughly 55&Prime; long and 5&Prime; wide appears in
-                deep stacks of the Soap Bubble field, at the same sky position and
-                position angle in both the H&alpha; and the O&nbsp;III channels. A long
-                sequence of tests established what it is not: it is fixed with respect to
-                the stars rather than the sensor, which excludes the optics, the detector
-                and dust or a chip in the optical path; it survives a median of thirty
-                frames, which excludes a satellite or meteor; its signal-to-noise
-                <em>rises</em> with the number of frames combined, which excludes an
-                asteroid or comet, because stacking dilutes anything that moves; and a
-                stack of 63 bright stars shows the telescope produces no diffraction
-                spikes at all. Each exclusion held. The conclusion drawn from them did
-                not, because one question had never been asked: <strong>how many
-                comparable features does the frame contain?</strong> A matched-filter
-                search finds 387 above 4&sigma;, and the strand ranks twentieth &mdash;
-                the 95th percentile of an ordinary population, not an outlier. In a field
-                this dense with filamentary H&alpha; and O&nbsp;III emission the most
-                economical reading is that it is faint nebulosity, which fits every
-                established fact without strain. The one measurement that appeared to show the feature
-                varying with time turned out to be tracking the sky background, which fell
-                48% through each filter block and reset at the filter change
-                (r = &minus;0.705). This note is therefore mostly a record of a
-                methodological failure: excluding exotic explanations one at a time for a
-                feature whose ordinariness a single measurement would have shown at the
-                outset.
-            </p>
-        <p class="last-updated" id="last-updated">Updated 2026-08-10 20:30 EDT</p>
+        .note.expanded > .note-title {
+            cursor: pointer;
+        }
+
+        .note.expanded > .note-title::after {
+            transform: rotate(90deg);
+        }
+
+        .note-excerpt {
+            color: #8b9bb4;
+            font-size: 0.95rem;
+            margin: 0;
+        }
+
+        /* The excerpt is the opening of the first paragraph, so leaving it up
+           while expanded prints that sentence twice. */
+        .note.expanded > .note-excerpt {
+            display: none;
+        }
+
+        .note-body {
+            display: none;
+        }
+
+        .note.expanded > .note-body {
+            display: block;
+            animation: note-open .25s ease;
+        }
+
+        @keyframes note-open {
+            from { opacity: 0; transform: translateY(-6px); }
+            to   { opacity: 1; transform: none; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .note.collapsed,
+            .note-title::after { transition: none; }
+            .note.expanded > .note-body { animation: none; }
+            .note.collapsed:hover { transform: none; }
+        }
+
+        .note-date {
+            color: var(--secondary-accent);
+            font-weight: bold;
+        }
+
+        .note code {
+            font-family: monospace;
+            background: rgba(62, 100, 255, 0.12);
+            border-radius: 4px;
+            padding: 0.1em 0.4em;
+            font-size: 0.95em;
+        }
+
+        .note pre {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            overflow-x: auto;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        .note pre code {
+            background: none;
+            padding: 0;
+            font-size: inherit;
+        }
+
+        .note pre .cmt {
+            color: #8b949e;
+        }
+
+        /* Data tables. Wide ones scroll inside their own box. */
+        .table-scroll {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+
+        .note table {
+            border-collapse: collapse;
+            width: 100%;
+            font-family: monospace;
+            font-size: 0.85rem;
+        }
+
+        .note th, .note td {
+            padding: 0.45rem 0.7rem;
+            text-align: right;
+            border-bottom: 1px solid #30363d;
+            white-space: nowrap;
+        }
+
+        .note th:first-child, .note td:first-child {
+            text-align: left;
+        }
+
+        .note thead th {
+            color: var(--secondary-accent);
+            border-bottom: 2px solid #30363d;
+        }
+
+        .note tr.highlight td {
+            background: rgba(62, 100, 255, 0.15);
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .note tr.muted td {
+            color: #8b949e;
+        }
+
+        /* A claim that needs to stay visible: what this result is not. */
+        .caveat {
+            background: rgba(245, 0, 87, 0.08);
+            border-left: 4px solid var(--secondary-accent);
+            border-radius: 0 8px 8px 0;
+            padding: 1rem 1.25rem;
+            margin: 1.5rem 0;
+        }
+
+        .note a {
+            color: var(--accent-color);
+        }
+
+        /* Two figures side by side when there is room, stacked when there is not. */
+        .figure-pair {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .figure-pair figure {
+            flex: 1 1 260px;
+            min-width: 0;
+        }
+
+        .note figcaption {
+            color: #8b9bb4;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+
+        .empty-state {
+            background-color: var(--card-bg);
+            border: 1px dashed rgba(62, 100, 255, 0.3);
+            border-radius: 12px;
+            padding: 3rem 2rem;
+            text-align: center;
+            color: #8b9bb4;
+        }
+
+        /* --- Image lightbox ---
+           Figures used to open the raw image file in a new tab. On a phone that
+           is a dead end: the bare JPEG has no site nav, and the browser chrome
+           that would carry a Back button is hidden while scrolling or absent
+           entirely in an in-app browser. So enlarging a plot meant losing the
+           page. The overlay keeps the reader on the document, and offers three
+           independent ways out -- the close button, the backdrop, and Back. */
+        .lightbox {
+            position: fixed;
+            /* Longhand as well as inset: iOS Safari below 14.1 ignores inset,
+               and a full-screen overlay that is not full screen is worse than
+               none at all. */
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            inset: 0;
+            z-index: 1000;
+            display: none;
+            background: rgba(5, 6, 12, 0.97);
+        }
+
+        .lightbox[data-open="true"] {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .lightbox-bar {
+            flex: 0 0 auto;
+            display: flex;
+            justify-content: flex-end;
+            padding-top: env(safe-area-inset-top, 0px);
+        }
+
+        .lightbox-close {
+            -webkit-appearance: none;
+            appearance: none;
+            background: rgba(21, 25, 43, 0.92);
+            color: var(--text-color);
+            border: 1px solid #2c3350;
+            border-radius: 8px;
+            font-size: 1.5rem;
+            line-height: 1;
+            /* 44px: the smallest target that stays reliably tappable by thumb. */
+            min-width: 44px;
+            min-height: 44px;
+            margin: 0.75rem;
+            cursor: pointer;
+        }
+
+        .lightbox-stage {
+            flex: 1 1 auto;
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 0.5rem;
+        }
+
+        .lightbox-stage img {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 6px;
+            background-color: #000;
+            cursor: zoom-in;
+        }
+
+        /* Fit-to-screen is unreadable for the dense diagnostic plots, so tapping
+           the image swaps to a width worth panning around. */
+        .lightbox[data-zoom="true"] .lightbox-stage {
+            align-items: flex-start;
+            justify-content: flex-start;
+        }
+
+        .lightbox[data-zoom="true"] .lightbox-stage img {
+            max-width: none;
+            max-height: none;
+            width: 200%;
+            cursor: zoom-out;
+        }
+
+        .lightbox-caption {
+            flex: 0 0 auto;
+            max-height: 30%;
+            overflow-y: auto;
+            margin: 0;
+            padding: 0.75rem 1rem;
+            padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+            color: #8b9bb4;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+        body.lightbox-open {
+            overflow: hidden;
+        }
+
+        .note figure img {
+            cursor: zoom-in;
+        }
+
+        @media (max-width: 768px) {
+            .dso-image-container {
+                height: 300px;
+            }
+            /* Needs restating inside the query: the collapsed selector outranks
+               the 300px rule above on specificity, so it would otherwise keep
+               the desktop height on a phone. */
+            .dso-section.collapsed .dso-image-container {
+                height: 200px;
+            }
+            .dso-title {
+                font-size: 1.5rem;
+            }
+            .mode-switch {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+            .mode-btn .mode-btn-label {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body data-mode="gallery">
+    <header>
+        <h1>Iris Lab Notes</h1>
+        <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
+        <p class="last-updated" id="last-updated">Updated 2026-08-11 09:15 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -1116,29 +1373,30 @@
             <h3>Abstract</h3>
 
             <p class="science-text note-abstract">
-                A faint linear feature roughly 55&Prime; long and 5&Prime; wide
-                appears in deep stacks of the Soap Bubble field, in both the H&alpha; and
-                the O&nbsp;III channels, at the same sky position and the same
-                position angle in each. This records what has been established about it and what
-                has not. It is fixed with respect to the stars rather than the sensor,
-                which excludes the optics and the detector; it survives a median of
-                thirty frames, which excludes a satellite or meteor; and its
-                signal-to-noise <em>rises</em> with the number of frames combined, which
-                excludes an asteroid or comet, because stacking dilutes anything that
-                moves. Dust or dirt in the optical path is excluded by making that
-                logic explicit: the feature is 9&times; stronger stacked on the stars than
-                in detector coordinates, whereas an obstruction must be the reverse. A
-                diffraction spike &mdash; the one instrumental explanation those
-                tests cannot reach on an equatorial mount &mdash; is excluded separately:
-                the feature is detached from any star, and a stack of 63 bright stars
-                shows this telescope produces no spike system at all, with the strand's
-                own position angle the weakest of twelve. Against that, a per-frame photometric series along its axis is
-                consistent with zero for the first eighteen exposures and positive at
-                2.4&ndash;7.7&sigma; for the last twelve, which no static interpretation
-                explains. The two lines of evidence are in direct tension and the feature
-                remains unidentified. The investigation also produced a number of
-                incorrect conclusions on the way, which are documented here because the
-                manner of the errors is instructive.
+                A faint linear feature roughly 55&Prime; long and 5&Prime; wide appears in
+                deep stacks of the Soap Bubble field, at the same sky position and
+                position angle in both the H&alpha; and the O&nbsp;III channels. A long
+                sequence of tests established what it is not: it is fixed with respect to
+                the stars rather than the sensor, which excludes the optics, the detector
+                and dust or a chip in the optical path; it survives a median of thirty
+                frames, which excludes a satellite or meteor; its signal-to-noise
+                <em>rises</em> with the number of frames combined, which excludes an
+                asteroid or comet, because stacking dilutes anything that moves; and a
+                stack of 63 bright stars shows the telescope produces no diffraction
+                spikes at all. Each exclusion held. The conclusion drawn from them did
+                not, because one question had never been asked: <strong>how many
+                comparable features does the frame contain?</strong> A matched-filter
+                search finds 387 above 4&sigma;, and the strand ranks twentieth &mdash;
+                the 95th percentile of an ordinary population, not an outlier. The one
+                measurement that appeared to show the feature varying with time turned out
+                to be tracking the sky background, which fell 48% through each filter
+                block and reset at the filter change (r = &minus;0.705). In a field this
+                dense with filamentary H&alpha; and O&nbsp;III emission the most
+                economical reading is that it is faint nebulosity, which fits every
+                established fact without strain. This note is therefore mostly a record of
+                a methodological failure: excluding exotic explanations one at a time for
+                a feature whose ordinariness a single measurement would have shown at the
+                outset.
             </p>
 
             <h3>The observation</h3>
