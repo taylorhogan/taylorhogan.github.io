@@ -829,7 +829,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-08-13 10:56 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-08-13 11:05 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -5840,7 +5840,26 @@ score    = snr * shape * quality * flatness</code></pre>
                             throw new Error('stale');
                         }
                         if (s.camera !== 'ok') {
-                            wrap.hidden = true;
+                            // A missed capture is not a dead camera — this one
+                            // drops roughly one run in five, and the web host
+                            // is still serving the last good photograph. Show
+                            // that, aged honestly, and give up only once it
+                            // passes the same staleness rule as everything
+                            // else. Hiding the sky because a single frame was
+                            // missed meant a one-in-five chance of an empty
+                            // panel on any given page load.
+                            var lastGood = s.last_good_captured;
+                            var goodAge = lastGood
+                                ? (Date.now() - new Date(lastGood).getTime()) / 60000
+                                : Infinity;
+                            if (!(goodAge <= STALE_MIN)) {
+                                wrap.hidden = true;
+                                return;
+                            }
+                            cap.innerHTML = 'Photographed ' + ago(lastGood)
+                                + '. The camera did not answer on the most recent check.';
+                            img.src = '/live/sky.jpg?t=' + Date.now();
+                            wrap.hidden = false;
                             return;
                         }
                         // A table, not a paragraph: how many catalogue stars sit
