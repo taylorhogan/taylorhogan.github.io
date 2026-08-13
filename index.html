@@ -829,7 +829,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-08-11 09:15 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-08-13 10:56 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -5115,6 +5115,35 @@ score    = snr * shape * quality * flatness</code></pre>
             <p class="live-caption" id="live-skycam-caption"></p>
         </div>
 
+        <!--
+            The all-sky camera INSIDE the observatory. It only sees sky while
+            the roof is open, so unlike its neighbours this panel is removed
+            from the page outright rather than merely emptied whenever the roof
+            is not known to be open — with the roof shut the same camera takes a
+            well-exposed photograph of the roof's own underside, and a picture
+            of the inside of a shed is not a thing to leave on the page under a
+            heading about the sky.
+        -->
+        <div class="live-sky" id="live-allsky" hidden>
+            <h3 id="live-allsky-title">Through the open roof</h3>
+            <img id="live-allsky-img" alt="Wide-angle photograph looking straight up through the observatory's open roof, taken by the all-sky camera beside the telescope">
+            <p class="live-caption" id="live-allsky-caption"></p>
+        </div>
+
+        <!--
+            Last, because it is the least interesting thing on the page and the
+            only one that is not a photograph. It rides on the same status.json
+            as the chart above, which is what keeps it honest: uptime is derived
+            from a boot instant, so a browser left open on a dead feed would go
+            on counting upward and advertise a powered-off observatory as having
+            its best uptime yet. Sharing the chart's status means this vanishes
+            the moment that feed is judged stale.
+        -->
+        <div class="live-sky" id="live-uptime" hidden>
+            <h3 id="live-uptime-title">How long it has been running</h3>
+            <p class="live-caption" id="live-uptime-caption"></p>
+        </div>
+
     </div>
 
     <script>
@@ -5659,6 +5688,42 @@ score    = snr * shape * quality * flatness</code></pre>
             }
             var STALE_MIN = 20;   // generator runs every 5; 20 allows a few misses
 
+            // The uptime block rides on THIS fetch rather than one of its own,
+            // for the reason spelled out beside its markup: it must disappear
+            // when the chart does. It also re-checks on the same wake events a
+            // phone returning from a background tab already triggers.
+            var upWrap = document.getElementById('live-uptime');
+            var upCap = document.getElementById('live-uptime-caption');
+
+            function uptime(iso) {
+                var secs = (Date.now() - new Date(iso).getTime()) / 1000;
+                if (!(secs > 0)) { return null; }   // clock skew: say nothing
+                var d = Math.floor(secs / 86400);
+                var h = Math.floor((secs % 86400) / 3600);
+                var m = Math.floor((secs % 3600) / 60);
+                function plural(n, word) {
+                    return n + ' ' + word + (n === 1 ? '' : 's');
+                }
+                if (d) { return plural(d, 'day') + ', ' + plural(h, 'hour'); }
+                if (h) { return plural(h, 'hour') + ', ' + plural(m, 'minute'); }
+                return plural(m, 'minute');
+            }
+
+            function showUptime(s) {
+                if (!upWrap) { return; }
+                var txt = s && s.boot ? uptime(s.boot) : null;
+                if (!txt) {
+                    upWrap.hidden = true;
+                    return;
+                }
+                var since = new Date(s.boot).toLocaleString([], {
+                    year: 'numeric', month: 'short', day: 'numeric',
+                    hour: '2-digit', minute: '2-digit'
+                });
+                upCap.innerHTML = '<strong>' + txt + '</strong> — since ' + since + '.';
+                upWrap.hidden = false;
+            }
+
             function ago(iso) {
                 var mins = (Date.now() - new Date(iso).getTime()) / 60000;
                 if (mins < 1.5) { return 'just now'; }
@@ -5674,6 +5739,7 @@ score    = snr * shape * quality * flatness</code></pre>
                         var age = (Date.now() - new Date(s.generated).getTime()) / 60000;
                         if (age > STALE_MIN) {
                             // Say nothing rather than present a stale sky as current.
+                            showUptime(null);
                             head.textContent = 'The observatory is sleeping';
                             cap.innerHTML = '<span class="live-stale">Last chart '
                                 + ago(s.generated) + ' \u2014 the feed has gone quiet.</span>';
@@ -5682,6 +5748,7 @@ score    = snr * shape * quality * flatness</code></pre>
                             if (lwx) { lwx.hidden = true; }
                             return;
                         }
+                        showUptime(s);
                         head.textContent = s.target
                             ? 'Tracking ' + s.target
                             : 'No target selected';
@@ -5716,7 +5783,11 @@ score    = snr * shape * quality * flatness</code></pre>
                     })
                     .catch(function () {
                         // No feed at all is the honest default: leave the
-                        // sleeping placeholder and show nothing.
+                        // sleeping placeholder and show nothing. This is also
+                        // the GitHub Pages copy's normal path -- /live/ is
+                        // served by the web host, so there the fetch 404s and
+                        // the header simply carries no uptime.
+                        showUptime(null);
                         wrap.hidden = true;
                         var lwy = document.getElementById('live-latest');
                         if (lwy) { lwy.hidden = true; }
@@ -5860,6 +5931,170 @@ score    = snr * shape * quality * flatness</code></pre>
             // visibilitychange: iOS Safari restores from the back/forward
             // cache without ever firing a visibility change, so without it a
             // page reached with the back button stays frozen indefinitely.
+            document.addEventListener('visibilitychange', function () {
+                if (!document.hidden) { refresh(); }
+            });
+            window.addEventListener('pageshow', function () { refresh(); });
+        })();
+
+        (function () {
+            // The all-sky camera under the roof, published into allsky.json by
+            // scripts/allsky_monitor.py. Its own file, like its neighbours: the
+            // other generators rewrite theirs wholesale on their own timers, so
+            // a shared one would mean whichever job finished last had deleted
+            // the others' fields.
+            //
+            // This panel is DETACHED from the document rather than hidden when
+            // the roof is not known open. Its neighbours can afford to sit
+            // there empty because their cameras always look at sky; this one
+            // photographs the underside of the roof whenever the roof is shut,
+            // so "no reading" and "a picture of the inside of the observatory"
+            // are the same state, and the honest rendering of it is nothing at
+            // all.
+            var wrap = document.getElementById('live-allsky');
+            if (!wrap) {
+                return;
+            }
+            var img = document.getElementById('live-allsky-img');
+            var cap = document.getElementById('live-allsky-caption');
+            var title = document.getElementById('live-allsky-title');
+            // Where to put the panel back, kept from before it is first taken
+            // out. Without an anchor a re-attached panel would land at the end
+            // of the container instead of below the sky camera it belongs with.
+            var anchor = document.createComment('all-sky panel: attached only while the roof is open');
+            wrap.parentNode.insertBefore(anchor, wrap);
+            var STALE_MIN = 20;   // publisher runs every 5; 20 allows a few misses
+
+            function detach() {
+                if (wrap.parentNode) { wrap.parentNode.removeChild(wrap); }
+                // Dropped so the browser is not holding a picture of a closed
+                // roof ready to paint the instant the panel comes back.
+                img.removeAttribute('src');
+            }
+
+            function attach() {
+                if (!wrap.parentNode) {
+                    anchor.parentNode.insertBefore(wrap, anchor.nextSibling);
+                }
+                wrap.hidden = false;
+            }
+
+            function ago(iso) {
+                var mins = (Date.now() - new Date(iso).getTime()) / 60000;
+                if (mins < 1.5) { return 'just now'; }
+                if (mins < 90) { return Math.round(mins) + ' minutes ago'; }
+                return Math.round(mins / 60) + ' hours ago';
+            }
+
+            function magnitudeTable(s) {
+                // How many catalogue stars sit at each whole magnitude in view,
+                // and how many were actually detected. The pair is the
+                // measurement — a count on its own says nothing without the
+                // total it came from.
+                var rows = '';
+                var tn = 0, tf = 0;
+                s.completeness.forEach(function (r) {
+                    tn += r.n; tf += r.found;
+                    rows += '<tr><td>' + Math.round(r.vmag) + '</td><td>'
+                        + r.n + '</td><td>' + r.found + '</td><td>'
+                        + Math.round(100 * r.fraction) + '%</td></tr>';
+                });
+                return '<table class="sky-table"><caption>Photographed '
+                    + ago(s.captured || s.generated) + '</caption><thead><tr>'
+                    + '<th>Mag</th><th>In catalogue</th><th>Detected</th><th></th>'
+                    + '</tr></thead><tbody>' + rows + '</tbody>'
+                    + '<tfoot><tr><td>all</td><td>' + tn + '</td><td>' + tf
+                    + '</td><td>' + Math.round(100 * tf / Math.max(tn, 1))
+                    + '%</td></tr></tfoot></table>';
+            }
+
+            function sentence(s) {
+                var bits = [];
+                if (!s.night) {
+                    bits.push('Daylight — the sun is '
+                        + Math.abs(Math.round(s.sun_alt_deg)) + '° '
+                        + (s.sun_alt_deg >= 0 ? 'above' : 'below')
+                        + ' the horizon, so no stars are counted');
+                } else if (s.trustworthy === false) {
+                    // Cloud and rain fill the frame with fragments that pass a
+                    // point-source cut, so the raw number can be at its highest
+                    // on the worst sky of the night. Say so rather than publish
+                    // it as a reading.
+                    bits.push('<strong>Star count unreliable</strong> in this frame — '
+                        + s.false_positives + ' of ' + s.stars
+                        + ' detections are false by the negative-image control, '
+                        + 'which is what rain or heavy cloud looks like');
+                } else if (s.stars != null) {
+                    bits.push('<strong>' + s.stars + ' stars</strong> detected');
+                    if (s.limiting_mag != null) {
+                        // NOT the faintest star seen. It is the 50%
+                        // completeness point: the brightness at which half the
+                        // catalogue stars in view get picked up.
+                        bits.push('clarity reaches <strong>magnitude '
+                            + s.limiting_mag.toFixed(1)
+                            + '</strong> — the brightness where the detection rate '
+                            + 'falls through half, catching nearly every brighter '
+                            + 'star and few fainter ones');
+                    }
+                    if (s.purity != null) {
+                        bits.push('measured against a negative-image control that found '
+                            + s.false_positives + ' false '
+                            + (s.false_positives === 1 ? 'detection' : 'detections'));
+                    }
+                }
+                if (s.exposure_s != null) {
+                    bits.push(s.exposure_s + ' second exposure at gain ' + s.gain
+                        + ', chosen by sweeping both and keeping whichever '
+                        + 'setting showed the most stars');
+                }
+                bits.push('photographed ' + ago(s.captured || s.generated));
+                return bits.join('. ') + '.';
+            }
+
+            function refresh() {
+                fetch('/live/allsky.json', { cache: 'no-store' })
+                    .then(function (r) { return r.ok ? r.json() : null; })
+                    .then(function (s) {
+                        if (!s || !s.generated) { throw new Error('no all-sky status'); }
+                        if ((Date.now() - new Date(s.generated).getTime()) / 60000 > STALE_MIN) {
+                            throw new Error('stale');
+                        }
+                        // The gate. Anything other than a positive "open" takes
+                        // the panel off the page — including "unknown", because
+                        // not knowing whether the roof is open is not a reason
+                        // to show what is behind it.
+                        if (s.roof !== 'open' || s.camera !== 'ok') {
+                            throw new Error('roof not open');
+                        }
+                        title.textContent = 'Through the open roof';
+                        var html = '<p>' + sentence(s) + '</p>';
+                        if (s.night && s.completeness && s.completeness.length) {
+                            html += magnitudeTable(s);
+                        }
+                        if (s.roof_reason) {
+                            html += '<p class="live-stale">Roof confirmed open: '
+                                + s.roof_reason + '.</p>';
+                        }
+                        cap.innerHTML = html;
+                        img.src = '/live/allsky.jpg?t=' + Date.now();
+                        attach();
+                    })
+                    .catch(function () {
+                        detach();
+                    });
+            }
+
+            detach();          // absent until a reading says otherwise
+            refresh();
+            setInterval(refresh, 5 * 60 * 1000);
+
+            // Phone browsers freeze timers in a backgrounded tab, so returning
+            // to the page can show a reading several minutes old with no
+            // obvious way to ask for a fresh one. These fire at the moment
+            // someone is actually looking. pageshow matters separately from
+            // visibilitychange: iOS Safari restores from the back/forward cache
+            // without ever firing a visibility change, so without it a page
+            // reached with the back button stays frozen indefinitely.
             document.addEventListener('visibilitychange', function () {
                 if (!document.hidden) { refresh(); }
             });
