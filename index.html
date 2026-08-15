@@ -829,7 +829,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-08-15 05:45 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-08-15 09:25 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -1290,6 +1290,83 @@
         </article>
 
         <!-- SH2-101 -->
+        <!-- Soap Bubble -->
+        <article id="soap-bubble" class="dso-section">
+            <div class="dso-image-container">
+                <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/soap_bubble_hoo.jpg" alt="The Soap Bubble Nebula: a faint teal spherical shell left of centre in a wide field of red hydrogen emission and dense stars in Cygnus" class="dso-image">
+            </div>
+            <div class="dso-content">
+                <h2 class="dso-title">PN G75.5+1.7 - Soap Bubble Nebula</h2>
+                <div class="dso-meta">TYPE: PLANETARY NEBULA | 40 Ha + 50 O&nbsp;III &times; 300 s | 7.5 HOURS | NO HUMAN IN THE LOOP</div>
+
+                <p class="science-text">
+                    A planetary nebula in Cygnus, and a genuinely difficult one: it was not
+                    discovered until 2008, because it is a thin spherical shell of very low
+                    surface brightness sitting in front of one of the brightest, most crowded
+                    stretches of the Milky Way. It is the faint teal ring left of centre here.
+                    Everything red around it is unrelated foreground hydrogen in the same line
+                    of sight.
+                </p>
+
+                <p class="science-text">
+                    The image is <strong>HOO</strong>: two narrowband filters instead of red,
+                    green and blue. Hydrogen-alpha at 656.3&nbsp;nm and doubly ionised oxygen
+                    at 500.7&nbsp;nm, each passing a band a few nanometres wide. Almost
+                    everything else is rejected before it reaches the sensor &mdash; skyglow,
+                    moonlight, the sodium and LED lines of every streetlight for miles. That
+                    is what makes a shell this faint recoverable from a suburban sky at all.
+                    Two filters are then mapped to three channels: hydrogen to red, oxygen to
+                    green <em>and</em> blue together. Nothing feeds green on its own, so pure
+                    green cannot appear; oxygen reads as teal, and the colour of any pixel is
+                    really a ratio between two emission lines.
+                </p>
+
+                <p class="science-text">
+                    Those two lines are a map of energy rather than of composition. Freeing an
+                    electron from hydrogen takes 13.6&nbsp;eV; when one is recaptured it
+                    cascades back down, and the n=3&rarr;2 step emits the 656.3&nbsp;nm photon.
+                    Hydrogen-alpha therefore traces the whole reach of the ultraviolet.
+                    Stripping oxygen <em>twice</em> takes 35.1&nbsp;eV &mdash; nearly three
+                    times as much &mdash; and photons that hard are absorbed quickly, so
+                    doubly ionised oxygen survives only near a hot source. In a planetary
+                    nebula that source is the exposed core of a dying star, and the teal shell
+                    marks where its hardest photons still reach. The red and the teal are not
+                    different materials; they are different distances from something very hot.
+                </p>
+
+                <p class="science-text">
+                    The oxygen line is also <em>forbidden</em>. Its upper level is metastable,
+                    lasting seconds rather than nanoseconds, and in any laboratory gas a
+                    collision knocks the atom out of it long before it can radiate &mdash;
+                    which is why the line was once credited to a hypothetical element,
+                    &ldquo;nebulium&rdquo;. At nebular densities of a few hundred atoms per
+                    cubic centimetre, a far harder vacuum than anything achievable on Earth,
+                    collisions are rare enough that the atom simply waits and emits. The teal
+                    in this frame is light that cannot be made in a laboratory.
+                </p>
+
+                <p class="science-text">
+                    This is the first image the observatory produced with <strong>no human in
+                    the loop</strong>. Target selection, scheduling, the roof, the mount, the
+                    filter sequence, calibration against bias, darks and flats, registration,
+                    stacking, and the colour composition were all done by its own code. No
+                    external processing software appears anywhere in the chain, and the final
+                    step was a single command: <code>process bubble hoo</code>. It drew on 90
+                    sub-exposures of 300&nbsp;s &mdash; 40 in hydrogen-alpha, 50 in oxygen
+                    &mdash; for 7.5 hours of integration gathered across two nights, and took
+                    25 minutes to render.
+                </p>
+
+                <p class="science-text">
+                    This field is also the subject of
+                    <a href="#strands">Strands in the stack: a feature that was never
+                    unusual</a>, which examines a filament found in an earlier version of this
+                    data and the reasoning that turned it from a discovery into an ordinary
+                    member of a population of 387.
+                </p>
+            </div>
+        </article>
+
         <article id="sh2-101" class="dso-section">
             <div class="dso-image-container">
                 <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/sh2-101.jpg" alt="SH2-101" class="dso-image">
