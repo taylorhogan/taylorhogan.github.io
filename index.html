@@ -829,7 +829,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-08-13 11:05 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-08-15 02:20 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -1340,6 +1340,143 @@
     </div>
 
     <div class="container" id="notes-panel" role="tabpanel" aria-labelledby="tab-notes">
+
+        <article id="allsky-gain" class="note">
+            <h2 class="note-title">The calibration that chose the worst setting</h2>
+            <div class="note-meta"><span class="note-date">2026-08-15</span> &middot; ASI120MC-S ALL-SKY &middot; FIRST LIGHT &middot; 150&deg; FOV &middot; AUTO-EXPOSURE OVERRULED</div>
+
+            <h3>Abstract</h3>
+
+            <p class="science-text note-abstract">
+                A second all-sky camera saw sky for the first time, and its automatic
+                exposure sweep confidently selected the worst setting available. The
+                sweep scores each exposure and gain by how many stars it detects, but
+                detection uses a threshold fixed in ADU, while raising gain scales
+                signal and noise together &mdash; so higher gain pushes everything
+                across a fixed cut and the count rises whether or not anything was
+                actually seen better. It duly picked the camera's maximum gain. Scored
+                honestly, with the threshold set from each frame's own noise, that
+                setting is the <em>worst</em> of six tested: 1,308 stars over a 19,587 ADU
+                background, against 2,077 stars over 976 ADU at gain 0 &mdash; twenty
+                times the sky for 37% fewer stars, and fatter ones. The error was
+                invisible from inside the camera's own numbers and was caught by
+                disagreement with a second camera: the older Kasa reported limiting
+                magnitude 5.28 on a black sky in the same minute the new camera reported
+                5% completeness. Two instruments on one sky is the cheapest error
+                detector in the observatory.
+            </p>
+
+            <h3>An objective that measures the wrong thing</h3>
+
+            <p class="science-text">
+                The sweep is written to avoid an obvious trap and falls into a subtler
+                one. It deliberately does not meter brightness &mdash; metering optimises
+                a picture, and the quantity wanted is stars &mdash; so every candidate
+                exposure is scored by how many trustworthy detections it actually
+                yields. That is the right instinct.
+            </p>
+
+            <p class="science-text">
+                But the detector's threshold is a constant number of ADU. Gain is an
+                analogue amplifier ahead of the converter: turn it up and the star, the
+                sky and the read noise all grow by the same factor. A fixed ADU cut is
+                therefore a <em>different</em> cut at every gain &mdash; a strict one at
+                gain 0, a permissive one at gain 100 &mdash; and the count it returns is
+                partly a measure of the amplifier setting rather than of the sky. An
+                objective of &ldquo;most detections&rdquo; will then climb the gain axis
+                until something else breaks.
+            </p>
+
+            <p class="science-text">
+                Re-scoring the same rungs with the threshold set at five times each
+                frame's own measured noise removes the confound, because that cut means
+                the same thing at every gain:
+            </p>
+
+            <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr><th>Gain</th><th>Exposure</th><th>Sky level (ADU)</th><th>Noise</th><th>Stars</th><th>Purity</th><th>FWHM (px)</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>0</td><td>30 s</td><td>976</td><td>63</td><td>2,077</td><td>0.959</td><td>1.77</td></tr>
+                    <tr><td>0</td><td>60 s</td><td>1,596</td><td>109</td><td>2,107</td><td>0.968</td><td>1.79</td></tr>
+                    <tr><td>50</td><td>30 s</td><td>6,211</td><td>494</td><td>2,128</td><td>0.970</td><td>1.79</td></tr>
+                    <tr><td>50</td><td>60 s</td><td>12,601</td><td>888</td><td>2,186</td><td>0.980</td><td>1.80</td></tr>
+                    <tr><td>100</td><td>30 s</td><td>19,587</td><td>1,734</td><td>1,308</td><td>0.930</td><td>1.83</td></tr>
+                    <tr><td>100</td><td>60 s</td><td>34,070</td><td>1,751</td><td>1,610</td><td>0.909</td><td>2.04</td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <p class="science-text">
+                Maximum gain is last on every column that matters. It also shrinks the
+                sensor's full well, so the sky occupies a far larger share of the
+                available range &mdash; which is why the published frames looked washed
+                out rather than dark, and why a magnitude&#8209;2 star can be lost in a
+                background that a magnitude&#8209;5 star elsewhere in the frame survives.
+            </p>
+
+            <p class="science-text">
+                The same defect hid the alternative. Asked for a plain star count at
+                gain 0, the detector returned <em>two</em>, because the threshold
+                inherited from gain 100 sat six times above the entire sky level. The
+                setting that turned out to be best looked like a dead camera.
+            </p>
+
+            <h3>Exposure has a separate ceiling</h3>
+
+            <p class="science-text">
+                Gain is not the only axis the sweep was searching badly. The camera is
+                bolted down, so the sky drifts across it at 15 arcseconds per second.
+                At the solved plate scale of 0.0946&deg; per pixel that is 1.3 px of
+                trailing in 30 s and 2.6 px in 60 s, against stars whose profile is
+                about 1.8 px wide. Long exposures do not merely soften the stars; the
+                detector rejects anything more elongated than 2.2, so beyond a point
+                each extra second of integration <em>removes</em> stars from the count.
+                The measured widths show it &mdash; 1.83 px at 30 s and 2.04 px at 60 s
+                at the same gain. Holding trailing under a pixel means staying under
+                roughly 22 s.
+            </p>
+
+            <h3>Two cameras, one sky</h3>
+
+            <p class="science-text">
+                None of this was visible from inside the new camera's own reporting,
+                which is the part worth keeping. Its purity was 0.97, its detections
+                numbered in the thousands, and its frames looked plausible. The
+                completeness table was flat at every magnitude instead of falling off a
+                cliff, and the first explanation reached for was cloud &mdash; the frames
+                were bright and featureless, which is what cloud looks like.
+            </p>
+
+            <p class="science-text">
+                The older Kasa camera, four metres away and pointed at the same sky,
+                reported a limiting magnitude of 5.28 over a background of 5 ADU in the
+                same minute. There was no cloud. A camera that disagrees with a
+                validated camera about the same sky is reporting a fault in itself, and
+                the disagreement is what makes it findable &mdash; a single instrument
+                producing self-consistent numbers has no way to tell you that its
+                calibration is wrong.
+            </p>
+
+            <h3>Still open</h3>
+
+            <p class="science-text">
+                The blind plate solve does not converge: five solves of frames minutes
+                apart returned five different optical axes, with the projection's
+                handedness alternating between them. Catalogue positions and the usable
+                radius are both computed from that axis, so it is now the largest error
+                in every completeness figure quoted above, and no radius or limiting
+                magnitude from this camera should be trusted until it settles. Master
+                darks are also still missing &mdash; the first attempt caught the flat
+                panel lighting the observatory, visible as the illuminated fraction
+                climbing from 0.0% to 1.7% across three successive frames, and was
+                discarded. Hot pixel counts rose 8, 24, 39 over 1, 2 and 4 second
+                exposures, so they are not a small correction at the exposures this
+                camera wants.
+            </p>
+        </article>
 
         <article id="strands" class="note">
             <h2 class="note-title">Strands in the stack: a feature that was never unusual</h2>
