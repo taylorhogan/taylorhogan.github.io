@@ -829,7 +829,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-08-15 09:25 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-08-17 15:30 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -1418,6 +1418,143 @@
 
     <div class="container" id="notes-panel" role="tabpanel" aria-labelledby="tab-notes">
 
+
+        <article id="n2n-first-result" class="note">
+            <h2 class="note-title">The first denoise worth showing, and why nothing may be measured from it</h2>
+            <div class="note-meta"><span class="note-date">2026-08-17</span> &middot; SOAP BUBBLE, PN&nbsp;G75.5+1.7 &middot; O&nbsp;III 500.7&nbsp;nm, 77 SUBS &middot; HELD-OUT TARGET &middot; STATUS: DISPLAY ONLY</div>
+
+            <h3>Abstract</h3>
+
+            <p class="science-text note-abstract">
+                The Noise2Noise network trained here has produced its first result that clearly beats the stack it was given. In 77 O&nbsp;III subs of the Soap Bubble the shell is barely a suggestion &mdash; a faint arc buried in grain; after denoising it closes into a continuous ring with structure along its rim, and the stars stay round and in place, which is the check that matters. The network had never seen this object during training, so this is generalisation and not memorisation. It is also, permanently, <em>not a measurement</em>: a denoiser outputs what was probably there, not what was there, and it removes the visible evidence of uncertainty without removing any of the uncertainty. The output is for looking at. Nothing is computed from it.
+            </p>
+
+            <h3>The result</h3>
+
+            <figure>
+                <a href="images/n2n_oiii_before_after.png" target="_blank" rel="noopener noreferrer">
+                    <img src="images/n2n_oiii_before_after.png" alt="Before and after crops of the Soap Bubble in O III. The left panel is grainy with a barely visible arc; the right shows a continuous ring with the stars unchanged.">
+                </a>
+                <figcaption>The same 1:1 crop, 1700&nbsp;px, before and after. Left is the
+                    ordinary stack of 77 O&nbsp;III subs; right is the same data through the
+                    network. The shell closes.</figcaption>
+            </figure>
+
+            <p class="science-text">
+                The Soap Bubble is a hard target for this. It is a planetary nebula whose
+                shell is a thin spherical shock, most of it fainter than the sky it sits
+                against, and O&nbsp;III at 500.7&nbsp;nm is where it shows at all.
+                Seventy-seven subs is a real night&rsquo;s work, and the ordinary stack still
+                leaves the shell as an arc you have to already know about to see. In the
+                denoised frame it closes into a ring, and the rim varies along its length.
+                That is the first output from this network that is straightforwardly better
+                than what went in, rather than merely different from it.
+            </p>
+
+            <h3>Why the stars are the interesting part</h3>
+
+            <p class="science-text">
+                The failure modes here are not subtle, and they appear in the stars before
+                anywhere else. A network that has learned the wrong lesson eats them: a
+                point source that lands in a slightly different place in every dithered
+                frame looks exactly like noise, and a carelessly trained denoiser removes
+                it. Others smear stars into ellipses, shift them, or keep the bright ones
+                while dissolving the faint ones &mdash; which quietly rewrites the
+                photometry of the whole field.
+            </p>
+
+            <p class="science-text">
+                None of that happens here. The stars are round, they are where they were,
+                and the faint ones survive. That is the evidence that the network learned
+                something about this camera&rsquo;s <em>noise</em> rather than something
+                about this camera&rsquo;s <em>pictures</em>.
+            </p>
+
+            <h3>Held out, which is what makes it a result</h3>
+
+            <p class="science-text">
+                The network was never shown a frame of this object. Had it been trained on
+                Soap Bubble data, a beautiful Soap Bubble output would prove very little
+                &mdash; a large network can memorise, and reproducing a shell it has already
+                been taught is not the same as recovering one. Evaluating only on targets
+                held out of training is the difference between a demonstration and an
+                anecdote, and it is a discipline this project imposed on itself after
+                <a href="#injection">an earlier episode where a search that found nothing
+                looked exactly like a search that worked</a>.
+            </p>
+
+            <h3>How the training works, briefly</h3>
+
+            <p class="science-text">
+                The full treatment is in <a href="#noise2noise">the earlier note on learning
+                to denoise without ever seeing a clean image</a>. In short: no clean image of
+                a nebula exists anywhere to train against, so supervised denoising is
+                unavailable. Noise2Noise sidesteps the problem by training the network to map
+                one noisy frame onto <em>another noisy frame of the same scene</em>. The
+                predictor that minimises squared error against a random target is that
+                target&rsquo;s mean; the noise is zero-mean and independent between frames;
+                so the network converges on the clean signal without ever being shown one. An
+                observatory that takes hundreds of subs of the same field is close to the
+                ideal case for it.
+            </p>
+
+            <p class="science-text">
+                Reaching this point took fixing three faults found on 2026-08-11 &mdash;
+                registration against a global reference, a normalisation mismatch between
+                training and inference, and a BatchNorm problem &mdash; together with changes
+                to the training itself. The earlier outputs were not marginally worse than
+                this one; they were wrong in ways that became obvious as soon as the stars
+                were examined.
+            </p>
+
+            <h3>The part that does not go away</h3>
+
+            <p class="science-text">
+                A denoiser does not recover the photons. That information was destroyed when
+                the noise was added, and nothing downstream restores it. What the network
+                outputs is an <em>estimate of what was most likely there</em>, given this
+                input and everything it learned from every other frame it saw in training.
+                That is a statement about a population. It is not a measurement of this
+                object.
+            </p>
+
+            <p class="science-text">
+                The consequence is sharper than &ldquo;it might be wrong&rdquo;. Grain in an
+                image is not merely ugly; it is the honest, visible record of how much is
+                known. Denoising removes that record <em>without removing any of the
+                underlying uncertainty</em>. The smooth image looks far more certain than the
+                data behind it is, and it looks that way to a careful reader as much as to a
+                careless one. That is what makes it dangerous in a way a noisy image is not.
+            </p>
+
+            <p class="science-text">
+                A network minimising expected error will also, handed pure noise, produce
+                whatever structure is most plausible &mdash; because plausible structure is
+                precisely what minimises expected error. It will hand you a filament that was
+                never there, and it will look like the filaments that were. The reason to
+                trust <em>this</em> ring is that it is already present in the raw stack,
+                faintly, as an arc: the network made an existing feature legible rather than
+                inventing one. Had the ring emerged from a blank field, the correct reaction
+                would have been alarm rather than pleasure.
+            </p>
+
+            <h3>What it may be used for</h3>
+
+            <p class="science-text">
+                Looking at. Gallery images, presentation, showing somebody what is out there.
+                That is a real use, and this result is good enough for it.
+            </p>
+
+            <p class="science-text">
+                Nothing else. No photometry &mdash; flux is not conserved in any way that can
+                be trusted. No detections, since a transient search run on denoised frames
+                would be searching a network&rsquo;s expectations rather than the sky. No line
+                ratios, no surface-brightness profiles, no rotation curves, no transit depths.
+                Every measurement this observatory makes runs on the ordinary stack, and the
+                denoised frame is a picture made from it afterwards. The stack is the science
+                product; this is the photograph.
+            </p>
+        </article>
 
         <article id="strands" class="note">
             <h2 class="note-title">Strands in the stack: a feature that was never unusual</h2>
