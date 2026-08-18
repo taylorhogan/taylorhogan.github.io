@@ -829,7 +829,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-08-17 15:45 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-08-18 09:05 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -1369,8 +1369,8 @@
                     Deeper O&nbsp;III data of the same shell is also the first target on which
                     this observatory&rsquo;s Noise2Noise denoiser produced something worth
                     showing: <a href="#n2n-first-result">The first denoise worth showing, and
-                    why nothing may be measured from it</a>. In 77 subs the shell is a bare arc
-                    in the ordinary stack and closes into a continuous ring after denoising
+                    why nothing may be measured from it</a>. In 77 subs the shell is a faint ring
+                    fighting grain of its own amplitude, and comes cleanly out of it after denoising
                     &mdash; a photograph, explicitly not a measurement.
                 </p>
             </div>
@@ -1435,27 +1435,51 @@
             <h3>Abstract</h3>
 
             <p class="science-text note-abstract">
-                The Noise2Noise network trained here has produced its first result that clearly beats the stack it was given. In 77 O&nbsp;III subs of the Soap Bubble the shell is barely a suggestion &mdash; a faint arc buried in grain; after denoising it closes into a continuous ring with structure along its rim, and the stars stay round and in place, which is the check that matters. The network had never seen this object during training, so this is generalisation and not memorisation. It is also, permanently, <em>not a measurement</em>: a denoiser outputs what was probably there, not what was there, and it removes the visible evidence of uncertainty without removing any of the uncertainty. The output is for looking at. Nothing is computed from it.
+                The Noise2Noise network trained here has produced its first result that clearly beats the stack it was given. In 77 O&nbsp;III subs of the Soap Bubble the shell is traceable all the way round but no brighter than the grain it sits in; after denoising it reads as a continuous rim with structure along it, and the stars stay round and in place &mdash; 93% of the brightest 250 survive, with a median centroid shift of 0.26&nbsp;px. That last number is the check that matters. The network had never seen this object during training, so this is generalisation and not memorisation. It is also, permanently, <em>not a measurement</em>: a denoiser outputs what was probably there, not what was there, and it removes the visible evidence of uncertainty without removing any of the uncertainty. The output is for looking at. Nothing is computed from it.
             </p>
 
             <h3>The result</h3>
 
             <figure>
-                <a href="images/n2n_oiii_before_after.png" target="_blank" rel="noopener noreferrer">
-                    <img src="images/n2n_oiii_before_after.png" alt="Before and after crops of the Soap Bubble in O III. The left panel is grainy with a barely visible arc; the right shows a continuous ring with the stars unchanged.">
+                <a href="images/soap_bubble_n2n_final.jpg" target="_blank" rel="noopener noreferrer">
+                    <img src="images/soap_bubble_n2n_final.jpg" alt="Wide two-colour field in Cygnus. Red hydrogen-alpha clouds fill the upper half, teal O III fills the lower right, and a small pale sphere sits at the centre.">
                 </a>
-                <figcaption>The same 1:1 crop, 1700&nbsp;px, before and after. Left is the
-                    ordinary stack of 77 O&nbsp;III subs; right is the same data through the
-                    network. The shell closes.</figcaption>
+                <figcaption>The finished frame. H&alpha; red, O&nbsp;III teal; the Soap
+                    Bubble is the small pale sphere at centre, an almost perfect circle
+                    against the H&alpha; clouds of the Cygnus complex. The crops below are
+                    taken from the sphere itself.</figcaption>
             </figure>
+
+            <div class="figure-pair">
+                <figure>
+                    <a href="images/n2n_shell_raw.jpg" target="_blank" rel="noopener noreferrer">
+                        <img src="images/n2n_shell_raw.jpg" alt="Grainy 1:1 crop of the shell. Heavy speckle everywhere, with a faint ring just traceable through it.">
+                    </a>
+                    <figcaption><strong>Before.</strong> The ordinary stack, 1:1. The ring is
+                        there &mdash; traceable all the way round &mdash; but it is competing
+                        with grain of its own amplitude.</figcaption>
+                </figure>
+                <figure>
+                    <a href="images/n2n_shell_denoised.jpg" target="_blank" rel="noopener noreferrer">
+                        <img src="images/n2n_shell_denoised.jpg" alt="The same crop after denoising. The speckle is gone, the ring is smooth and continuous, and the stars are unchanged in position and shape.">
+                    </a>
+                    <figcaption><strong>After.</strong> The same pixels through the network.
+                        The grain goes, the rim holds together, and the stars stay where they
+                        were.</figcaption>
+                </figure>
+            </div>
 
             <p class="science-text">
                 The Soap Bubble is a hard target for this. It is a planetary nebula whose
                 shell is a thin spherical shock, most of it fainter than the sky it sits
-                against, and O&nbsp;III at 500.7&nbsp;nm is where it shows at all.
+                against, and O&nbsp;III at 500.7&nbsp;nm is where it shows at all. The
+                denoising was done on that O&nbsp;III channel; the crops are shown in the
+                same H&alpha;/O&nbsp;III rendering as the wide frame, which is why the sphere
+                reads pale against red rather than as a bare monochrome ring.
                 Seventy-seven subs is a real night&rsquo;s work, and the ordinary stack still
-                leaves the shell as an arc you have to already know about to see. In the
-                denoised frame it closes into a ring, and the rim varies along its length.
+                leaves the shell at roughly the amplitude of its own noise &mdash; a ring you
+                can trace, but only once you know to look. In the denoised frame the rim
+                holds together and varies visibly along its length.
                 That is the first output from this network that is straightforwardly better
                 than what went in, rather than merely different from it.
             </p>
@@ -1473,8 +1497,14 @@
             </p>
 
             <p class="science-text">
-                None of that happens here. The stars are round, they are where they were,
-                and the faint ones survive. That is the evidence that the network learned
+                None of that happens here. Measured on the two frames above, the count of
+                real sources goes <em>up</em> rather than down &mdash; 314 to 330, as faint
+                stars climb out of the grain that was hiding them &mdash; and of the 250
+                brightest in the raw crop, 232 survive with a median centroid shift of
+                0.26&nbsp;px and 95% inside 0.66&nbsp;px. Those figures come from the
+                display-stretched crops rather than the linear data, so they are a sanity
+                check and not photometry; but a network that ate, smeared or shifted stars
+                could not produce them. That is the evidence that the network learned
                 something about this camera&rsquo;s <em>noise</em> rather than something
                 about this camera&rsquo;s <em>pictures</em>.
             </p>
@@ -1541,9 +1571,11 @@
                 whatever structure is most plausible &mdash; because plausible structure is
                 precisely what minimises expected error. It will hand you a filament that was
                 never there, and it will look like the filaments that were. The reason to
-                trust <em>this</em> ring is that it is already present in the raw stack,
-                faintly, as an arc: the network made an existing feature legible rather than
-                inventing one. Had the ring emerged from a blank field, the correct reaction
+                trust <em>this</em> ring is that the whole circumference is already present in
+                the raw stack, faintly: the network made an existing feature legible rather
+                than inventing one. That is a weaker claim than it sounds &mdash; it is the
+                reason to trust this ring, not a general licence &mdash; and it is checkable
+                only because the before frame was kept. Had the ring emerged from a blank field, the correct reaction
                 would have been alarm rather than pleasure.
             </p>
 
