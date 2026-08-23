@@ -829,7 +829,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-08-18 09:05 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-08-23 12:20 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -1427,6 +1427,113 @@
 
     <div class="container" id="notes-panel" role="tabpanel" aria-labelledby="tab-notes">
 
+
+        <article id="ngc6888-hso" class="note">
+            <h2 class="note-title">The Crescent in three ionization states</h2>
+            <div class="note-meta"><span class="note-date">2026-08-23</span> &middot; NGC&nbsp;6888, CRESCENT NEBULA &middot; H&alpha; / S&nbsp;II / O&nbsp;III &middot; NOISE2NOISE REPROCESS &middot; STATUS: DISPLAY ONLY</div>
+
+            <h3>Abstract</h3>
+
+            <p class="science-text note-abstract">
+                A reprocessing of this observatory's existing Crescent Nebula data through the
+                latest Noise2Noise model, rendered in an unusual palette: HSO, with hydrogen
+                mapped to red, sulfur to green, and oxygen to blue. The palette is the point.
+                Two of these three emission lines sit fifteen nanometres apart in the deep red,
+                where the eye cannot tell them apart at all &mdash; a narrowband image is not a
+                photograph of what the nebula looks like, it is a map of which atoms are
+                radiating where, and false colour is the only way to draw that map. The other
+                finding is about the denoiser: after many model variants, they all land within
+                sight of each other. The lever that remains is not architecture. It is
+                integration time.
+            </p>
+
+            <h3>The picture</h3>
+
+            <figure>
+                <a href="images/ngc6888_hso_denoised.jpg" target="_blank" rel="noopener noreferrer">
+                    <img src="images/ngc6888_hso_denoised.jpg" alt="The Crescent Nebula in the HSO palette: a yellow-green shell with a sharp green rim against a black star field, with faint red hydrogen clouds around it.">
+                </a>
+                <figcaption>NGC&nbsp;6888 reprocessed through the current Noise2Noise model
+                    and composed as HSO: H&alpha; &rarr; red, S&nbsp;II &rarr; green,
+                    O&nbsp;III &rarr; blue. The same object, from the same data era as
+                    <a href="#ngc6888">the gallery's Crescent</a>.</figcaption>
+            </figure>
+
+            <p class="science-text">
+                The Crescent is a wind-blown bubble: the Wolf-Rayet star WR&nbsp;136 spent its
+                red-giant phase shedding a slow envelope, and now its fast wind is slamming
+                into that older shell from the inside. Read through the palette, the picture
+                separates the players. The body of the shell renders yellow &mdash; red plus
+                green, hydrogen and sulfur radiating together in the swept-up ejecta. The
+                sharp green skin is where S&nbsp;II dominates: the shocked interface itself,
+                sulfur's low-ionization lines lighting up exactly along the collision front.
+                The diffuse red patches framing the field are plain hydrogen &mdash; the
+                Cygnus background that surrounds everything in this part of the sky,
+                radiating H&alpha; with no sulfur to speak of. Where all three lines emit
+                together, the mix tends toward white.
+            </p>
+
+            <h3>Fifteen nanometres</h3>
+
+            <figure>
+                <img src="images/narrowband_spectrum.png" alt="The visible spectrum from 380 to 750 nanometres with three lines marked: O III at 500.7 in the blue-green, H-alpha at 656.3 and S II at 671.6 both in the red, the last two only 15 nm apart.">
+                <figcaption>Where the three lines fall. O&nbsp;III sits alone in the
+                    blue-green; H&alpha; and S&nbsp;II are 15&nbsp;nm apart in the deep red
+                    &mdash; indistinguishable to the eye.</figcaption>
+            </figure>
+
+            <p class="science-text">
+                Each line is a fingerprint of one atom in one state. <strong>H&alpha;
+                (656.3&nbsp;nm)</strong> is hydrogen recombining after ionization &mdash; the
+                workhorse line, radiated by essentially any gas a hot star has touched, which
+                is why it traces the bulk of every nebula. <strong>S&nbsp;II
+                (671.6&nbsp;nm)</strong> is singly ionized sulfur, easy to make and easy to
+                destroy: it survives only in low-ionization gas, which concentrates it at
+                shock fronts and ionization boundaries &mdash; edges, skins, rims.
+                <strong>O&nbsp;III (500.7&nbsp;nm)</strong> is doubly ionized oxygen, which
+                takes serious ultraviolet or shock energy to produce; it marks the
+                highest-excitation gas, nearest the star or hottest parts of the front.
+            </p>
+
+            <p class="science-text">
+                Now the problem the chart makes visible: two of those three diagnostics are
+                both, to a human eye, simply red. Photograph the Crescent in "true colour"
+                and the hydrogen story and the sulfur story land on the same retinal cells;
+                the physics distinction is real but invisible. Assigning the lines to three
+                well-separated display channels is what makes the distinction visible at all
+                &mdash; the green rim on this image <em>is</em> the shock front, as a thing
+                you can point at. A narrowband palette is routinely criticised for not being
+                what the object "really looks like". That is true, and it is not the goal.
+                No emission nebula looks like much of anything to the eye &mdash; too faint,
+                colour vision not engaged. The palette trades a fictional realism for a real
+                map: which atom, in which state, where.
+            </p>
+
+            <h3>The denoiser, and where that work has landed</h3>
+
+            <p class="science-text">
+                The render was denoised by the latest of the Noise2Noise models this
+                observatory has been training since <a href="#n2n-first-result">the first
+                result worth showing</a> (the method itself is described in
+                <a href="#noise2noise">the original note</a>). The synopsis of the many
+                variants built since &mdash; per-filter models, pooled training, different
+                losses and normalisations &mdash; is easy to state: they all come out very
+                similar. Once the early bugs were fixed, the architecture stopped being the
+                thing that mattered; every reasonable variant recovers about the same image
+                from the same data, because they are all estimating the same signal from the
+                same photons.
+            </p>
+
+            <p class="science-text">
+                That is a useful negative result. It says the model is no longer the
+                bottleneck &mdash; the photons are. Better pictures now mean more
+                integration time on the sky, not more epochs on the GPU. The denoiser's
+                place in the pipeline is settled and modest: a display-stage tool, applied
+                after the science products are made, never before. As with every image in
+                this series: the denoised frame is for looking at. Nothing is measured
+                from it.
+            </p>
+        </article>
 
         <article id="n2n-first-result" class="note">
             <h2 class="note-title">The first denoise worth showing, and why nothing may be measured from it</h2>
