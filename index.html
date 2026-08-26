@@ -829,7 +829,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-08-26 05:50 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-08-26 06:03 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -5600,6 +5600,19 @@ score    = snr * shape * quality * flatness</code></pre>
             <h2 class="live-title" id="live-headline">The observatory is sleeping</h2>
         </div>
 
+        <!--
+            First, because it is the densest thing here: every sub of the
+            current session at once, so a visitor sees what the night has
+            actually produced before seeing where the telescope is aimed. The
+            chart is rendered by the same code behind the `stats` command, so
+            the site and the observatory cannot quote different numbers.
+        -->
+        <div class="live-sky" id="live-stats" hidden>
+            <h3 id="live-stats-title">Tonight's frames</h3>
+            <img id="live-stats-img" alt="Four-panel chart of every frame this session: star width, number of stars detected, eccentricity and sky brightness, coloured by filter">
+            <p class="live-caption" id="live-stats-caption"></p>
+        </div>
+
         <div class="live-sky" id="live-sky" hidden>
             <h3 id="live-sky-title">Where it is pointing</h3>
             <img id="live-sky-img" alt="All-sky chart: zenith at the centre, horizon at the rim, compass points around the edge, with the region blocked by trees shaded and the current target circled">
@@ -6259,6 +6272,10 @@ score    = snr * shape * quality * flatness</code></pre>
                             wrap.hidden = false;
                             var lwx = document.getElementById('live-latest');
                             if (lwx) { lwx.hidden = true; }
+                            // The stats chart goes with them: a stale feed
+                            // means these frames are not "tonight's".
+                            var lsx = document.getElementById('live-stats');
+                            if (lsx) { lsx.hidden = true; }
                             return;
                         }
                         showUptime(s);
@@ -6293,6 +6310,31 @@ score    = snr * shape * quality * flatness</code></pre>
                         } else {
                             lw.hidden = true;
                         }
+
+                        // The session stats chart. Its own frame count is used
+                        // rather than the ticker's, because the chart covers the
+                        // current session for one target while the ticker counts
+                        // whatever the night has done.
+                        var ls = document.getElementById('live-stats');
+                        if (s.stats_dso) {
+                            document.getElementById('live-stats-title').textContent =
+                                'Tonight’s frames — ' + s.stats_dso;
+                            document.getElementById('live-stats-img').src =
+                                '/live/stats.jpg?t=' + Date.now();
+                            var sbits = [];
+                            if (s.stats_frames != null) {
+                                sbits.push(s.stats_frames + ' frame'
+                                    + (s.stats_frames === 1 ? '' : 's') + ' this session');
+                            }
+                            if (s.stats_filters && s.stats_filters.length) {
+                                sbits.push('in ' + s.stats_filters.join(' and '));
+                            }
+                            document.getElementById('live-stats-caption').textContent =
+                                sbits.length ? sbits.join(' ') + '.' : '';
+                            ls.hidden = false;
+                        } else {
+                            ls.hidden = true;
+                        }
                     })
                     .catch(function () {
                         // No feed at all is the honest default: leave the
@@ -6304,6 +6346,8 @@ score    = snr * shape * quality * flatness</code></pre>
                         wrap.hidden = true;
                         var lwy = document.getElementById('live-latest');
                         if (lwy) { lwy.hidden = true; }
+                        var lsy = document.getElementById('live-stats');
+                        if (lsy) { lsy.hidden = true; }
                     });
             }
 
