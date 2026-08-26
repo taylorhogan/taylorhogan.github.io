@@ -825,15 +825,15 @@
         }
     </style>
 </head>
-<body data-mode="gallery">
+<body data-mode="live">
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-08-24 12:07 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-08-26 05:50 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
-        <button class="mode-btn" id="tab-gallery" role="tab" aria-selected="true" aria-controls="gallery-panel" data-target="gallery">
+        <button class="mode-btn" id="tab-gallery" role="tab" aria-selected="false" aria-controls="gallery-panel" data-target="gallery">
             <span class="mode-btn-label">The Images</span>
             <span class="mode-btn-sub">Deep sky objects shot from the observatory, and how far back you are looking</span>
         </button>
@@ -841,7 +841,7 @@
             <span class="mode-btn-label">The Science</span>
             <span class="mode-btn-sub">Experiments, measurements, and problems being worked on</span>
         </button>
-        <button class="mode-btn" id="tab-live" role="tab" aria-selected="false" aria-controls="live-panel" data-target="live">
+        <button class="mode-btn" id="tab-live" role="tab" aria-selected="true" aria-controls="live-panel" data-target="live">
             <span class="mode-btn-label">Live</span>
             <span class="mode-btn-sub">What the observatory is doing right now</span>
         </button>
@@ -5741,7 +5741,11 @@ score    = snr * shape * quality * flatness</code></pre>
                     ev.preventDefault();
                     var mode = el.dataset.target;
                     setMode(mode);
-                    history.replaceState(null, '', mode === 'gallery' ? '#' : '#' + mode);
+                    // Live is the default panel, so it is the one that gets the
+                    // bare hash; the others name themselves. This has to agree
+                    // with the default on <body> or a shared link reopens on a
+                    // different tab than the one it was copied from.
+                    history.replaceState(null, '', mode === 'live' ? '#' : '#' + mode);
                     window.scrollTo(0, 0);
                 });
             });
@@ -5749,8 +5753,15 @@ score    = snr * shape * quality * flatness</code></pre>
             // A bare panel hash selects that panel. Anything else is a deep link
             // to a single card, left to the deck code below, so that a DSO
             // anchor still lands in the gallery.
+            //
+            // 'gallery' is listed explicitly now that it is no longer the
+            // default: before this it was reached by the bare '#' and never
+            // appeared as a hash, so omitting it was harmless. It is not any
+            // more -- without it, #gallery would fall through to the card
+            // lookup, find nothing, and leave the visitor on Live.
             var panelHash = location.hash.slice(1);
-            if (panelHash === 'notes' || panelHash === 'live') {
+            if (panelHash === 'notes' || panelHash === 'live'
+                    || panelHash === 'gallery') {
                 setMode(panelHash);
             }
         })();
@@ -6160,7 +6171,7 @@ score    = snr * shape * quality * flatness</code></pre>
             // has a contents list: land in the right tab with that card already
             // open. Each deck declares which tab it belongs to.
             var slug = location.hash.slice(1);
-            if (slug && slug !== 'notes' && slug !== 'live') {
+            if (slug && slug !== 'notes' && slug !== 'live' && slug !== 'gallery') {
                 var target = document.getElementById(slug);
                 if (target && target._deck) {
                     var mode = target._deck.mode;
