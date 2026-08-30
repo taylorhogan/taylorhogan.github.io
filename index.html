@@ -864,7 +864,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-08-30 11:59 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-08-30 12:13 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -1574,6 +1574,202 @@
 
     <div class="container" id="notes-panel" role="tabpanel" aria-labelledby="tab-notes">
 
+
+        <article id="dither" class="note">
+            <h2 class="note-title">Missing on purpose</h2>
+            <div class="note-meta"><span class="note-date">2026-08-30</span> &middot; DITHERING &middot; SIMULATION + SOAP BUBBLE / ELEPHANT TRUNK DATA &middot; STATUS: RA FIX BUILT, AWAITING FIRST NIGHT ON SKY</div>
+
+            <h3>Abstract</h3>
+
+            <p class="science-text note-abstract">
+                Deliberately adding random pointing errors between exposures &mdash; dithering
+                &mdash; makes the final stacked image cleaner, which sounds backwards: the
+                telescope goes deeper by aiming worse. The reason is that a camera produces two
+                kinds of noise, and only one of them averages away with more frames. Random
+                photon noise is different in every frame and falls as &radic;N; hot pixels and
+                row banding are bolted to the detector and identical in every frame, so stacking
+                a hundred subs leaves them at full strength. Dithering converts the second kind
+                into the first. A simulation below shows a held-still stack hitting a hard SNR
+                ceiling at about a fifth of what the same detector delivers when dithered
+                &mdash; and this observatory's own data shows the ceiling in the wild: a stack
+                whose SNR grew from 2.7 to only 4.5 between 2 and 29 frames, where &radic;N
+                promised 10. Chasing that number uncovered a dither that was quietly broken in
+                one axis, a mount that was wrongly blamed for it, and a trigonometric trap that
+                made a flawless correction look 45% short.
+            </p>
+
+            <h3>The wrong intuition, and why it is wrong</h3>
+
+            <p class="science-text">
+                The intuition says: point at the target, hold perfectly still, and let the
+                frames pile up. Every pixel then sees exactly the same patch of sky all night,
+                the signal adds coherently, and any motion can only smear things. Holding still
+                feels like discipline. It is actually the one pointing strategy guaranteed to
+                stop a stack improving.
+            </p>
+
+            <p class="science-text">
+                The &radic;N law &mdash; stack N frames and the noise falls by the square root
+                of N &mdash; carries a fine-print clause that everything here hinges on: it
+                applies only to noise that is <em>independent from frame to frame</em>. Photon
+                shot noise and read noise qualify; every frame rolls new dice. But a sensor also
+                carries a fixed pattern &mdash; hot pixels, warm columns, row-bias banding,
+                flat-field residuals &mdash; that is the <em>same</em> in every frame, because
+                it belongs to the silicon rather than the sky. Averaging identical copies of
+                something reproduces it exactly. Stack ten frames or ten thousand: the random
+                noise sinks toward the fixed pattern, and then the image stops getting better,
+                because what remains was never random.
+            </p>
+
+            <p class="science-text">
+                Dithering breaks the symmetry. Shift the pointing by a random handful of pixels
+                before each sub, then register the frames back onto the stars before combining.
+                In sky coordinates the target lands in the same place every time &mdash; but the
+                detector's fixed pattern, dragged along by the registration, lands somewhere
+                <em>different</em> in every frame. From the stack's point of view the pattern
+                has become one more source of frame-to-frame random noise, and &radic;N applies
+                to it again. Better still, a hot pixel now visits each sky position only once,
+                which is exactly the lone-outlier shape that sigma-clipping rejects outright.
+                Nothing about the detector changed; its noise was merely decorrelated from the
+                sky.
+            </p>
+
+            <h3>A controlled demonstration</h3>
+
+            <p class="science-text">
+                Real nights never offer a clean A/B &mdash; nobody spends five hours
+                deliberately not dithering &mdash; so this one is synthetic, with every noise
+                source known exactly. A 256-pixel toy detector observes a faint nebula whose
+                surface brightness peaks at 0.4&nbsp;&sigma; of a single frame's noise &mdash;
+                genuinely invisible in any one sub. Each frame gets fresh random noise
+                (10&nbsp;ADU), plus a fixed pattern that never changes: 90 hot pixels and
+                row/column banding of about 2&nbsp;ADU. Two campaigns of 64 frames differ in
+                exactly one thing: one holds the pointing perfectly still, the other shifts it
+                randomly by up to &plusmn;16&nbsp;px per frame. Both are registered and combined
+                with the same 3&nbsp;&sigma;-clipped mean.
+            </p>
+
+            <figure>
+                <a href="images/dither_sim.jpg" target="_blank" rel="noopener noreferrer">
+                    <img src="images/dither_sim.jpg" alt="Simulation of dithering: three image panels show a single noisy frame, a 64-frame stack with pointing held still that is dominated by a grid of banding and hot pixels, and a 64-frame dithered stack in which a faint nebula is clearly visible; below, a log-log chart shows the held-still stack's SNR flattening at 0.33 while the dithered stack follows the square-root-of-N ideal up to 1.5.">
+                </a>
+                <figcaption>Synthetic data, every parameter known. Left: one frame &mdash; the
+                    nebula is nowhere to be seen. Middle: 64 frames stacked with the pointing
+                    held still; the random noise has averaged down, which only exposes the
+                    banding grid and hot pixels underneath, and the nebula is buried in wreckage
+                    that will never average away. Right: the same detector, same exposure,
+                    dithered &mdash; the pattern is gone and the nebula simply appears. The
+                    curve underneath is the whole argument in one line: held-still SNR flattens
+                    at 0.33 while the dithered stack tracks the &radic;N ideal to 1.5, and the
+                    gap is still widening at 64 frames. The dithered curve actually edges
+                    <em>above</em> the dotted ideal, because the ideal is anchored to the first
+                    frame's noise, which includes the fixed pattern &mdash; and the dithered
+                    stack is removing that too.</figcaption>
+            </figure>
+
+            <p class="science-text">
+                The middle panel deserves a second look, because it is the counterintuitive
+                claim made visible. Those 64 frames are not wasted &mdash; their random noise
+                really did fall by a factor of eight &mdash; and that is precisely the problem.
+                Averaging is a flashlight: it dims everything random and leaves everything
+                systematic standing, so the cleaner the stack, the more clearly it renders the
+                detector instead of the sky.
+            </p>
+
+            <h3>The ceiling, observed on a real telescope</h3>
+
+            <p class="science-text">
+                This observatory ran into the ceiling before it had a name for it. On a 50-sub
+                night on the Soap Bubble field, the stack's SNR grew from 2.69 at 2 frames to
+                4.53 at 29, where independent noise predicts 10.25. Sub-&radic;N growth is the
+                signature of noise that does not average down. The dither setting looked
+                healthy on paper &mdash; but measured from the frames themselves, the median
+                pointing step between consecutive subs was about 3&nbsp;px against a stellar
+                FWHM of 6.38&nbsp;px. A defect moved less than half a star-width between
+                neighbouring frames: adjacent subs kept landing it on the same piece of sky,
+                where it stops looking like a lone outlier and starts looking like signal.
+                Dither that is smaller than a star is barely dither at all.
+            </p>
+
+            <p class="science-text">
+                The pattern being fought is also measurable directly. Differencing consecutive
+                subs cancels the sky and the nebula and leaves only what changed &mdash; and on
+                the Elephant Trunk data the row means of those differences scatter 7&ndash;8&times;
+                more than independent pixel noise allows, the column means 6&times;. That is
+                real row- <em>and</em> column-correlated banding. (Measured on raw frames
+                instead of differences the figure comes out a spectacular and bogus
+                18&ndash;23&times;, because the nebula itself spans whole rows; the measurement
+                only means something after the sky has been subtracted away.) It also explains
+                an otherwise puzzling asymmetry: O&nbsp;III stacks converged far worse than
+                H&alpha; from the same nights &mdash; not because O&nbsp;III frames are worse,
+                but because both filters carry the same banding and O&nbsp;III's signal is
+                weaker, so the un-averaged residue is a larger fraction of it.
+            </p>
+
+            <h3>The bug, the false accusation, and the cosine</h3>
+
+            <p class="science-text">
+                Fixing the amplitude was supposed to be the end of the story: raise the dither
+                to 20&nbsp;px and move on. The next run's FITS headers said otherwise. Dec was
+                dithering beautifully &mdash; rms 11.8&ndash;14.5&nbsp;px, right on target. RA:
+                0.1&nbsp;px. One axis of the dither simply was not happening, and a 1-D dither
+                is a line on the sky &mdash; it averages one banding family and leaves the
+                perpendicular one untouched, forever.
+            </p>
+
+            <p class="science-text">
+                The sequencing software's own log showed it commanding both axes correctly, so
+                suspicion fell on the mount: perhaps a direct-drive servo holding to its
+                tracking model treats an RA rate-pulse as an error to be corrected, and quietly
+                nulls it. A live test settled it &mdash; command the mount's native offset API
+                to move +30&nbsp;arcsec in RA and watch what sticks. The answer came back
+                16.4&nbsp;arcsec, and for a moment that read as the mount complying with 55% of
+                the request. It is nothing of the sort: the command is in RA-coordinate arcsec,
+                the measurement is on-sky arcsec, and at declination 56.9&deg; they differ by
+                exactly cos(dec)&nbsp;=&nbsp;0.547. The offset held to a ratio of 0.9999. The
+                mount was flawless; the arithmetic reading the test was where the bug nearly
+                landed. Read the raw numbers side by side and a perfect mount looks like a
+                broken one &mdash; the opposite of the truth.
+            </p>
+
+            <p class="science-text">
+                So the fault is in the pulse-guide path the sequencer uses to nudge the mount,
+                not in the mount itself &mdash; the pulses go out and the servo tracks straight
+                back. The fix routes around it: a script dithers through the mount's offset API
+                directly, with the sequencer still deciding <em>when</em>. Offsets are set
+                absolutely rather than accumulated, so a missed call cannot compound into a walk
+                off target, and the RA amplitude is divided by cos(dec) up front &mdash; the
+                cosine that mislabelled the mount now sized into the command where it belongs.
+                Simulated over 400 dithers it delivers rms 11.9&nbsp;/&nbsp;11.6&nbsp;px on both
+                axes. The number that will prove it on sky is a single statistic in the next
+                run's FITS headers: RA rms &ge;&nbsp;8&nbsp;px. As of this note, that night has
+                not yet happened.
+            </p>
+
+            <h3>What settled out as practice</h3>
+
+            <p class="science-text">
+                Dither every sub, not every few &mdash; rejection works because a defect is a
+                lone outlier at its sky position, and three consecutive hits stop being an
+                outlier. Size the step to roughly three times the stellar FWHM: below one FWHM
+                it buys little (as measured above), beyond five it just spends settle time. The
+                cost of all this deliberate imprecision, measured across a real night, is about
+                12 seconds per 300-second sub &mdash; four percent &mdash; and that covers
+                readout, download, the move and the settle combined. Four percent of the night,
+                paid to make the other ninety-six actually accumulate.
+            </p>
+
+            <p class="science-text caveat">
+                The general lesson is the one this series keeps re-learning in different
+                costumes: more data only helps with noise that differs from frame to frame, so
+                the first question about any noise source is not "how big is it?" but "does it
+                repeat?" Whatever repeats must be made to stop repeating &mdash; calibrate it
+                out, or scramble its relationship to the signal &mdash; because no quantity of
+                averaging will touch it. Dithering is that scrambling, applied with a
+                telescope. The pointing errors were there all along; the only change is that
+                now they are large, random, and working for us.
+            </p>
+        </article>
 
         <article id="trunk-hoo" class="note">
             <h2 class="note-title">The shadow is the subject</h2>
