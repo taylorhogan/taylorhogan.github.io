@@ -84,6 +84,22 @@
             text-decoration: none;
         }
 
+        /* "New" sticker on a tab — points at the latest addition; remove (or
+           move) it when the next thing lands. */
+        .new-badge {
+            display: inline-block;
+            margin-left: 0.5rem;
+            padding: 0.1rem 0.55rem;
+            border-radius: 999px;
+            background: #e6a83e;
+            color: #10131f;
+            font-size: 0.62rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            vertical-align: middle;
+        }
+
         /* --- Mode switch: gallery vs. lab notes --- */
         .mode-switch {
             display: flex;
@@ -513,6 +529,25 @@
             background-color: #000;
         }
 
+        /* Gallery entries that carry their measurements (the Trunk's charts)
+           style figures the same way the notes do. */
+        .dso-content figure {
+            margin: 1.5rem 0;
+        }
+
+        .dso-content figure img {
+            width: 100%;
+            border-radius: 8px;
+            background-color: #000;
+        }
+
+        .dso-content figcaption {
+            color: #8b9bb4;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+
         /* --- The Science as a deck of cards ---
            Nine articles at full length made the section a wall of text: you
            could not see what was there without scrolling past all of it, which
@@ -829,12 +864,12 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-08-28 02:57 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-08-30 10:26 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
         <button class="mode-btn" id="tab-gallery" role="tab" aria-selected="false" aria-controls="gallery-panel" data-target="gallery">
-            <span class="mode-btn-label">The Images</span>
+            <span class="mode-btn-label">The Images <span class="new-badge">New</span></span>
             <span class="mode-btn-sub">Deep sky objects shot from the observatory, and how far back you are looking</span>
         </button>
         <button class="mode-btn" id="tab-notes" role="tab" aria-selected="false" aria-controls="notes-panel" data-target="notes">
@@ -1418,6 +1453,118 @@
                     <span class="time-travel-title">On Earth: ~11,000 BC</span>
                     <p>
                         This light set out as the last ice age was releasing its grip. Ice sheets were retreating across northern Europe and North America, sea levels were beginning the rise that would drown the Bering land bridge, and mammoths, giant ground sloths and sabre-toothed cats were entering their final few millennia. Human hunter-gatherers had reached the southern tip of South America, and in the Fertile Crescent the Natufians were harvesting wild cereals from settled villages &mdash; the first hesitant step toward agriculture.
+                    </p>
+                </div>
+            </div>
+        </article>
+
+        <!-- Elephant's Trunk -->
+        <article id="trunk" class="dso-section">
+            <div class="dso-image-container">
+                <img src="images/trunk_hso_denoised.jpg" alt="The Elephant's Trunk Nebula in the HSO palette: a dark winding column of dust silhouetted against a red and magenta field of glowing hydrogen, its edges rimmed in orange where the ionization front burns." class="dso-image">
+            </div>
+            <div class="dso-content">
+                <h2 class="dso-title">IC 1396A - Elephant's Trunk Nebula</h2>
+                <div class="dso-meta">DISTANCE: ~2,400 LIGHT YEARS | TYPE: DARK GLOBULE IN AN H II REGION | 34 Ha + 64 O&nbsp;III + 47 S&nbsp;II &times; 300 s | 12.1 HOURS OVER FOUR NIGHTS</div>
+
+                <p class="science-text">
+                    The Elephant's Trunk is a dense column of cold gas and dust more than
+                    twenty light-years long, hanging inside IC&nbsp;1396 &mdash; a vast
+                    emission region in Cepheus ionized by the hot multiple star
+                    HD&nbsp;206267, which sits outside this frame. The trunk is what that
+                    star has not yet managed to destroy: its ultraviolet radiation is
+                    boiling material off the column's surface and compressing what remains,
+                    and inside the compressed head a clutch of new stars is forming &mdash;
+                    creation triggered by the same radiation that is eating the cloud. The
+                    dark body of the trunk is not an absence of nebula but a silhouette,
+                    an opaque cloud in front of the glowing hydrogen behind it; the case
+                    that such darkness is real absorption, made by measurement rather than
+                    by eye, is in <a href="#trunk-hoo">The shadow is the subject</a>.
+                </p>
+
+                <p class="science-text">
+                    The colours are a map, not a photograph. This is the <strong>HSO</strong>
+                    palette: three narrowband filters, each passing a single emission line,
+                    assigned hydrogen-alpha&nbsp;&rarr;&nbsp;red,
+                    sulfur&nbsp;(S&nbsp;II)&nbsp;&rarr;&nbsp;green,
+                    oxygen&nbsp;(O&nbsp;III)&nbsp;&rarr;&nbsp;blue. The broad field renders
+                    red shading toward magenta &mdash; hydrogen radiating everywhere, tinted
+                    blue-ward where oxygen's high-excitation emission joins it. The rim of
+                    the trunk burns orange-gold: that is where sulfur's low-ionization line
+                    lights up alongside hydrogen, and it traces the ionization front itself
+                    &mdash; the working surface where the star's radiation meets the cloud.
+                    Two of these three lines are fifteen nanometres apart in the deep red,
+                    indistinguishable to the eye, which is why the palette exists at all
+                    &mdash; the argument is made in full in
+                    <a href="#ngc6888-hso">The Crescent in three ionization states</a>.
+                </p>
+
+                <p class="science-text">
+                    The data behind the picture: 174 five-minute exposures over four nights
+                    (2026-08-23 to 2026-08-28), of which 145 survived the quality gate
+                    &mdash; 12.1 hours in the final image. The chart below tracks the four
+                    metrics measured on every frame across those evenings &mdash; star
+                    sharpness (FWHM), stars detected, star elongation (eccentricity), and
+                    sky brightness &mdash; each dot one exposure, coloured by filter, each
+                    shaded band one night.
+                </p>
+
+                <figure>
+                    <a href="images/trunk_frame_stats.jpg" target="_blank" rel="noopener noreferrer">
+                        <img src="images/trunk_frame_stats.jpg" alt="Four-panel plot of FWHM, stars detected, eccentricity and sky brightness across 173 frames of the Elephant's Trunk over four nights, points coloured red for hydrogen-alpha, green for O III and purple for S II.">
+                    </a>
+                    <figcaption>Four metrics across the evenings, one dot per frame:
+                        H&alpha; in red, O&nbsp;III in green, S&nbsp;II in purple. The sky
+                        panel shows the moon and haze coming and going; the FWHM panel is
+                        the seeing doing the same.</figcaption>
+                </figure>
+
+                <p class="science-text">
+                    And the question every added frame is supposed to answer: is the stack
+                    still improving? The curves below measure signal-to-noise convergence
+                    per filter &mdash; how far a stack of the first k frames sits from the
+                    full stack, as frames accumulate. When the tail flattens, more frames
+                    are polish rather than progress. O&nbsp;III (64 frames) and S&nbsp;II
+                    (47) have flattened below the 0.40&nbsp;%/frame threshold this
+                    observatory calls converged; H&alpha;, at 34 frames and
+                    &minus;0.42&nbsp;%/frame, is the one channel still earning its
+                    exposure time.
+                </p>
+
+                <div class="figure-pair">
+                    <figure>
+                        <a href="images/trunk_convergence_ha.jpg" target="_blank" rel="noopener noreferrer">
+                            <img src="images/trunk_convergence_ha.jpg" alt="Stack convergence curve for the hydrogen-alpha filter: normalized RMSE falling from 37 percent at one frame toward zero at 34 frames, tail slope minus 0.42 percent per frame.">
+                        </a>
+                        <figcaption>H&alpha; &mdash; 34 frames, tail slope
+                            &minus;0.42&nbsp;%/frame: still improving.</figcaption>
+                    </figure>
+                    <figure>
+                        <a href="images/trunk_convergence_oiii.jpg" target="_blank" rel="noopener noreferrer">
+                            <img src="images/trunk_convergence_oiii.jpg" alt="Stack convergence curve for the O III filter: 64 frames with tail slope minus 0.30 percent per frame, below the convergence threshold.">
+                        </a>
+                        <figcaption>O&nbsp;III &mdash; 64 frames,
+                            &minus;0.30&nbsp;%/frame: converged.</figcaption>
+                    </figure>
+                    <figure>
+                        <a href="images/trunk_convergence_sii.jpg" target="_blank" rel="noopener noreferrer">
+                            <img src="images/trunk_convergence_sii.jpg" alt="Stack convergence curve for the S II filter: 47 frames with tail slope minus 0.38 percent per frame, below the convergence threshold.">
+                        </a>
+                        <figcaption>S&nbsp;II &mdash; 47 frames,
+                            &minus;0.38&nbsp;%/frame: converged.</figcaption>
+                    </figure>
+                </div>
+
+                <div class="time-travel-box">
+                    <span class="time-travel-title">On Earth: ~400 BC</span>
+                    <p>
+                        This light left during the golden age of classical Greece. Socrates
+                        was questioning his fellow Athenians in the agora &mdash; he would
+                        drink the hemlock in 399 BC &mdash; and his student Plato would soon
+                        found the Academy. The Parthenon stood newly finished on the
+                        Acropolis. Rome was a young republic still confined to central
+                        Italy; in China the Warring States period was beginning and the
+                        disciples of Confucius were compiling the Analects.
                     </p>
                 </div>
             </div>
