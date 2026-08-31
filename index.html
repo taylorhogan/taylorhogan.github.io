@@ -222,6 +222,48 @@
             max-width: 720px;
         }
 
+        /* The night's stages. Rendered from the machine table published in
+           status.json, not from anything written here. */
+        #live-machine-stages {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            max-width: 720px;
+            margin-top: 0.5rem;
+        }
+
+        #live-machine-stages .stage {
+            font-size: 0.78rem;
+            letter-spacing: 0.01em;
+            padding: 0.28rem 0.7rem;
+            border-radius: 999px;
+            border: 1px solid #26304a;
+            background: #10151f;
+            color: #6c7a92;
+            white-space: nowrap;
+        }
+
+        /* Stages already passed tonight read as settled, not disabled. */
+        #live-machine-stages .stage-past {
+            color: #9fb0c8;
+            border-color: #33405e;
+        }
+
+        #live-machine-stages .stage-now {
+            background: rgba(63, 185, 80, 0.16);
+            border-color: #3fb950;
+            color: #7ee787;
+            font-weight: 600;
+        }
+
+        #live-machine-stages .stage-hold {
+            background: rgba(232, 116, 97, 0.16);
+            border-color: #e87461;
+            color: #ffab95;
+            font-weight: 600;
+            white-space: normal;
+        }
+
         .live-caption strong {
             color: var(--text-color);
         }
@@ -864,7 +906,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-08-31 13:41 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-08-31 14:07 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -5977,7 +6019,7 @@ score    = snr * shape * quality * flatness</code></pre>
         -->
         <div class="live-sky" id="live-machine" hidden>
             <h3 id="live-machine-title">Where the night stands</h3>
-            <div id="live-machine-diagram" style="overflow-x:auto;"></div>
+            <div id="live-machine-stages"></div>
             <p class="live-caption" id="live-machine-caption"></p>
         </div>
 
@@ -6614,32 +6656,22 @@ score    = snr * shape * quality * flatness</code></pre>
                 return Math.round(mins / 60) + ' hours ago';
             }
 
-            // --- The night state machine, current state lit. -----------------
-            // Mermaid is ~900 KB, so it loads only on the first refresh that
-            // actually carries a machine_state — the GitHub Pages copy (where
-            // /live/ 404s) never pays for it. The diagram source is fetched
-            // from /live/night_machine.mmd, pushed by the observatory from the
-            // same CI-checked file the conductor's table generates; this page
-            // only appends a highlight class, never structure.
-            var mermaidLoading = null;
-            function loadMermaid() {
-                if (window.mermaid) { return Promise.resolve(); }
-                if (mermaidLoading) { return mermaidLoading; }
-                mermaidLoading = new Promise(function (res, rej) {
-                    var sc = document.createElement('script');
-                    sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/mermaid/9.4.3/mermaid.min.js';
-                    sc.onload = function () {
-                        window.mermaid.initialize({
-                            startOnLoad: false, theme: 'dark',
-                            themeVariables: { fontFamily: 'inherit', fontSize: '13px' }
-                        });
-                        res();
-                    };
-                    sc.onerror = rej;
-                    document.head.appendChild(sc);
-                });
-                return mermaidLoading;
-            }
+            // --- The night's stages, with the current one lit. ---------------
+            // No diagram library: this site's CSP is script-src 'self', and
+            // keeping it that way is worth more than a drawn graph. The STAGE
+            // LIST is not written here either — it arrives in status.json as
+            // machine_path, straight from the state table the observatory's
+            // conductor executes, so a state added to the machine shows up on
+            // this page without the page being edited, and the page can never
+            // display a stage the machine does not have.
+            var STAGE_LABEL = {
+                IDLE_DAY: 'Idle', PLANNING: 'Planning', ARMED: 'Armed',
+                PRE_FLIGHT: 'Pre-flight', OPENING_ROOF: 'Opening roof',
+                PRELUDE: 'Cooling &amp; focus', SLOT_SETUP: 'Slewing',
+                SLOT_IMAGING: 'Imaging', FLATS: 'Flats', PARKING: 'Parking',
+                CLOSING_ROOF: 'Closing roof', SHUTDOWN: 'Shutting down',
+                NIGHT_DONE: 'Night done'
+            };
 
             function hideMachine() {
                 var lm = document.getElementById('live-machine');
@@ -6648,40 +6680,39 @@ score    = snr * shape * quality * flatness</code></pre>
 
             function renderMachine(s) {
                 var lm = document.getElementById('live-machine');
-                if (!lm) { return; }
-                Promise.all([
-                    loadMermaid(),
-                    fetch('/live/night_machine.mmd', { cache: 'no-store' })
-                        .then(function (r) { return r.ok ? r.text() : null; })
-                ]).then(function (parts) {
-                    var src = parts[1];
-                    if (!src) { hideMachine(); return; }
-                    // Highlight only a state the diagram actually contains, so
-                    // a state added to the code before the mmd re-pushes can
-                    // never inject a stray node.
-                    if (new RegExp('\\b' + s.machine_state + '\\b').test(src)) {
-                        src += '\n    classDef liveActive fill:#3fb950,stroke:#2ea043,color:#0d1117,font-weight:bold\n'
-                             + '    class ' + s.machine_state + ' liveActive\n';
-                    }
-                    var id = 'machine-svg-' + Date.now();
-                    window.mermaid.render(id, src, function (svg) {
-                        document.getElementById('live-machine-diagram').innerHTML = svg;
-                        var tmp = document.getElementById('d' + id);
-                        if (tmp && tmp.parentNode !== null
-                                && !document.getElementById('live-machine-diagram').contains(tmp)) {
-                            tmp.parentNode.removeChild(tmp);
-                        }
-                        document.getElementById('live-machine-title').textContent =
-                            'Where the night stands — ' + s.machine_state
-                            + (s.machine_dso ? ' (' + s.machine_dso + ')' : '');
-                        document.getElementById('live-machine-caption').textContent =
-                            (s.machine_shadow
-                                ? 'The shadow conductor’s reading — tracking the night read-only while the new architecture is proven. '
-                                : '')
-                            + 'The chart is generated from the state table the software executes; the build fails if they ever differ.';
-                        lm.hidden = false;
-                    });
-                }).catch(hideMachine);
+                var box = document.getElementById('live-machine-stages');
+                if (!lm || !box || !s.machine_path || !s.machine_path.length) {
+                    hideMachine();
+                    return;
+                }
+                var at = s.machine_path.indexOf(s.machine_state);
+                var html = '';
+                for (var i = 0; i < s.machine_path.length; i++) {
+                    var st = s.machine_path[i];
+                    // Unknown state names still render, labelled by their own
+                    // name — a machine that gained a stage says so rather than
+                    // showing a gap.
+                    var label = STAGE_LABEL[st] || st.toLowerCase().replace(/_/g, ' ');
+                    var cls = 'stage';
+                    if (!s.machine_hold && i === at) { cls += ' stage-now'; }
+                    else if (!s.machine_hold && at > -1 && i < at) { cls += ' stage-past'; }
+                    html += '<span class="' + cls + '">' + label + '</span>';
+                }
+                if (s.machine_hold) {
+                    html += '<span class="stage stage-hold">' + s.machine_state
+                          + ' — held for the operator</span>';
+                }
+                box.innerHTML = html;
+                document.getElementById('live-machine-title').textContent =
+                    'Where the night stands — '
+                    + (STAGE_LABEL[s.machine_state] || s.machine_state)
+                    + (s.machine_dso ? ' (' + s.machine_dso + ')' : '');
+                document.getElementById('live-machine-caption').textContent =
+                    (s.machine_shadow
+                        ? 'Read by the shadow conductor, which follows the night without touching anything while the new control software is proven. '
+                        : '')
+                    + 'These stages come from the state table the software actually executes — the build fails if the two ever differ.';
+                lm.hidden = false;
             }
 
             function refresh() {
