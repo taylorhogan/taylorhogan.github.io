@@ -222,6 +222,40 @@
             max-width: 720px;
         }
 
+        /* Per-filter frame counts under the stats chart's heading. Sized to be
+           read at arm's length, not squinted at: the count is the point of the
+           panel, so it gets body-text weight rather than caption treatment. */
+        #live-stats-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.45rem;
+            max-width: 720px;
+            margin: 0.15rem 0 0.7rem;
+        }
+
+        #live-stats-filters .filter-count {
+            display: inline-flex;
+            align-items: baseline;
+            gap: 0.4rem;
+            padding: 0.3rem 0.75rem;
+            border: 1px solid #2a3550;
+            border-radius: 8px;
+            background: #121826;
+        }
+
+        #live-stats-filters .filter-name {
+            font-size: 0.95rem;
+            color: #9fb0c8;
+            letter-spacing: 0.02em;
+        }
+
+        #live-stats-filters .filter-n {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-color);
+            font-variant-numeric: tabular-nums;
+        }
+
         /* The night's stages. Rendered from the machine table published in
            status.json, not from anything written here. */
         #live-machine-stages {
@@ -906,7 +940,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-08-31 14:07 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-08-31 14:22 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -5994,7 +6028,12 @@ score    = snr * shape * quality * flatness</code></pre>
         -->
         <div class="live-sky" id="live-stats" hidden>
             <h3 id="live-stats-title">Every frame so far</h3>
-            <img id="live-stats-img" alt="Four-panel chart of every frame taken of this target: star width, number of stars detected, eccentricity and sky brightness, coloured by filter">
+            <!--
+                Per-filter frame counts, at reading size rather than caption
+                size: how much of each channel is in the bank is the number
+                people come to this panel for, and it should not need zooming.
+            -->
+            <div id="live-stats-filters"></div>
             <p class="live-caption" id="live-stats-caption"></p>
         </div>
 
@@ -6782,17 +6821,40 @@ score    = snr * shape * quality * flatness</code></pre>
                                 'Every frame — ' + s.stats_dso;
                             document.getElementById('live-stats-img').src =
                                 '/live/stats.jpg?t=' + Date.now();
+
+                            // Per-filter counts, at reading size. Falls back to
+                            // the bare filter names for a feed published before
+                            // stats_by_filter existed, so an old status.json
+                            // degrades to the previous behaviour instead of
+                            // showing an empty row.
+                            var fbox = document.getElementById('live-stats-filters');
+                            var fhtml = '';
+                            if (s.stats_by_filter) {
+                                for (var fk in s.stats_by_filter) {
+                                    if (!Object.prototype.hasOwnProperty.call(
+                                            s.stats_by_filter, fk)) { continue; }
+                                    fhtml += '<span class="filter-count">'
+                                        + '<span class="filter-name">' + fk + '</span>'
+                                        + '<span class="filter-n">'
+                                        + s.stats_by_filter[fk] + '</span></span>';
+                                }
+                            } else if (s.stats_filters && s.stats_filters.length) {
+                                for (var fi = 0; fi < s.stats_filters.length; fi++) {
+                                    fhtml += '<span class="filter-count">'
+                                        + '<span class="filter-name">'
+                                        + s.stats_filters[fi] + '</span></span>';
+                                }
+                            }
+                            fbox.innerHTML = fhtml;
+
                             var sbits = [];
                             if (s.stats_frames != null) {
                                 sbits.push(s.stats_frames + ' frame'
-                                    + (s.stats_frames === 1 ? '' : 's'));
+                                    + (s.stats_frames === 1 ? '' : 's') + ' in total');
                             }
                             if (s.stats_nights != null) {
                                 sbits.push('across ' + s.stats_nights + ' night'
                                     + (s.stats_nights === 1 ? '' : 's'));
-                            }
-                            if (s.stats_filters && s.stats_filters.length) {
-                                sbits.push('in ' + s.stats_filters.join(', '));
                             }
                             document.getElementById('live-stats-caption').textContent =
                                 sbits.length ? sbits.join(' ') + '.' : '';
