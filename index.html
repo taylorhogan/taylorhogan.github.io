@@ -940,7 +940,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-08-31 14:22 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-08-31 14:34 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -6034,6 +6034,7 @@ score    = snr * shape * quality * flatness</code></pre>
                 people come to this panel for, and it should not need zooming.
             -->
             <div id="live-stats-filters"></div>
+            <img id="live-stats-img" alt="Four-panel chart of every frame taken of this target: star width, number of stars detected, eccentricity and sky brightness, coloured by filter">
             <p class="live-caption" id="live-stats-caption"></p>
         </div>
 
@@ -6870,12 +6871,23 @@ score    = snr * shape * quality * flatness</code></pre>
                             hideMachine();
                         }
                     })
-                    .catch(function () {
+                    .catch(function (err) {
                         // No feed at all is the honest default: leave the
                         // sleeping placeholder and show nothing. This is also
                         // the GitHub Pages copy's normal path -- /live/ is
                         // served by the web host, so there the fetch 404s and
                         // the header simply carries no uptime.
+                        //
+                        // But say WHY on the console first. A missing feed is
+                        // routine; a TypeError in the code above is not, and
+                        // this catch hides four panels either way. Twice now a
+                        // silent catch here has turned a one-line mistake into
+                        // "the Live tab is blank" with nothing to go on: a
+                        // blocked CDN script, and an element deleted by an
+                        // edit. One console line makes both diagnosable.
+                        if (err && err.message !== 'no status') {
+                            console.warn('live status panel failed:', err);
+                        }
                         showUptime(null);
                         wrap.hidden = true;
                         var lwy = document.getElementById('live-latest');
