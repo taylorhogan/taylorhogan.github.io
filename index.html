@@ -864,7 +864,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-08-30 12:13 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-08-31 13:41 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -5967,6 +5967,20 @@ score    = snr * shape * quality * flatness</code></pre>
             <img id="live-latest-img" alt="The most recent sub-exposure from the telescope, annotated with filter, star width, eccentricity and sky brightness">
         </div>
 
+        <!--
+            The night state machine with the current state lit. The diagram is
+            NOT authored here: the observatory pushes docs/night_machine.mmd,
+            which CI regenerates from the transition table the conductor
+            executes and fails the build if it drifts — so this panel can never
+            show a structure the code doesn't have. The page only appends a
+            highlight class for the state named in status.json.
+        -->
+        <div class="live-sky" id="live-machine" hidden>
+            <h3 id="live-machine-title">Where the night stands</h3>
+            <div id="live-machine-diagram" style="overflow-x:auto;"></div>
+            <p class="live-caption" id="live-machine-caption"></p>
+        </div>
+
         <div class="live-sky" id="live-skycam" hidden>
             <h3 id="live-skycam-title">The sky right now</h3>
             <img id="live-skycam-img" alt="Wide-angle photograph of the whole sky from a camera beside the telescope, looking straight up, with trees around the edges of the frame">
@@ -6600,6 +6614,76 @@ score    = snr * shape * quality * flatness</code></pre>
                 return Math.round(mins / 60) + ' hours ago';
             }
 
+            // --- The night state machine, current state lit. -----------------
+            // Mermaid is ~900 KB, so it loads only on the first refresh that
+            // actually carries a machine_state — the GitHub Pages copy (where
+            // /live/ 404s) never pays for it. The diagram source is fetched
+            // from /live/night_machine.mmd, pushed by the observatory from the
+            // same CI-checked file the conductor's table generates; this page
+            // only appends a highlight class, never structure.
+            var mermaidLoading = null;
+            function loadMermaid() {
+                if (window.mermaid) { return Promise.resolve(); }
+                if (mermaidLoading) { return mermaidLoading; }
+                mermaidLoading = new Promise(function (res, rej) {
+                    var sc = document.createElement('script');
+                    sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/mermaid/9.4.3/mermaid.min.js';
+                    sc.onload = function () {
+                        window.mermaid.initialize({
+                            startOnLoad: false, theme: 'dark',
+                            themeVariables: { fontFamily: 'inherit', fontSize: '13px' }
+                        });
+                        res();
+                    };
+                    sc.onerror = rej;
+                    document.head.appendChild(sc);
+                });
+                return mermaidLoading;
+            }
+
+            function hideMachine() {
+                var lm = document.getElementById('live-machine');
+                if (lm) { lm.hidden = true; }
+            }
+
+            function renderMachine(s) {
+                var lm = document.getElementById('live-machine');
+                if (!lm) { return; }
+                Promise.all([
+                    loadMermaid(),
+                    fetch('/live/night_machine.mmd', { cache: 'no-store' })
+                        .then(function (r) { return r.ok ? r.text() : null; })
+                ]).then(function (parts) {
+                    var src = parts[1];
+                    if (!src) { hideMachine(); return; }
+                    // Highlight only a state the diagram actually contains, so
+                    // a state added to the code before the mmd re-pushes can
+                    // never inject a stray node.
+                    if (new RegExp('\\b' + s.machine_state + '\\b').test(src)) {
+                        src += '\n    classDef liveActive fill:#3fb950,stroke:#2ea043,color:#0d1117,font-weight:bold\n'
+                             + '    class ' + s.machine_state + ' liveActive\n';
+                    }
+                    var id = 'machine-svg-' + Date.now();
+                    window.mermaid.render(id, src, function (svg) {
+                        document.getElementById('live-machine-diagram').innerHTML = svg;
+                        var tmp = document.getElementById('d' + id);
+                        if (tmp && tmp.parentNode !== null
+                                && !document.getElementById('live-machine-diagram').contains(tmp)) {
+                            tmp.parentNode.removeChild(tmp);
+                        }
+                        document.getElementById('live-machine-title').textContent =
+                            'Where the night stands — ' + s.machine_state
+                            + (s.machine_dso ? ' (' + s.machine_dso + ')' : '');
+                        document.getElementById('live-machine-caption').textContent =
+                            (s.machine_shadow
+                                ? 'The shadow conductor’s reading — tracking the night read-only while the new architecture is proven. '
+                                : '')
+                            + 'The chart is generated from the state table the software executes; the build fails if they ever differ.';
+                        lm.hidden = false;
+                    });
+                }).catch(hideMachine);
+            }
+
             function refresh() {
                 fetch('/live/status.json', { cache: 'no-store' })
                     .then(function (r) { return r.ok ? r.json() : null; })
@@ -6619,6 +6703,9 @@ score    = snr * shape * quality * flatness</code></pre>
                             // means these frames are not "tonight's".
                             var lsx = document.getElementById('live-stats');
                             if (lsx) { lsx.hidden = true; }
+                            // A stale feed's machine state is a guess, not a
+                            // reading; the diagram goes dark with the rest.
+                            hideMachine();
                             return;
                         }
                         showUptime(s);
@@ -6682,6 +6769,13 @@ score    = snr * shape * quality * flatness</code></pre>
                         } else {
                             ls.hidden = true;
                         }
+
+                        // The night machine, current state lit.
+                        if (s.machine_state) {
+                            renderMachine(s);
+                        } else {
+                            hideMachine();
+                        }
                     })
                     .catch(function () {
                         // No feed at all is the honest default: leave the
@@ -6695,6 +6789,7 @@ score    = snr * shape * quality * flatness</code></pre>
                         if (lwy) { lwy.hidden = true; }
                         var lsy = document.getElementById('live-stats');
                         if (lsy) { lsy.hidden = true; }
+                        hideMachine();
                     });
             }
 
