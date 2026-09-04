@@ -605,6 +605,14 @@
             background-color: #000;
         }
 
+        /* Video in a note behaves like its figures do. */
+        .note figure video {
+            width: 100%;
+            border-radius: 8px;
+            background-color: #000;
+            display: block;
+        }
+
         /* Gallery entries that carry their measurements (the Trunk's charts)
            style figures the same way the notes do. */
         .dso-content figure {
@@ -940,7 +948,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-08-31 14:34 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-09-04 02:44 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -1650,6 +1658,180 @@
 
     <div class="container" id="notes-panel" role="tabpanel" aria-labelledby="tab-notes">
 
+
+        <article id="satellite-tracker" class="note">
+            <h2 class="note-title">The $25 camera that caught a space station</h2>
+            <div class="note-meta"><span class="note-date">2026-09-03</span> &middot; TIANGONG &middot; SECURITY CAMERA AS SATELLITE TRACKER &middot; 1.04&deg;/s &middot; THROUGH CLOUD</div>
+
+            <h3>Abstract</h3>
+
+            <p class="science-text note-abstract">
+                A cheap outdoor security camera &mdash; the kind sold to watch a
+                driveway &mdash; photographed the Chinese space station crossing the sky
+                above the observatory, unattended, at 20:49 on a night so cloudy the
+                telescope never opened its roof. Nobody was watching. The camera knew the
+                station was coming because the observatory had worked out the pass from
+                orbital data that morning, armed itself, and started recording ninety
+                seconds before. And we can prove the bright dot in the video is not a star
+                without knowing a thing about astronomy: it moves 29 pixels every second,
+                and stars move about 0.004.
+            </p>
+
+            <h3>How a driveway camera becomes a tracker</h3>
+
+            <p class="science-text">
+                The camera is a consumer Wi-Fi model bolted outside the observatory,
+                pointing up. It exists to answer a much duller question &mdash; is it
+                cloudy? &mdash; by counting stars every five minutes. It has no
+                telescope, no tracking mount, no cooling, and a pixel covers about two
+                arcminutes of sky, which in astronomical terms is roughly the resolution
+                of a potato.
+            </p>
+
+            <p class="science-text">
+                None of that matters for satellites, because a space station is not a
+                faint thing. The ISS is brighter than every star in the sky and brighter
+                than most planets; Tiangong is a magnitude or two behind it but still
+                comfortably in the "you would notice it from a parking lot" category.
+                What a satellite demands is not sensitivity. It demands <em>knowing
+                where and when to look</em>, and being awake at 4 in the morning.
+                Computers are excellent at both.
+            </p>
+
+            <p class="science-text">
+                So the observatory does this. Every day at noon it downloads the current
+                orbital elements for the ISS and Tiangong &mdash; published freely, since
+                everything in orbit is tracked by radar whether its operators like it or
+                not &mdash; and works out every pass in the next eighteen hours. Then it
+                throws almost all of them away. A pass only counts if three things line up
+                at once: the station has to climb above 40&deg; so it is inside the
+                camera's field rather than behind the trees, it has to be lit by sunlight
+                on a site that is already dark (satellites are only visible in that narrow
+                window where they are in daylight and you are not), and it has to stay
+                that way long enough to film. That trio lines up perhaps a few times a
+                fortnight. When it does, the observatory writes itself a note, and a job
+                that runs every five minutes checks that note and spawns a recorder six
+                minutes before the station arrives.
+            </p>
+
+            <h3>The one that got away, and the one that didn't</h3>
+
+            <p class="science-text caveat">
+                Confession, because it is the more interesting half of the story: this
+                had been quietly broken since the day it was written. The five-minute job
+                that checks the note was checking it <em>only in daylight</em> &mdash; a
+                single misplaced indent &mdash; and a visible pass is, by definition,
+                something that happens at night. So the observatory dutifully predicted
+                passes, armed itself, and then never once looked at its own note at the
+                moment it mattered. The feature's only successful recording in its entire
+                life had been a test run in broad daylight: the exception that proved it
+                could never work. It took a very ordinary question &mdash; "did you record
+                the ISS last night?" &mdash; to find it. Thirty-six hours later it caught
+                a space station.
+            </p>
+
+            <h3>The video</h3>
+
+            <figure>
+                <video controls muted playsinline preload="metadata"
+                       poster="images/tiangong_pass_poster.jpg">
+                    <source src="images/tiangong_pass.mp4" type="video/mp4">
+                    Your browser cannot play this video; it shows a bright point of light
+                    crossing a cloudy night sky framed by trees.
+                </video>
+                <figcaption>Tiangong, 2026-09-03, 20:49 local. The gold ring follows the
+                    station; the box at top right is the same view magnified 3&times; so
+                    the dot is actually visible. The timestamp runs in the corner. Those
+                    are the observatory's trees around the edge and, in between, a solid
+                    overcast &mdash; the telescope stayed shut all night.</figcaption>
+            </figure>
+
+            <h3>It is filmed through the clouds, not between them</h3>
+
+            <p class="science-text">
+                The sky that night was genuinely bad. The camera's own cloud detector
+                rated the frame <strong>untrustworthy</strong> at the very moment of the
+                pass: of 403 things it detected that looked like stars, 163 were measured
+                to be false &mdash; cloud texture masquerading as points of light. The
+                observatory's plate-solver, which normally matches 122 catalogue stars,
+                could match 16. By every measure the instrument had of the sky, the sky
+                was closed for business.
+            </p>
+
+            <p class="science-text">
+                And the station sailed straight through it anyway. That is the part worth
+                sitting with: a space station is bright enough that thin overcast dims it
+                without hiding it. So this particular capability &mdash; unlike every
+                other thing the observatory does &mdash; is <em>almost weather-proof</em>.
+                On a night when a $20,000 telescope had nothing to contribute, the cheap
+                camera on the outside wall got the shot.
+            </p>
+
+            <h3>Proving it is not a star: pixels per second</h3>
+
+            <p class="science-text">
+                A bright dot in a night video proves nothing by itself. Airplanes,
+                satellites, planets, hot pixels, and reflections off a passing bird all
+                look about the same in one frame. The distinguishing feature is not
+                brightness or colour or shape &mdash; it is <strong>speed</strong>, and
+                the maths is refreshingly blunt.
+            </p>
+
+            <p class="science-text">
+                The sky appears to rotate once a day, so a star drifts across this
+                camera at about <strong>0.004 pixels per second</strong>: over the whole
+                two-minute recording it moves half a pixel, which is to say it does not
+                move. The station was measured at <strong>29.2 pixels per second</strong>
+                &mdash; more than seven thousand times faster, crossing a quarter of the
+                sky in the time it takes to read this paragraph. In real units that is
+                1.04&deg; per second, which is precisely what an object 400 km up and
+                travelling at 7.7 km/s looks like when it passes nearly overhead. No
+                identification required: nothing else in the sky moves like that.
+            </p>
+
+            <figure>
+                <a href="images/tiangong_track.jpg" target="_blank" rel="noopener noreferrer">
+                    <img src="images/tiangong_track.jpg" alt="A single frame of the cloudy night sky with a straight gold line drawn from the upper right, where the station emerged past the trees, down to the lower centre of the frame, with small circles marking the first and last detections.">
+                </a>
+                <figcaption>Fifty-eight separate detections, one straight line. The gold
+                    track is the path measured across 38 seconds of video; the circles
+                    mark the first and last frames where the station outshone the
+                    cloud.</figcaption>
+            </figure>
+
+            <p class="science-text">
+                Finding that line took one small trick, and it is a nice illustration of
+                why cloudy data is hard. Asking "what is the brightest thing in each
+                frame?" gives the wrong answer most of the time, because a moonlit cloud
+                edge is often brighter than a space station. Fitting a line through all
+                those answers produces confident nonsense. So instead the question is
+                turned around: <em>which straight, constant-speed path do the most
+                detections agree with?</em> Clouds cannot conspire to drift in a perfect
+                line at a constant rate, and satellites cannot do anything else. Out of
+                260 candidate points across the recording, 58 agreed on a single track and
+                the rest were weather. One question, correctly posed, does the entire job
+                of telling a spacecraft from a cloud.
+            </p>
+
+            <h3>What it costs</h3>
+
+            <p class="science-text">
+                Nothing, is the honest answer. The camera was already there counting
+                stars. The orbital data is free. The prediction takes a couple of seconds
+                of arithmetic once a day, the recording writes about 25&nbsp;MB, and old
+                footage is deleted automatically so the disk cannot fill. The observatory
+                announces its own catch to the phone in the morning: "<em>Tiangong pass
+                recorded: peak alt 79 deg at 20:49:22, 2609 frames</em>."
+            </p>
+
+            <p class="science-text">
+                There is something pleasing about the division of labour here. The
+                expensive instrument in the shed spends months gathering photons from a
+                nebula that has been sitting in the same place since before there were
+                people. The cheap camera on the wall waits for something built by humans
+                to go by overhead at 17,000 miles an hour, and catches it in the rain.
+            </p>
+        </article>
 
         <article id="dither" class="note">
             <h2 class="note-title">Missing on purpose</h2>
