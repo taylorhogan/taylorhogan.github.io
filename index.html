@@ -948,7 +948,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-09-04 03:02 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-09-07 20:30 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -6965,12 +6965,19 @@ score    = snr * shape * quality * flatness</code></pre>
                             return;
                         }
                         showUptime(s);
+                        // target_mode says whether the marked target is what
+                        // the camera is on right now ("imaging") or the night's
+                        // plan while the roof is shut ("planned"). One rule
+                        // feeds every panel, so they cannot name different
+                        // objects any more.
+                        var planned = s.target_mode === 'planned';
                         head.textContent = s.target
-                            ? 'Tracking ' + s.target
+                            ? (planned ? 'Tonight: ' : 'Tracking ') + s.target
                             : 'No target selected';
                         var bits = [];
                         if (s.target) {
-                            bits.push('<strong>' + s.target + '</strong> is '
+                            bits.push('<strong>' + s.target + '</strong>'
+                                + (planned ? ' (planned, not yet imaging) is ' : ' is ')
                                 + s.state + ', at altitude ' + s.alt_deg
                                 + '\u00b0 and azimuth ' + s.az_deg + '\u00b0');
                             if (s.good_hours != null) {
