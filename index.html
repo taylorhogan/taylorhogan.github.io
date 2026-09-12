@@ -948,7 +948,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-09-12 07:17 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-09-12 16:45 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -1657,6 +1657,184 @@
     </div>
 
     <div class="container" id="notes-panel" role="tabpanel" aria-labelledby="tab-notes">
+
+        <article id="focus-seed" class="note">
+            <h2 class="note-title">Telling the telescope where focus will be before it looks</h2>
+            <div class="note-meta"><span class="note-date">2026-09-12</span> &middot; FOCUS &middot; 580 AUTOFOCUS RUNS, MARCH&ndash;SEPTEMBER &middot; TEMPERATURE MODEL PER FILTER &middot; STATUS: BUILT, FIRST NIGHT PENDING</div>
+
+            <h3>Abstract</h3>
+
+            <p class="science-text note-abstract">
+                Six months of the telescope's own autofocus records show that the focus
+                position of every filter follows the focuser's temperature along a straight
+                line &mdash; about 80 steps per degree &mdash; with only two or three hundred
+                steps of scatter around it, and that the seven filters sit at fixed
+                distances from one another. They also show why the autofocus had been
+                failing: across the whole range it had been sweeping, stars grow by
+                only 12&nbsp;percent, less than the noise of a single measurement, so there
+                was no curve to fit. On the night of 11 September four of six runs failed
+                and the first O&nbsp;III exposure was taken at the H&alpha; focus, a thousand
+                steps off. From now on each filter block begins by moving the focuser to
+                where the model says focus will be at the current temperature, and the
+                autofocus only refines it. On that night's data the model would have
+                started 48 steps from the answer.
+            </p>
+
+            <h3>The night that prompted this</h3>
+
+            <p class="science-text">
+                Focusing a telescope is the same job as focusing a camera lens, except that
+                the "lens" is a 17-inch mirror system whose length changes as the night
+                cools, and there is nobody at the eyepiece. So the telescope refocuses
+                itself: it steps the focuser through a range of positions, photographs a
+                star field at each, measures how big the stars are, and fits a V-shaped
+                curve to the results. The bottom of the V is focus. It repeats this every
+                time it changes filter, because the filters are not quite the same
+                thickness of glass, and every time the temperature drifts a couple of
+                degrees.
+            </p>
+
+            <p class="science-text">
+                On 11 September the sequence began with thirty-three minutes of autofocus
+                attempts before it took a single picture. Four runs through the luminance
+                filter were rejected by the fitting software, then one through H&alpha;,
+                before a sixth finally passed. Later, at the switch to O&nbsp;III, the run
+                that was supposed to refocus for the new filter stepped through five
+                positions, found the stars essentially the same size at all of them, and
+                gave up. When an autofocus run fails the software puts the focuser back
+                where it started &mdash; which was the H&alpha; focus &mdash; and carries on.
+                So the first O&nbsp;III exposure of the night was taken a thousand steps from
+                where O&nbsp;III focuses, and the stars in it were 2.5&nbsp;arcseconds across
+                instead of 2.3.
+            </p>
+
+            <figure>
+                <img src="images/focus_seed_night.png"
+                     alt="Two autofocus runs on O III: five nearly flat points from the failed attempt, and an eleven-point V from the successful one, with the Hα focus, the true O III focus and the model's prediction marked as vertical lines.">
+                <figcaption>The two O&nbsp;III runs that night. The first attempt (orange) saw
+                    five points that differ by less than the measurement noise and had
+                    nothing to fit; it restored the focuser to 70150, the H&alpha; focus, and
+                    the first exposure was taken there. The second attempt (blue), starting
+                    from the same place but walking further, found the V and put focus at
+                    71127. The green line is where the temperature model, given the
+                    focuser's reading of 14.7&nbsp;&deg;C, would have started: 71175.</figcaption>
+            </figure>
+
+            <h3>Why the sweep was failing</h3>
+
+            <p class="science-text">
+                The autofocus was sweeping in steps of 500, four steps either side of its
+                starting point, so it only ever looked at focuser positions within
+                &plusmn;2000 of where it began. The chart below, built from the summer's
+                accepted runs, shows what that range actually contains on this telescope.
+                At &plusmn;2000 steps the stars have grown by about 12&nbsp;percent through a
+                narrowband filter and by almost nothing through a broadband one. The
+                measurement of a single point, meanwhile, is uncertain by about
+                10&nbsp;percent, because the atmosphere is never still and every exposure
+                catches a slightly different blur. The V the software was asked to fit was
+                as deep as the noise. That it succeeded as often as it did is a tribute to
+                the fitting code.
+            </p>
+
+            <figure>
+                <img src="images/focus_vcurve_depth.png"
+                     alt="Star size relative to best focus against focuser offset, from minus 8000 to plus 8000 steps, for narrowband and broadband filters; the narrowband curve reaches three times the focused size at plus or minus 8000, the broadband curve under twice; dashed lines mark the 500-step sweep's reach at plus or minus 2000.">
+                <figcaption>How much the stars grow with defocus, measured from the summer's
+                    runs. The grey band is the noise of one measurement. Between the green
+                    dashed lines is everything a 500-step sweep could see; the dotted lines
+                    are the reach of a 2000-step sweep, where narrowband stars are three
+                    times their focused size and there is an unmistakable curve to
+                    fit.</figcaption>
+            </figure>
+
+            <p class="science-text">
+                The cure for that half of the problem is simply a bigger step, and the
+                sweep is now 2000, so its outer points reach &plusmn;8000 where the curve is
+                deep. But a bigger sweep is only useful if it is centred somewhere near
+                focus, and that depends on where the focuser is when the run begins. On
+                11 September it began at the previous filter's focus every time. The
+                other half of the fix is to start it somewhere better.
+            </p>
+
+            <h3>What 580 autofocus runs say</h3>
+
+            <p class="science-text">
+                Every autofocus run writes a small report: which filter, what temperature
+                the focuser's sensor read, where the V bottomed out, and how well the
+                curve fit. The telescope has been keeping these since March without
+                anyone reading them. Plotting the accepted ones &mdash; the runs whose fit
+                the software itself trusted &mdash; gives the picture below.
+            </p>
+
+            <figure>
+                <img src="images/focus_model_fits.png"
+                     alt="Seven small panels, one per filter, each plotting focus position against focuser temperature with accepted runs as dots, failed runs as faint crosses, and a fitted straight line; every line slopes downward, about 80 steps per degree for the broadband filters.">
+                <figcaption>Focus position against focuser temperature for each filter.
+                    Dots are runs the autofocus accepted; crosses are runs it rejected, which
+                    are not used. Each panel's line is the model that now seeds that
+                    filter, with its slope and the scatter of the points about it. The
+                    O&nbsp;III line is steep and rests on a narrow band of temperatures; see
+                    the caveat below.</figcaption>
+            </figure>
+
+            <p class="science-text">
+                Three things stand out. The focus moves with temperature at a steady rate:
+                the broadband filters agree on roughly 80 steps per degree, so a night
+                that cools from 20&nbsp;&deg;C to 10&nbsp;&deg;C carries the focus 800 steps.
+                The filters are not parfocal, and their offsets are stable: H&alpha; sits
+                about 1400 steps below luminance, O&nbsp;III about 700, S&nbsp;II about 1300.
+                And the scatter about each line is 200 to 300 steps, which is about what
+                a single autofocus run is good for in ordinary seeing; the line is not
+                worse than a measurement, and it is available before any measurement has
+                been made. The rejected runs, the crosses, scatter thousands of steps
+                from the line, which is exactly why they are rejected.
+            </p>
+
+            <p class="science-text caveat">
+                One caveat the plot makes visible. The O&nbsp;III filter has only been
+                autofocused between 11 and 22&nbsp;&deg;C, and its fitted slope is nearly twice
+                the others'. Stretched to a frosty night that line would predict a
+                position two thousand steps from where the broadband trend would put it.
+                The model is refitted from the reports every time a sequence is generated,
+                so the first few cold O&nbsp;III nights will pull it into line; until then the
+                2000-step sweep has enough reach to absorb the error.
+            </p>
+
+            <h3>The seed</h3>
+
+            <p class="science-text">
+                The mechanism is deliberately small. When the observatory writes the
+                night's imaging sequence at noon, it now inserts one instruction before
+                every filter block: move the focuser to <em>slope &times; temperature +
+                intercept</em>, using that filter's line, with the temperature read from the
+                focuser's own sensor at the moment the instruction runs &mdash; not a
+                forecast made at noon. The imaging software already has exactly this
+                instruction; it only needed the two numbers. The move happens before the
+                filter changes, so the autofocus that follows the filter change sweeps
+                around the prediction. And if that run fails, the position it restores
+                is the prediction, not the previous filter's focus.
+            </p>
+
+            <p class="science-text">
+                The seed does not replace the autofocus. Its scatter, 200 to 300 steps, is
+                the width of the region the sweep covers anyway; what it removes is the
+                case where the sweep is centred a thousand steps away and sees only one
+                arm of the V. The autofocus still has the last word every time, and each
+                run it accepts becomes one more point on the line.
+            </p>
+
+            <h3>What to watch</h3>
+
+            <p class="science-text">
+                The first exposure of each filter is the test. On 11 September the first
+                O&nbsp;III frame was measurably softer than the second; after the seed it
+                should not be. The other number to watch is how many autofocus runs the
+                software rejects per night, which was four of six. The noon log now records
+                the seeds it wrote, so a bad night can be traced to the model or to the
+                sky. As of this note the code is in place and the model is fitted; the
+                first night that runs with it has not yet happened.
+            </p>
+        </article>
 
 
         <article id="satellite-tracker" class="note">
