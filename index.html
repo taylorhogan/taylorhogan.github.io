@@ -948,7 +948,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-09-12 16:45 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-09-18 01:03 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -6421,9 +6421,8 @@ score    = snr * shape * quality * flatness</code></pre>
             highlight class for the state named in status.json.
         -->
         <div class="live-sky" id="live-machine" hidden>
-            <h3 id="live-machine-title">Where the night stands</h3>
+            <h3 id="live-machine-title">Observatory State</h3>
             <div id="live-machine-stages"></div>
-            <p class="live-caption" id="live-machine-caption"></p>
         </div>
 
         <div class="live-sky" id="live-skycam" hidden>
@@ -7107,14 +7106,9 @@ score    = snr * shape * quality * flatness</code></pre>
                 }
                 box.innerHTML = html;
                 document.getElementById('live-machine-title').textContent =
-                    'Where the night stands — '
+                    'Observatory State — '
                     + (STAGE_LABEL[s.machine_state] || s.machine_state)
                     + (s.machine_dso ? ' (' + s.machine_dso + ')' : '');
-                document.getElementById('live-machine-caption').textContent =
-                    (s.machine_shadow
-                        ? 'Read by the shadow conductor, which follows the night without touching anything while the new control software is proven. '
-                        : '')
-                    + 'These stages come from the state table the software actually executes — the build fails if the two ever differ.';
                 lm.hidden = false;
             }
 
