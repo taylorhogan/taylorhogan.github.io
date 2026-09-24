@@ -948,7 +948,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-09-18 01:03 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-09-24 09:47 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -1657,6 +1657,208 @@
     </div>
 
     <div class="container" id="notes-panel" role="tabpanel" aria-labelledby="tab-notes">
+
+        <article id="star-white-balance" class="note">
+            <h2 class="note-title">Why the galaxy came out green, and how the stars fixed it</h2>
+            <div class="note-meta"><span class="note-date">2026-09-24</span> &middot; COLOUR &middot; M33, 53 FRAMES IN FIVE FILTERS &middot; 297 FIELD STARS &middot; STATUS: SHIPPED, <code>wb=stars</code></div>
+
+            <h3>Abstract</h3>
+
+            <p class="science-text note-abstract">
+                Twenty-seven different renderings of the Triangulum Galaxy all came out
+                the same shade of yellow-green, where the real galaxy's arms are
+                blue-white. The stretch was not the problem: the camera records about a
+                fifth more green than red or blue for a white star, and no amount of
+                brightness adjustment can change the balance between colours. The fix is
+                to measure the balance from the picture itself. The pipeline now finds a
+                few hundred ordinary stars in the field, measures each one through the
+                red, green and blue filters, and scales red and blue so that the
+                <em>average</em> star comes out neutral. On M33 that meant red &times;1.21
+                and blue &times;1.25, agreed by 297 stars to about 12&nbsp;percent, and the
+                arms turned blue, the dust lanes brown and the star-forming regions stayed
+                pink. Brightness and noise are untouched; only the hue changes.
+            </p>
+
+            <h3>The picture that was wrong</h3>
+
+            <p class="science-text">
+                A colour picture from this telescope is built from separate black-and-white
+                exposures through red, green and blue filters (plus a luminance filter for
+                detail and a hydrogen-alpha filter for the glowing gas). The three colour
+                stacks are stretched on one shared brightness scale, on purpose: if each
+                channel were stretched independently the colour would be whatever the
+                stretch happened to make it. Keeping the scale shared means the picture's
+                colour is the ratio the camera actually measured.
+            </p>
+
+            <p class="science-text">
+                On 24 September the pipeline rendered M33 twenty-seven ways &mdash; a grid of
+                black points, white points and stretch strengths, to pick the best-looking
+                one. Every cell of the grid was the same colour: the disc yellow-green, the
+                outer arms olive. That is the tell. A stretch changes how bright things
+                are, not what colour they are relative to each other, so a cast that
+                survives every stretch is a cast in the data.
+            </p>
+
+            <figure>
+                <a href="images/m33_wb_side_by_side.jpg" target="_blank" rel="noopener noreferrer">
+                    <img src="images/m33_wb_side_by_side.jpg"
+                         alt="Two renderings of M33 side by side: the left is yellow-green across the whole disc, the right has blue-white arms, brown dust lanes and pink H II regions.">
+                </a>
+                <figcaption>The same stack, the same stretch (black point at the 55th
+                    percentile, white at the 99.9th, softening 0.025). Left: as measured.
+                    Right: red scaled by 1.20 and blue by 1.25 so that the average field
+                    star is neutral. Nothing else differs.</figcaption>
+            </figure>
+
+            <h3>Why the camera sees green</h3>
+
+            <p class="science-text">
+                The three filters are not equally wide, the sensor is not equally
+                sensitive at every wavelength, and the atmosphere takes more blue than
+                red. So a star that is truly white &mdash; equal energy in each band &mdash;
+                registers more counts in green than in red or blue. Every camera does
+                this; it is why a phone has a white-balance setting, and why a photograph
+                under a tungsten lamp comes out orange until the camera is told the lamp
+                is the reference. A one-shot colour camera makes that correction silently.
+                A mono camera with a filter wheel does not: the raw ratios are the
+                instrument's, and somebody has to decide what "white" is.
+            </p>
+
+            <h3>What "white" should mean</h3>
+
+            <p class="science-text">
+                Here the usual convention is borrowed from the image-processing packages
+                astrophotographers use: <strong>the average star in the field is white.</strong>
+                Stars come in every colour from blue-white to deep orange, but a few
+                hundred of them picked at random from one patch of sky have a
+                well-defined typical colour, and it is the same typical colour in any
+                other patch. Making that average neutral gives a picture in which blue
+                stars look blue, orange stars look orange, and anything in between looks
+                like what it is. (The alternative reference, a star exactly like the Sun,
+                is slightly bluer than the average field star, so pictures balanced that
+                way come out a touch cooler. Either is defensible; this one is the common
+                default and needs no catalogue.)
+            </p>
+
+            <h3>Measuring the stars</h3>
+
+            <p class="science-text">
+                The pipeline finds stars on the luminance stack &mdash; the deepest, sharpest
+                channel &mdash; and keeps the ones that are compact, round, not saturated and
+                not near the edge of the frame. It measures the brightest three hundred.
+                The measurement is the oldest one in photometry: add up the light inside a
+                small circle around the star, and subtract the sky measured in a ring
+                just outside it. The ring matters. Most of these stars sit on the galaxy
+                itself, and the galaxy is yellow. Measured with a ring, the yellow
+                background is subtracted out and only the star's own light is counted;
+                measured without one, the galaxy's colour would leak into every star and
+                the "correction" would push the galaxy toward grey rather than toward its
+                true colour.
+            </p>
+
+            <figure>
+                <img src="images/wb_aperture.png"
+                     alt="A grey-scale crop of the galaxy disc with one star at the centre, a solid green circle 9 pixels across on the star and two dashed orange circles at 17 and 28 pixels marking the sky ring.">
+                <figcaption>One of the 297 stars, on the galaxy's disc. The green circle is
+                    what counts as the star; the ring between the two orange circles is the
+                    local sky, which here is mostly galaxy. The circle is sized from the
+                    stars themselves (four times their typical half-width) so the same
+                    code works at any binning. Luminance stack, binned 2&times;.</figcaption>
+            </figure>
+
+            <p class="science-text">
+                Each star then gives two numbers: its red counts divided by its green, and
+                its blue divided by its green. The figure below plots all 297. They lie
+                along a diagonal &mdash; the redder a star is, the less blue it has, which is
+                just what a range of star temperatures looks like &mdash; and the cloud sits
+                well below and to the left of the point (1,&nbsp;1) that would mean "equal
+                in all three". The median star measures 0.83 in red and 0.80 in blue. The
+                correction is the inverse: multiply red by 1/0.83&nbsp;=&nbsp;1.21 and blue by
+                1/0.80&nbsp;=&nbsp;1.25, and the median lands on (1,&nbsp;1). Green, and the
+                luminance that carries the picture's brightness, are never touched.
+            </p>
+
+            <figure>
+                <a href="images/wb_star_colours.png" target="_blank" rel="noopener noreferrer">
+                    <img src="images/wb_star_colours.png"
+                         alt="Two scatter plots of blue-over-green against red-over-green for 298 stars. On the left the cloud of points runs diagonally and its median sits at (0.83, 0.80); on the right the same cloud has been shifted so its median sits at (1.00, 1.00).">
+                </a>
+                <figcaption>Every measured star's colour, before (left) and after (right).
+                    Points are coloured by brightness. The orange cross is the median. The
+                    diagonal is real: hot stars are blue and red-poor, cool stars are red
+                    and blue-poor, and the correction slides the whole line without
+                    changing its shape. Measured on the 2&times;-binned stacks; the live
+                    full-resolution run found 297 stars and factors 1.205 and 1.247.</figcaption>
+            </figure>
+
+            <p class="science-text">
+                How sure is the answer? The scatter of individual stars about the median is
+                about 12&nbsp;percent in each colour &mdash; that is the spread of star
+                colours, not measurement error &mdash; and with three hundred of them the
+                median is pinned to a percent or two. A second check: the brighter half of
+                the stars gives red/green 0.82 and the fainter half 0.86, a four-percent
+                difference. Faint stars in a galaxy field are more often the galaxy's own
+                young blue stars than the Milky Way's, so a small drift with brightness is
+                expected and it is well inside what the eye can tell.
+            </p>
+
+            <h3>What changed in the picture</h3>
+
+            <figure>
+                <a href="images/wb_crops.jpg" target="_blank" rel="noopener noreferrer">
+                    <img src="images/wb_crops.jpg"
+                         alt="Three pairs of crops, before on the left and after on the right: the galaxy core turns from green-yellow to cream with brown dust lanes; the NGC 604 region shows the same pink nebula against arms that turn from olive to blue-white; an outer arm turns from green to blue.">
+                </a>
+                <figcaption>Three 600-pixel crops at the binned resolution, before and after.
+                    Top: the core, cream rather than green, with the dust lanes now brown.
+                    Middle: NGC&nbsp;604, the galaxy's giant star-forming region, still pink
+                    &mdash; its colour comes from the hydrogen-alpha channel, which the
+                    balance leaves alone &mdash; against arms that have gone blue-white.
+                    Bottom: an outer arm, whose young blue star clusters were green.</figcaption>
+            </figure>
+
+            <p class="science-text">
+                The order of operations matters in one place. The pipeline's HALRGB recipe
+                adds the hydrogen-alpha <em>excess</em> &mdash; the H&alpha; light minus the
+                share of it that ordinary starlight already contributes to the red
+                channel &mdash; into red and luminance. That excess is measured against red.
+                So the balance is applied first, on the plain red, green and blue, and the
+                excess is computed afterwards; done the other way round the correction
+                would scale the nebula's glow along with the stars, and the pink regions
+                would come out a fifth too strong.
+            </p>
+
+            <h3>What it does not do</h3>
+
+            <p class="science-text caveat">
+                It does not make the picture "true colour" in any absolute sense &mdash;
+                there is no such thing for an object the eye could never see in colour;
+                it makes the picture consistent with a stated, conventional reference. It
+                does nothing for the narrowband palettes (HOO, SHO), which are false colour
+                by design and must not be balanced, so the option is off by default and
+                refused there. And it cannot manufacture blue signal that was never
+                recorded: M33's blue channel has five frames against twenty-five in
+                luminance, and the mottled look of the outer arms in the balanced picture
+                is that shortage, not the balance. More blue frames are the next step.
+            </p>
+
+            <h3>Running it</h3>
+
+            <p class="science-text">
+                It is one word on the existing command:
+                <code>process m33 halrgb reuse black=55 soft=0.025 white=99.9 wb=stars</code>.
+                With <code>reuse</code> the stacks are read from cache and the render takes
+                about two minutes for a 61-megapixel field. The log records the factors
+                and the star count every time (<code>White balance from 297 stars on L:
+                R x1.205 B x1.247</code>); fewer than twenty usable stars means no change
+                and a logged reason, never a guess. Implementation:
+                <code>star_white_balance()</code> in
+                <a href="https://github.com/taylorhogan/srt/blob/main/stacking/color_process.py" target="_blank" rel="noopener noreferrer">stacking/color_process.py</a>,
+                commit <code>8911a25</code>, with a synthetic test that plants a known
+                colour error and checks that the measured factors undo it to three percent.
+            </p>
+        </article>
 
         <article id="focus-seed" class="note">
             <h2 class="note-title">Telling the telescope where focus will be before it looks</h2>
