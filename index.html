@@ -948,7 +948,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-09-28 07:34 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-10-04 10:27 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -1393,6 +1393,78 @@
                     <span class="time-travel-title">On Earth: 40 Million Years Ago</span>
                     <p>
                         During the Eocene epoch, Earth experienced a warm climate with lush forests extending to the poles. Early primates evolved in these environments, while modern mammal orders like whales transitioned from land to sea. Antarctica began separating from Australia, initiating global cooling trends.
+                    </p>
+                </div>
+            </div>
+        </article>
+
+        <!-- NGC7380 -->
+        <article id="ngc7380" class="dso-section">
+            <div class="dso-image-container">
+                <img src="images/ngc7380.jpg" alt="The Wizard Nebula in narrowband: a broad magenta cloud of glowing gas filling the right of the frame, bounded on the left and top by gold-orange ridges and dark dust pillars, with the young star cluster scattered across the bright interior." class="dso-image">
+            </div>
+            <div class="dso-content">
+                <h2 class="dso-title">NGC 7380 - Wizard Nebula</h2>
+                <div class="dso-meta">DISTANCE: ~7,200 LIGHT YEARS | TYPE: EMISSION NEBULA AND OPEN CLUSTER | 79 H&alpha; + 87 S&nbsp;II + 96 O&nbsp;III &times; 300 s | 21.8 HOURS OVER SIX NIGHTS</div>
+
+                <p class="science-text">
+                    NGC 7380 is a young star cluster in Cepheus still wrapped in the cloud it
+                    formed from, first recorded by Caroline Herschel in 1787. Its brightest
+                    member, DH Cephei, is a pair of massive O-type stars that orbit each
+                    other in about two days, and their ultraviolet light is what makes the
+                    gas glow: hydrogen stripped of its electron and recombining, over and
+                    over, across a region roughly a hundred light-years wide. The colours here
+                    are a map of that process rather than what the eye would see &mdash;
+                    hydrogen-alpha in red, ionised sulphur in green, doubly ionised oxygen in
+                    blue. Where all three overlap, in the interior nearest the hot stars, the
+                    gas reads magenta; at the edges, where the radiation meets denser cloud
+                    and the ionisation front is still eating its way in, sulphur takes over
+                    and the rims turn gold. The dark knots and fingers along those rims are
+                    dust that has so far survived the erosion. The silhouette of the whole
+                    cloud is what gives it the name.
+                </p>
+
+                <p class="science-text">
+                    The picture is 262 five-minute subframes &mdash; 79 through the
+                    hydrogen-alpha filter, 87 sulphur and 96 oxygen, all 3&nbsp;nm wide &mdash;
+                    from six nights between 11 and 23 September 2026, 21.8 hours in all. Three
+                    nanometre filters pass only the emission lines and almost nothing of the
+                    sky, so a single subframe is mostly noise; it takes this many to bring the
+                    faint outer gas up. The observatory chose the target itself, each noon,
+                    from what was visible and what the forecast allowed, split the night
+                    between the three filters, and wrote the sequence. From there each night
+                    ran without anyone touching it: the roof opened only after the camera
+                    inside the observatory confirmed it shut and the telescope parked, the
+                    focuser was pre-set from a temperature model so that autofocus started
+                    close (on every night after the first), the telescope parked and the roof
+                    closed before the flats were taken, and by morning a convergence analysis
+                    had reported which filters were still improving. Four of the six nights were
+                    started by the scheduler on its own; the other two by a single command.
+                </p>
+
+                <p class="science-text">
+                    The three filters were stacked onto one shared reference by the
+                    observatory's own <code>process</code> pipeline, which calibrates every
+                    frame, rejects the soft or clouded ones, and composes the colour on a
+                    shared brightness scale. The result was then denoised on the DGX Spark by
+                    the Noise2Noise network trained on Iris's own subframes &mdash; the same
+                    network described in
+                    <a href="#n2n-first-result">The first denoise worth showing</a>. As there,
+                    the denoised image is for looking at, not for measuring: the network
+                    returns what was most probably there, which smooths away the grain without
+                    removing the uncertainty the grain was showing. Every number about this
+                    object is taken from the ordinary stack.
+                </p>
+
+                <div class="time-travel-box">
+                    <span class="time-travel-title">On Earth: ~5,200 BC</span>
+                    <p>
+                        This light set out when farming was still spreading across Europe.
+                        Villages of long timber houses, built by the people archaeologists call
+                        the Linear Pottery culture, were appearing along the rivers of central
+                        Europe. In southern Mesopotamia the first settlements of the Ubaid
+                        period were draining marshes and building with mud brick, and writing
+                        was still some two thousand years in the future.
                     </p>
                 </div>
             </div>
