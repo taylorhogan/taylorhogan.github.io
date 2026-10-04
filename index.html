@@ -948,7 +948,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-10-04 10:27 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-10-04 12:48 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -1063,7 +1063,7 @@
             </div>
             <div class="dso-content">
                 <h2 class="dso-title">M33 - Triangulum Galaxy</h2>
-                <div class="dso-meta">DISTANCE: ~2.7 MILLION LIGHT YEARS | TYPE: SPIRAL GALAXY | 25 L + 7 R + 9 G + 5 B + 7 H&alpha; &times; 300 s | 4.4 HOURS OVER FOUR NIGHTS</div>
+                <div class="dso-meta">DISTANCE: ~2.7 MILLION LIGHT YEARS | TYPE: SPIRAL GALAXY | 25 L + 15 R + 13 G + 9 B + 24 H&alpha; &times; 300 s | 7.2 HOURS OVER SIX NIGHTS</div>
 
                 <p class="science-text">
                     M33 is the third-largest galaxy in our Local Group, after Andromeda and
@@ -1082,18 +1082,35 @@
                 </p>
 
                 <p class="science-text">
-                    The picture is luminance, red, green and blue with the hydrogen-alpha
-                    <em>excess</em> added to red, from four nights between 12 and 24
-                    September 2026 &mdash; 57 five-minute frames, 53 through the quality
-                    gate. Its colour is set by the stars: the pipeline measured 297 of them
-                    through the three colour filters and scaled red and blue so that the
+                    The picture is luminance, red, green and blue with hydrogen-alpha
+                    blended in, from six nights between 11 September and 3 October 2026
+                    &mdash; 95 five-minute frames, 86 through the quality gate. Its colour
+                    is set by the stars: the pipeline measured 298 of them through the
+                    three colour filters and scaled red by 1.18 and blue by 1.28 so that the
                     average star is neutral, which turned a uniformly yellow-green
                     rendering into this one. That correction, why it was needed and what it
                     does not do, is the subject of
                     <a href="#star-white-balance">Why the galaxy came out green, and how the stars fixed it</a>.
-                    The blue channel is the thin one &mdash; five frames against
-                    twenty-five in luminance &mdash; and the slightly mottled look of the
-                    outer arms is that shortage; more blue is queued.
+                    Blue is still the thinnest channel &mdash; nine frames against
+                    twenty-five in luminance &mdash; and the slightly grainy look of the
+                    faint outer arms is that shortage.
+                </p>
+
+                <p class="science-text">
+                    The hydrogen-alpha is not simply added to red. An H&alpha; filter sees
+                    the glowing gas, but it also passes a little ordinary starlight, and
+                    adding that would only tint every star red. So the pipeline first
+                    measures how much of the red channel's starlight leaks through the
+                    H&alpha; filter &mdash; here 2.5%, taken from the brightest stars and
+                    galaxy body &mdash; subtracts that share, and keeps only what is left
+                    over: the <em>excess</em>, the light that is genuinely hydrogen
+                    emission. Anything in that excess below twice its own noise is dropped
+                    as grain, which leaves 1.7% of the frame &mdash; the star-forming
+                    regions and almost nothing else. That excess is then added once, at its
+                    measured strength, to both the red and the luminance channels, so the
+                    nebulae gain brightness as well as colour. The pink of NGC&nbsp;604 and
+                    the knots along the arms is that excess; the stars and the smooth light
+                    of the disc are untouched by it.
                 </p>
 
                 <div class="time-travel-box">
