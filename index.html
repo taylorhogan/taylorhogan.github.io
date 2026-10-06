@@ -948,7 +948,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-10-06 02:51 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-10-06 02:56 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -8277,6 +8277,33 @@ score    = snr * shape * quality * flatness</code></pre>
                 if (!document.hidden) { refresh(); }
             });
             window.addEventListener('pageshow', function () { refresh(); });
+        })();
+    </script>
+    <!-- Visitor count: /stats/visitors.json is written every 15 minutes on the
+         web host by iris-visitors.py from Caddy's access log. One visitor = one
+         person (IP + browser) per day loading the page; bots counted separately
+         by their user agent. Stays hidden if the file is missing. -->
+    <footer class="visitor-count last-updated" id="visitor-count" hidden
+            style="text-align:center; margin: 2.5rem auto 2rem;"></footer>
+    <script>
+        (function () {
+            var el = document.getElementById('visitor-count');
+            var n = function (x) { return Number(x).toLocaleString('en-US'); };
+            function show() {
+                fetch('/stats/visitors.json?t=' + Date.now(), { cache: 'no-store' })
+                    .then(function (r) { if (!r.ok) { throw r.status; } return r.json(); })
+                    .then(function (s) {
+                        var since = new Date(s.since + 'T12:00:00').toLocaleDateString('en-US',
+                            { day: 'numeric', month: 'short', year: 'numeric' });
+                        el.textContent = n(s.people) + ' visitors since ' + since + ' · '
+                            + n(s.people_today) + ' today · plus ' + n(s.bots)
+                            + ' visits from bots and crawlers';
+                        el.hidden = false;
+                    })
+                    .catch(function () { /* no count yet: leave the footer hidden */ });
+            }
+            show();
+            setInterval(show, 15 * 60 * 1000);
         })();
     </script>
 </body>
