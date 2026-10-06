@@ -948,7 +948,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-10-04 12:48 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-10-06 02:40 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -1802,6 +1802,227 @@
     </div>
 
     <div class="container" id="notes-panel" role="tabpanel" aria-labelledby="tab-notes">
+
+        <article id="quintet-redshift" class="note">
+            <h2 class="note-title">Five galaxies that only look like neighbours: measuring Stephan's Quintet with a filter</h2>
+            <div class="note-meta"><span class="note-date">2026-10-06</span> &middot; REDSHIFT &middot; STEPHAN'S QUINTET, 18 &times; 5 MIN THROUGH A 3&nbsp;nm S&nbsp;II FILTER + 19 &times; 5 MIN RED &middot; STATUS: DETECTED</div>
+
+            <figure>
+                <a href="images/quintet_lrgb.jpg" target="_blank" rel="noopener noreferrer">
+                    <img src="images/quintet_lrgb.jpg" alt="Colour image of Stephan's Quintet from the observatory: a tight knot of yellowish galaxies in a star field, with a larger, bluer, looser spiral just to its right.">
+                </a>
+                <figcaption>Stephan's Quintet from our observatory, in true colour (luminance, red, green
+                    and blue, first night, 3 October). As it falls on our camera: NGC 7317 is the small
+                    round galaxy at the top of the knot, the NGC 7318 pair sits below it, NGC 7319 is the
+                    barred spiral at the bottom, and the larger, bluer spiral to the right is NGC 7320,
+                    the one that is not really part of the group.</figcaption>
+            </figure>
+
+            <h3>Abstract</h3>
+
+            <p class="science-text note-abstract">
+                Stephan's Quintet looks like five galaxies huddled together, but one of them, NGC 7320,
+                is about eight times closer than the other four. We set out to show that with our own
+                telescope and no spectrograph. The four distant galaxies are flying away from us so fast
+                that the red glow of their hydrogen gas is stretched into a longer wavelength, far enough
+                to land inside a very narrow filter that was built for a different gas, sulphur. The
+                nearby galaxy's hydrogen is not stretched enough and misses it. After removing ordinary
+                starlight, the filter shows strong gas glow in the distant group &mdash; 56 times
+                the noise at the heart of NGC 7319, and 6.6 times at a starburst between the galaxies
+                &mdash; and nothing that stands out from the noise in the nearby one. A gas-free galaxy in
+                the distant group, used as a check, shows nothing either, as it should.
+            </p>
+
+            <h3>The question</h3>
+
+            <p class="science-text">
+                Stephan's Quintet, in Pegasus, is one of the most famous groupings in the sky. In a
+                picture the five galaxies sit almost touching. But a picture has no depth: two lamps at
+                different distances down a street can line up and look side by side. Astronomers have
+                known since the 1960s that the large, loose spiral in the group, NGC 7320,
+                is a foreground galaxy about 40 million light years away, while the other four are about
+                300 million light years away and really are crashing into one another. The usual way to
+                tell is a spectrograph. We wanted to see whether a camera and the right filter could show
+                it too.
+            </p>
+
+            <h3>Redshift, in one paragraph</h3>
+
+            <p class="science-text">
+                Every gas glows at its own exact colours. Hot hydrogen gas, the stuff of star-forming
+                clouds, glows most strongly at one deep-red wavelength called hydrogen-alpha, 656.3
+                nanometres (a nanometre is a millionth of a millimetre). That number is as fixed as a
+                barcode: here on Earth, in a lab, it is always 656.3. When light comes to us from a
+                galaxy moving away, it arrives stretched to a longer, redder wavelength. That stretch is
+                the <em>redshift</em>, and the faster the galaxy is receding, the bigger it is. A galaxy
+                moving away at 1% of the speed of light delivers its hydrogen-alpha 1% redder, at about
+                662.9 nanometres instead of 656.3. Measure where the line lands, and you have measured
+                how fast the galaxy is moving away.
+            </p>
+
+            <h3>Why far galaxies move away faster: the stretching of space</h3>
+
+            <p class="science-text">
+                The galaxies are not fleeing through space like shrapnel. Space itself is expanding. A
+                good picture is raisin bread rising in the oven: every raisin moves away from every other
+                raisin, not because the raisins are swimming through the dough but because the dough
+                between them is growing. Two raisins that start close drift apart slowly; two that start
+                far apart have more dough between them to grow, so they separate faster. The universe
+                behaves the same way. Light crossing that growing space has its waves stretched along
+                with it, which is where the redshift comes from. Edwin Hubble found in 1929 that a
+                galaxy's speed away from us rises in step with its distance: roughly 70 kilometres per
+                second for every megaparsec (3.26 million light years). So a redshift is not only a
+                speed; it is a distance.
+            </p>
+
+            <p class="science-text">
+                For the Quintet this gives a clean prediction. NGC 7320 recedes at about 790 km/s, which
+                fits about 40 million light years. The other four recede at 5,800 to 6,750 km/s, which
+                fits about 300 million. If our filter can tell those speeds apart, it can tell those
+                distances apart.
+            </p>
+
+            <h3>The trick: a filter that is too narrow to see the near galaxy</h3>
+
+            <p class="science-text">
+                Our filters are very narrow. A normal red filter lets through everything from about 600
+                to 700 nanometres, a 100&nbsp;nm window. The narrowband filters let through only
+                <strong>3&nbsp;nanometres</strong> each, about a thirtieth of that. They are built to
+                isolate a single gas glow and reject almost everything else. One of them, the S&nbsp;II
+                filter, is centred on 672.4&nbsp;nm, made to catch the glow of sulphur. Its window runs
+                from roughly 670.7 to 673.7&nbsp;nm in our telescope (the steep cone of light from the
+                f/6.8 mirror shifts a narrow filter slightly bluer than its label).
+            </p>
+
+            <p class="science-text">
+                Now the arithmetic. Stretch hydrogen-alpha by 6,750 km/s, the speed of NGC 7319, and it
+                lands at <strong>671.1&nbsp;nm</strong>: inside the sulphur filter. Its neighbouring
+                nitrogen line, normally at 658.3&nbsp;nm, is stretched to 673.2&nbsp;nm: also inside.
+                Stretch hydrogen-alpha by NGC 7320's 790 km/s and it lands at only
+                <strong>658.0&nbsp;nm</strong>, fourteen nanometres short of the window. So a sulphur
+                filter, pointed at the Quintet, should light up the distant group's glowing gas and stay
+                nearly dark on the near galaxy, even though in an ordinary photograph both are full of
+                glowing gas.
+            </p>
+
+            <figure>
+                <a href="images/quintet_redshift_spectrum.png" target="_blank" rel="noopener noreferrer">
+                    <img src="images/quintet_redshift_spectrum.png" alt="Chart of wavelength from 650 to 678 nanometres. Two grey bands mark the 3 nm hydrogen-alpha filter at 656.3 and the sulphur filter at 672.2. Each galaxy has an arrow from hydrogen-alpha's rest wavelength, 656.28 nm, to where its redshift puts it: NGC 7320 at 658.0, just past the hydrogen filter; NGC 7318B at 668.9; NGC 7318A, NGC 7317 and NGC 7319 at 670.8 to 671.1, inside the sulphur filter band.">
+                </a>
+                <figcaption>Where each galaxy's hydrogen glow lands. The dashed line is hydrogen-alpha as
+                    measured in a laboratory; each arrow is that same line from one galaxy, pushed to the
+                    right (redder) by its speed away from us. The grey bands are our two 3&nbsp;nm filters.
+                    The four distant galaxies (diamonds) land in or at the edge of the sulphur filter; the
+                    near galaxy NGC 7320 (circle) barely moves. The top axis reads the same shift as a
+                    speed. NGC 7317 is drawn hollow because it is an elliptical galaxy with almost no gas
+                    to glow.</figcaption>
+            </figure>
+
+            <h3>What we did</h3>
+
+            <p class="science-text">
+                The observatory shot the Quintet on two nights, entirely on its own: nineteen usable five-minute
+                exposures through the red filter and, on the night of 5 October, eighteen five-minute
+                exposures through the sulphur filter. Each set was calibrated and stacked into one deep
+                image.
+            </p>
+
+            <p class="science-text">
+                The sulphur filter sees more than gas. Stars and galaxies also shine a little at every
+                colour, including the 3&nbsp;nm slice the filter passes, so every star in the field shows
+                up through it too. To remove that, we used the red image as a measure of ordinary
+                starlight. Comparing 1,613 stars in both images showed that the sulphur filter passes
+                4.9% as much starlight as the red one. Subtracting that share of the red image from
+                the sulphur image leaves only light that is <em>extra</em> in that narrow slice: glowing
+                gas at exactly the right wavelength. Stars cancel to near zero (bright ones leave small
+                rings, because no two stars have quite the same colour).
+            </p>
+
+            <figure>
+                <a href="images/quintet_sii_excess.jpg" target="_blank" rel="noopener noreferrer">
+                    <img src="images/quintet_sii_excess.jpg" alt="Three images of the same patch of sky around Stephan's Quintet with the galaxies circled and labelled. Top: the sulphur-filter stack. Middle: the scaled red-filter image, ordinary starlight. Bottom: the difference, in which NGC 7319's core is a bright spot, the SQ-A knot and NGC 7318A and B show faint glow, and NGC 7317 and NGC 7320 vanish into the background.">
+                </a>
+                <figcaption>The same patch of sky three ways, rotated as it falls on our camera. Circles
+                    in orange are the distant group, blue is the near galaxy NGC 7320. (1) The sulphur
+                    filter. (2) The red filter, scaled to show what starlight alone would contribute.
+                    (3) The difference: what is left is gas glowing at a redshifted hydrogen or nitrogen
+                    wavelength. NGC 7319's core stands out brightly; NGC 7320, a broad glow in panel 2,
+                    leaves nothing behind.</figcaption>
+            </figure>
+
+            <h3>The result</h3>
+
+            <p class="science-text">
+                We measured the leftover light inside a circle on each galaxy and compared it with the
+                same circle dropped on hundreds of empty patches of sky, which tells us how big a
+                signal random noise can fake. "Times the noise" below is that comparison; anything
+                above about 5 is not chance.
+            </p>
+
+            <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr><th style="text-align:left">Galaxy</th><th>Distance</th><th>Speed away, km/s</th><th>Hydrogen lands at, nm</th><th>Share of its sulphur-filter light that is gas glow</th><th>Times the noise</th><th style="text-align:left">Verdict</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td style="text-align:left">NGC 7319, core</td><td>300 Mly</td><td>6,750</td><td>671.1 (inside)</td><td>50%</td><td>56</td><td style="text-align:left"><strong>Strong glow</strong></td></tr>
+                    <tr><td style="text-align:left">NGC 7319, whole galaxy</td><td>300 Mly</td><td>6,750</td><td>671.1 (inside)</td><td>24%</td><td>9</td><td style="text-align:left"><strong>Glow</strong></td></tr>
+                    <tr><td style="text-align:left">SQ-A starburst</td><td>300 Mly</td><td>~6,700</td><td>671.0 (inside, near edge)</td><td>58%</td><td>6.6</td><td style="text-align:left"><strong>Glow</strong></td></tr>
+                    <tr><td style="text-align:left">NGC 7318A</td><td>300 Mly</td><td>6,630</td><td>670.8 (on the edge)</td><td>&minus;3%</td><td>&minus;1.9</td><td style="text-align:left">Nothing seen</td></tr>
+                    <tr><td style="text-align:left">NGC 7318B</td><td>300 Mly</td><td>5,770</td><td>668.9 (outside)</td><td>2%</td><td>1.2</td><td style="text-align:left">Nothing, as predicted</td></tr>
+                    <tr><td style="text-align:left">NGC 7317 (check)</td><td>300 Mly</td><td>6,600</td><td>670.7 (no gas to glow)</td><td>&minus;2%</td><td>&minus;1.4</td><td style="text-align:left">Nothing, as it should</td></tr>
+                    <tr><td style="text-align:left">NGC 7320</td><td><strong>40 Mly</strong></td><td>790</td><td>658.0 (far outside)</td><td>&minus;4%</td><td>&minus;1.6</td><td style="text-align:left">Nothing, as predicted</td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <p class="science-text">
+                Every prediction came out the right way round. The distant group glows through the
+                sulphur filter; the brightest spot by far is the core of NGC 7319, which holds an active
+                black hole that makes its hydrogen and nitrogen lines unusually strong. SQ-A, a burst of
+                new stars in the open space north of the group, set off by the collision, is almost pure
+                gas glow: about 58% of its light through the filter is the shifted hydrogen line.
+                NGC 7317 is the control. It sits at the same distance as the others, so if colour
+                differences between galaxies were faking a signal it would show one, but it is an old
+                elliptical galaxy with no gas, and it gives nothing. NGC 7320, close by, bright, and
+                full of star-forming gas of its own, shows nothing that stands out from the noise,
+                because its hydrogen glow arrives at 658&nbsp;nm, outside the window.
+            </p>
+
+            <p class="science-text">
+                The two galaxies in the middle, NGC 7318A and NGC 7318B, show nothing. For NGC 7318B
+                that is the prediction: at 5,770 km/s its hydrogen lands at 668.9&nbsp;nm, below the
+                window. NGC 7318A was always going to be marginal. Its hydrogen lands at 670.8&nbsp;nm,
+                right on the blue edge, where the filter passes only part of the light, and it is
+                mostly old stars with little gas. Getting nothing there is consistent, not a surprise,
+                but it also means this test cannot say anything about NGC 7318A either way.
+            </p>
+
+            <h3>Why this matters</h3>
+
+            <p class="science-text">
+                What this picture shows is a measurement of distance made with a filter. Five galaxies
+                that look like a family split cleanly into four that are 300 million light years away
+                and one that is in the foreground, because space has stretched the light of the four
+                distant ones far enough to change which filter it goes through. The same physics,
+                done with a spectrograph on a large telescope, is how the expansion of the universe was
+                discovered.
+            </p>
+
+            <p class="science-text caveat">
+                Caveats. The filter's edges are not perfectly sharp, and SQ-A's hydrogen lands within about a
+                quarter of a nanometre of the blue edge, so its strength here understates it. A first
+                pass at this, using only six red exposures, showed weak signals at NGC 7318A and B;
+                they disappeared when the red image was rebuilt from nineteen. The strong results above
+                did not change, but it is a reminder that the subtraction is only as good as the
+                starlight image behind it. NGC 7320's own sulphur line just reaches the red edge of the
+                window, but nothing measurable comes through. Speeds are the
+                published values for each galaxy; distances use Hubble's law and are approximate. The
+                starlight scale was set from field stars, so a galaxy much redder or bluer than an
+                average star would leave a small leftover; the gas-free control, NGC 7317, sets that at
+                &minus;2%.
+            </p>
+        </article>
 
         <article id="telescope-cost" class="note">
             <h2 class="note-title">What a year of a great telescope costs, and who pays it</h2>
