@@ -948,7 +948,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-10-06 21:11 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-10-08 12:22 EDT</p>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -1802,6 +1802,187 @@
     </div>
 
     <div class="container" id="notes-panel" role="tabpanel" aria-labelledby="tab-notes">
+
+        <article id="three-slots" class="note">
+            <h2 class="note-title">Three targets a night: letting the planner fill the dark hours</h2>
+            <div class="note-meta"><span class="note-date">2026-10-08</span> &middot; SCHEDULING &middot; TREE-LINE HORIZON, 9.5 TO 11.5 DARK HOURS &middot; STATUS: LIVE, FIRST THREE-SLOT NIGHT TONIGHT</div>
+
+            <h3>Abstract</h3>
+
+            <p class="science-text note-abstract">
+                Our sky has edges. Trees stand sixty degrees high to the west and forty-eight
+                degrees high in the northeast, so every target is usable only for the part of the
+                night it spends above the trees in its own direction. With two targets a night that
+                left a hole: on the last three nights the first target set into the western trees
+                around half past midnight and the second could not clear the northeastern limb until
+                nearly three: two hours a night, roof open and sky clear, that could go to neither. The
+                nights are also getting longer, from 9.5 hours of full darkness now to 11.5 at the
+                solstice. From tonight the planner fits three targets, the third taking whatever gap
+                the first two leave, and a target can ask for only a short block: Hubble's variable
+                star in Andromeda gets one hour near the zenith, which is all a light curve needs. The
+                person sets the goals; the machine spends the hours.
+            </p>
+
+            <h3>A sky with edges</h3>
+
+            <p class="science-text">
+                A telescope in a clearing does not see down to the horizon. It sees down to the
+                trees, and the trees are not the same height in every direction. Ours are measured
+                in a horizon file the planner reads: 37 degrees to the north, a limb reaching 48
+                degrees just east of north, and a wall of 57 to 60 degrees across the whole west and
+                south. A galaxy that transits at 80 degrees still spends most of its night behind
+                something.
+            </p>
+
+            <figure>
+                <a href="images/three_slots_tonight.png" target="_blank" rel="noopener noreferrer">
+                    <img src="images/three_slots_tonight.png" alt="Altitude of three targets through the night of October 8 against time, with each target's tree line drawn dotted in the same color: NGC 7320 peaks at 82 degrees at 22:00 and drops below a 62-degree tree line at 01:00; Hubble's variable V1 peaks at 89 degrees at 00:20; NGC 2146 climbs slowly from 31 to 53 degrees and clears a 48-degree limb just before 03:00. Shaded bands mark the slots: NGC 7320 20:00 to 01:00, V1 01:00 to 02:00, NGC 2146 03:00 to 06:00.">
+                </a>
+                <figcaption>Tonight's three targets as the planner sees them. Each solid line is a
+                    target's height above the horizon; the dotted line in the same color is the tree
+                    line in the direction that target is at that moment. A target can be imaged only
+                    while its solid line is above its dotted one. NGC 7320 is high early but sets into
+                    the western trees, which stand over sixty degrees, at about 01:00. NGC 2146 never
+                    gets very high, and it spends the first half of the night behind the northeastern
+                    limb. Hubble's variable passes almost straight overhead in between. The shaded
+                    bands are the slots the planner chose.</figcaption>
+            </figure>
+
+            <p class="science-text">
+                With two slots a night, the planner gave the first target its whole usable window and
+                the second whatever remained after it. That worked until the two windows did not meet.
+                On the nights of October 5, 6 and 7 Stephan's Quintet set into the western trees at
+                about 00:30, and NGC 2146, the second target, was behind the northeastern limb until
+                nearly 03:00. The sequence should have waited those two hours with the roof open and
+                nothing to do. Instead it did something worse: the limb was missing from the horizon
+                file across four degrees of azimuth, so the sequence thought NGC 2146 was clear, started
+                it early, and took 49 frames through the branches before the gap in the file was found
+                and closed. That is now fixed twice over, with the limb in the file and a check that
+                rejects any frame
+                whose background is blotchy against the rest of the night's.
+            </p>
+
+            <h3>Longer nights</h3>
+
+            <figure>
+                <a href="images/dark_hours_winter.png" target="_blank" rel="noopener noreferrer">
+                    <img src="images/dark_hours_winter.png" alt="Hours of full astronomical darkness per night from September to April: 7.6 hours on September 1, 9.5 tonight, a peak of 11.5 hours on December 22, back to 8.2 by late March.">
+                </a>
+                <figcaption>Hours of full darkness at the observatory through the winter: 9.5 tonight,
+                    11.5 at the solstice. Two more hours to fill, on top of the holes the trees already
+                    make.</figcaption>
+            </figure>
+
+            <p class="science-text">
+                The second reason is the calendar. Full darkness, from the end of astronomical twilight
+                to its start the next morning, lasts 9.5 hours tonight and grows to 11.5 hours on
+                December 22. A target that transits in the evening is gone behind the western trees by
+                midnight; one that transits before dawn is not up until two. In a twelve-hour night the
+                dark hours between them are not a rounding error, and they come on the clearest, coldest
+                nights of the year.
+            </p>
+
+            <h3>How the planner fills a night</h3>
+
+            <p class="science-text">
+                At noon the planner reads the queue, the forecast and the horizon file and lays the
+                night out, then checks again ten minutes before sunset. The rules, in plain words:
+            </p>
+
+            <p class="science-text">
+                The main target is the highest-priority object in the queue, and it gets its whole
+                usable window: every hour it is above its own tree line, inside the dark hours, with an
+                acceptable forecast. A second target takes the dark hours the first leaves, if it has at
+                least two good ones there. A third takes whatever gap the two leave: before the first,
+                between them, or after the second. Every slot has a hard end time written into the
+                sequence, so a target that runs long cannot eat the next one. And a target may now
+                carry a note saying how much it wants: a one-hour cap means the planner never gives it
+                a main slot, puts its hour in the middle of a gap where it is highest, and, if the night
+                has no gap at all, reserves the hour at dusk or dawn and plans the rest around it.
+            </p>
+
+            <p class="science-text">
+                The result is posted at noon as a timeline, one line per event. Tonight's:
+            </p>
+
+            <pre class="science-text" style="white-space:pre; overflow-x:auto; font-size:0.9em;">Tonight: ngc7320 + hubblev1 + ngc2146
+Time    Event
+ 18:10  Imaging check (weather and plan re-checked)
+~18:14  Roof opens, camera cools, sequence starts
+ 18:20  Sunset
+ 20:00  ngc7320 starts: L 18, R 9, G 9, B 9 x 300s (3.8h)
+ 01:00  hubblev1 starts: L 6, G 2 x 300s (0.7h)
+ 03:00  ngc2146 starts: L 11, R 7, G 3, B 3 x 300s (2.0h)
+ 06:00  Imaging ends
+~06:05  Scope parked, roof closed
+~07:20  Flats done
+~07:40  All wrapped up: SNR and night analysis posted</pre>
+
+            <h3>Tonight's three</h3>
+
+            <p class="science-text">
+                <strong>NGC 7320 and Stephan's Quintet, 20:00 to 01:00.</strong> The five galaxies of
+                the <a href="#quintet-redshift">redshift experiment</a>, back for more luminance, red,
+                green and blue. The Quintet is at its best in the first half of the night, passing
+                82 degrees high at ten o'clock, and it is the first thing to set into the western
+                trees. Tonight's five hours go on the faint outer material: the tidal tails and the
+                halo of light around the colliding four, which only show up as the hours accumulate.
+            </p>
+
+            <p class="science-text">
+                <strong>Hubble's variable star V1 in Andromeda, 01:00 to 02:00.</strong> In October 1923
+                Edwin Hubble marked a star on a plate of the Andromeda nebula "VAR!", a Cepheid
+                variable, a kind of star whose true brightness is set by how fast it pulses. V1 brightens
+                and fades every 31.4 days between magnitudes 18.5 and 19.4, and from its period and its
+                faintness Hubble measured a distance that put Andromeda far outside the Milky Way: the
+                universe was made of galaxies. We are going to repeat the measurement. That needs a
+                brightness every clear night for two cycles, not depth, so the planner gives V1 exactly
+                one hour: six five-minute luminance frames and two green, taken when the star is almost
+                straight overhead, in the gap after the Quintet sets and before NGC 2146 rises. By
+                mid-December the points should trace two full pulses, and the period will give the
+                distance, two and a half million light-years, the same way it did a century ago.
+            </p>
+
+            <p class="science-text">
+                <strong>NGC 2146, 03:00 to 06:00.</strong> A starburst galaxy in Camelopardalis, about
+                70 million light-years away, nicknamed the Dusty Hand for the dark lane of dust bent
+                across its core, a spiral arm twisted through 45 degrees by a close encounter with a
+                smaller galaxy some 800 million years ago. The collision is still driving star formation
+                at a furious rate. It sits low in the north and climbs only to 53 degrees, which is why
+                it is a morning target here: it is behind the northeastern limb until nearly 03:00 and
+                gets the last three hours of the night. We have 34 good luminance frames of it so far
+                and want more; the plan is weighted toward luminance and red to bring up the faint
+                plumes around the disk.
+            </p>
+
+            <h3>Why hand the night to the machine</h3>
+
+            <p class="science-text">
+                A person at the telescope picks one target, images it until it is low, and goes to bed.
+                That is not a criticism; it is what one person can do at two in the morning. The
+                planner does what a person would not: it recomputes the whole night from the forecast
+                twice a day, knows the tree line in every direction, gives each target only the hours it
+                can use, puts a one-hour job in the one hour where it is highest, ends every slot on
+                time, and re-plans when the sunset forecast differs from the noon one. When it gets
+                something wrong, as it did with the missing limb, the fix is one line in a file and a
+                new check, and the mistake is not made again. The operator is still in charge of the
+                things that are judgment: which targets matter, in which filters, and how long a
+                monitoring job should run. Those are set once in the queue. The machine's job is to
+                turn them into hours, and it is better at that than we are, because it does not get
+                tired and it does not forget where the trees are.
+            </p>
+
+            <p class="science-text caveat">
+                Caveats. The plan above is the noon forecast's; the check at sunset can move a window
+                or drop a slot if the clouds come in, and the posted timeline will say so. The third slot
+                gets the leftover hours, so a target that lives there accumulates slowly. If the first
+                target finishes early, the next slot begins at once and runs to its own end time, so
+                V1's hour can stretch to an hour and a half. And three slots cost three slews, three
+                centerings and three focus runs, about ten minutes each; a gap shorter than two hours
+                is not worth that, which is why a slot needs two hours unless, like V1, it has asked
+                for less.
+            </p>
+        </article>
 
         <article id="quintet-redshift" class="note">
             <h2 class="note-title">Five galaxies that only look like neighbors: measuring Stephan's Quintet with a filter</h2>
