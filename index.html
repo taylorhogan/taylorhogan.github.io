@@ -100,6 +100,59 @@
             vertical-align: middle;
         }
 
+        /* Subscribe form under the header links; matches .share-btn / .last-updated. */
+        .subscribe-form {
+            max-width: 32rem;
+            margin: 0.9rem auto 0;
+            text-align: center;
+        }
+        .subscribe-label {
+            display: block;
+            color: #8b9bb4;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+        .subscribe-row {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .subscribe-row input[type="email"] {
+            flex: 1 1 14rem;
+            min-width: 0;
+            padding: 0.5rem 0.7rem;
+            background: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid #2a3150;
+            border-radius: 4px;
+            font: inherit;
+        }
+        .subscribe-row input[type="email"]:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+        .subscribe-send {
+            padding: 0.5rem 1rem;
+            background: var(--accent-color);
+            color: #fff;
+            border: 0;
+            border-radius: 4px;
+            font: inherit;
+            cursor: pointer;
+        }
+        .subscribe-send:disabled { opacity: 0.6; cursor: default; }
+        .subscribe-hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+        .subscribe-note {
+            margin: 0.5rem 0 0;
+            font-size: 0.8rem;
+            opacity: 0.65;
+        }
+        .subscribe-form[data-state="sent"] .subscribe-note { color: #3fb950; opacity: 1; }
+        .subscribe-form[data-state="failed"] .subscribe-note { color: var(--secondary-accent); opacity: 1; }
+
         /* --- Mode switch: gallery vs. lab notes --- */
         .mode-switch {
             display: flex;
@@ -947,8 +1000,20 @@
 <body data-mode="live">
     <header>
         <h1>Iris Lab Notes</h1>
-        <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-10-08 12:22 EDT</p>
+        <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button> &middot; <button type="button" class="share-btn" id="subscribe-btn" aria-expanded="false" aria-controls="subscribe-form">Subscribe</button></p>
+        <p class="last-updated" id="last-updated">Updated 2026-10-08 14:19 EDT</p>
+        <!-- Subscribe: POSTs to /api/subscribe on the web host (iris-subscribe
+             service); a confirmation email follows, nothing is sent before it
+             is clicked. The hp field is a honeypot: hidden, must stay empty. -->
+        <form id="subscribe-form" class="subscribe-form" hidden novalidate>
+            <label for="subscribe-email" class="subscribe-label">Email me when a new note or image is published</label>
+            <div class="subscribe-row">
+                <input type="email" id="subscribe-email" name="email" placeholder="you@example.com" autocomplete="email" required>
+                <input type="text" name="hp" class="subscribe-hp" tabindex="-1" autocomplete="off" aria-hidden="true">
+                <button type="submit" class="subscribe-send">Subscribe</button>
+            </div>
+            <p class="subscribe-note" id="subscribe-note">Only for new notes and images. Unsubscribe in one click, from any email.</p>
+        </form>
     </header>
 
     <div class="mode-switch" role="tablist">
@@ -8484,6 +8549,76 @@ score    = snr * shape * quality * flatness</code></pre>
             }
             show();
             setInterval(show, 15 * 60 * 1000);
+        })();
+    </script>
+    <script>
+        // Subscribe form + the messages the confirm/unsubscribe links land on
+        // (#subscribed / #unsubscribed). Same-origin fetch; the CSP allows it.
+        (function () {
+            var btn = document.getElementById('subscribe-btn');
+            var form = document.getElementById('subscribe-form');
+            var note = document.getElementById('subscribe-note');
+            var email = document.getElementById('subscribe-email');
+            var send = form.querySelector('.subscribe-send');
+            var defaultNote = note.textContent;
+            function open(msg, state) {
+                form.hidden = false;
+                btn.setAttribute('aria-expanded', 'true');
+                if (msg) { note.textContent = msg; form.dataset.state = state || ''; }
+            }
+            btn.addEventListener('click', function () {
+                if (form.hidden) { open(); email.focus(); }
+                else { form.hidden = true; btn.setAttribute('aria-expanded', 'false'); }
+            });
+            form.addEventListener('submit', function (ev) {
+                ev.preventDefault();
+                var addr = (email.value || '').trim();
+                if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(addr)) {
+                    note.textContent = 'That does not look like an email address.';
+                    form.dataset.state = 'failed';
+                    return;
+                }
+                send.disabled = true;
+                note.textContent = 'Sending…';
+                form.dataset.state = '';
+                fetch('/api/subscribe', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: addr, hp: form.elements.hp.value || '' })
+                }).then(function (r) {
+                      // Only a JSON answer from our own service is shown to the
+                      // reader; anything else (a proxy error page, no network)
+                      // becomes the generic line.
+                      return r.text().then(function (body) {
+                          var j = null;
+                          try { j = JSON.parse(body); } catch (x) { j = null; }
+                          if (!r.ok) {
+                              var err = new Error((j && j.error) || 'Could not subscribe, try again later.');
+                              err.fromService = !!(j && j.error);
+                              throw err;
+                          }
+                      });
+                  })
+                  .then(function () {
+                      note.textContent = 'Check your inbox and click the confirmation link.';
+                      form.dataset.state = 'sent';
+                      email.value = '';
+                  })
+                  .catch(function (e) {
+                      note.textContent = (e && e.fromService) ? e.message : 'Could not subscribe, try again later.';
+                      form.dataset.state = 'failed';
+                  })
+                  .then(function () { send.disabled = false; });
+            });
+            // Landing from a confirm / unsubscribe link: say so, then drop the hash
+            // so the card deck does not look for an article with that id.
+            var h = location.hash;
+            if (h === '#subscribed' || h === '#unsubscribed') {
+                open(h === '#subscribed' ? 'Subscribed. You will get an email when a new note or image is published.'
+                                         : 'Unsubscribed. Sorry to see you go; nothing more will be sent.', 'sent');
+                if (history.replaceState) { history.replaceState(null, '', location.pathname + location.search); }
+            }
+            void defaultNote;
         })();
     </script>
 </body>
