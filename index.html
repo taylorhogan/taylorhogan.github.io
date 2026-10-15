@@ -1001,7 +1001,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button> &middot; <button type="button" class="share-btn" id="subscribe-btn" aria-expanded="false" aria-controls="subscribe-form">Subscribe</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-10-08 14:19 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-10-15 03:40 EDT</p>
         <!-- Subscribe: POSTs to /api/subscribe on the web host (iris-subscribe
              service); a confirmation email follows, nothing is sent before it
              is clicked. The hp field is a honeypot: hidden, must stay empty. -->
@@ -7319,6 +7319,21 @@ score    = snr * shape * quality * flatness</code></pre>
         </div>
 
         <!--
+            Tonight's plan, as the scheduler decided it at noon and re-checked
+            just before sunset: the same picture the operator gets on the
+            phone (when the roof opens and closes, when each target starts and
+            in which filters). A night called off shows a red card saying why,
+            rather than nothing. The block travels in status.json as "plan"
+            and the picture as plan.jpg; the section hides when there is no
+            plan for tonight.
+        -->
+        <div class="live-sky" id="live-plan" hidden>
+            <h3 id="live-plan-title">Tonight's plan</h3>
+            <img id="live-plan-img" alt="Tonight's imaging timeline: when the roof opens and closes, when each target starts and in which filters, or the reason there is no imaging tonight">
+            <p class="live-caption" id="live-plan-caption"></p>
+        </div>
+
+        <!--
             First, because it is the densest thing here: every sub ever taken
             of the current target at once, so a visitor sees what the target has
             actually accumulated before seeing where the telescope is aimed. The
@@ -8067,6 +8082,8 @@ score    = snr * shape * quality * flatness</code></pre>
                             // means these frames are not "tonight's".
                             var lsx = document.getElementById('live-stats');
                             if (lsx) { lsx.hidden = true; }
+                            var lpx = document.getElementById('live-plan');
+                            if (lpx) { lpx.hidden = true; }
                             // A stale feed's machine state is a guess, not a
                             // reading; the diagram goes dark with the rest.
                             hideMachine();
@@ -8097,6 +8114,34 @@ score    = snr * shape * quality * flatness</code></pre>
                         cap.innerHTML = bits.join('. ') + '.';
                         img.src = '/live/skymap.jpg?t=' + Date.now();
                         wrap.hidden = false;
+
+                        // Tonight's plan: the scheduler's own picture, or the
+                        // red "no imaging tonight" card. Absent from the
+                        // status means no decision for tonight yet.
+                        var lp = document.getElementById('live-plan');
+                        if (lp) {
+                            if (s.plan && s.plan.verdict) {
+                                var skip = s.plan.verdict !== 'imaging';
+                                var when = s.plan.check === 'sunset'
+                                    ? 'confirmed at the pre-sunset check'
+                                    : (s.plan.check === 'start'
+                                        ? 'decided as the run was about to start'
+                                        : 'decided at the noon check');
+                                document.getElementById('live-plan-title').textContent =
+                                    skip ? 'Tonight: no imaging' : (s.plan.title || "Tonight's plan");
+                                document.getElementById('live-plan-img').src =
+                                    '/live/plan.jpg?t=' + Date.now();
+                                document.getElementById('live-plan-caption').textContent =
+                                    (skip && s.plan.reason ? s.plan.reason + '; ' : '')
+                                    + when + ', ' + ago(s.plan.written) + '.';
+                                if (skip && planned) {
+                                    head.textContent = 'Tonight: no imaging';
+                                }
+                                lp.hidden = false;
+                            } else {
+                                lp.hidden = true;
+                            }
+                        }
 
                         // The most recent sub, annotated by the same code the
                         // `latest` webchat command uses, so the site and the
