@@ -1040,7 +1040,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button> &middot; <button type="button" class="share-btn" id="subscribe-btn" aria-expanded="false" aria-controls="subscribe-form">Subscribe</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-10-17 18:25 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-10-17 18:32 EDT</p>
         <!-- Subscribe: POSTs to /api/subscribe on the web host (iris-subscribe
              service); a confirmation email follows, nothing is sent before it
              is clicked. The hp field is a honeypot: hidden, must stay empty. -->
@@ -1072,7 +1072,7 @@
 
     <div class="container" id="gallery-panel" role="tabpanel" aria-labelledby="tab-gallery">
 
-        <!-- Sorting. Every gallery entry carries two attributes:
+        <!-- Sorting (click the active button again to reverse it). Every gallery entry carries two attributes:
                data-added="YYYY-MM-DD"   the day the entry went on the site
                data-distance-ly="N"      distance in light years, a plain number
              A GALAXY CLUSTER is sorted by the FURTHEST object in its picture
@@ -8998,11 +8998,14 @@ score    = snr * shape * quality * flatness</code></pre>
                 var t = card.querySelector('.dso-title');
                 return (t ? t.textContent : card.id).replace(/\s+/g, '');
             }
+            // Each key compares in its first-click direction; dir -1 reverses it.
+            // Ties keep page order in both directions, and an entry with no
+            // known distance stays last either way rather than jumping to the top.
             var KEYS = {
                 // Newest first; entries added the same day keep their page order.
                 added: function (a, b) {
                     var da = a.getAttribute('data-added') || '', db = b.getAttribute('data-added') || '';
-                    return da < db ? 1 : da > db ? -1 : a._pageOrder - b._pageOrder;
+                    return da < db ? 1 : da > db ? -1 : 0;
                 },
                 // Natural order, so M13 comes before M101 and NGC891 before NGC4565.
                 name: function (a, b) {
@@ -9010,26 +9013,49 @@ score    = snr * shape * quality * flatness</code></pre>
                 },
                 distance: function (a, b) {
                     var x = distanceLy(a), y = distanceLy(b);
-                    return x === y ? a._pageOrder - b._pageOrder : (x < y ? -1 : 1);
+                    return x === y ? 0 : (x < y ? -1 : 1);
                 }
             };
+            var LABELS = {
+                added: ['Newest first', 'Oldest first'],
+                name: ['A–Z', 'Z–A'],
+                distance: ['Nearest first', 'Farthest first']
+            };
             var buttons = Array.prototype.slice.call(bar.querySelectorAll('.sort-btn'));
+            var current = { key: 'added', dir: 1 };
 
-            function apply(key) {
+            function apply(key, dir) {
                 if (!KEYS[key]) { key = 'added'; }
-                cards.slice().sort(KEYS[key]).forEach(function (c) { panel.appendChild(c); });
+                dir = dir === -1 ? -1 : 1;
+                cards.slice().sort(function (a, b) {
+                    if (key === 'distance') {
+                        var ua = !isFinite(distanceLy(a)), ub = !isFinite(distanceLy(b));
+                        if (ua !== ub) { return ua ? 1 : -1; }
+                    }
+                    return dir * KEYS[key](a, b) || a._pageOrder - b._pageOrder;
+                }).forEach(function (c) { panel.appendChild(c); });
                 buttons.forEach(function (b) {
-                    b.setAttribute('aria-pressed', b.getAttribute('data-sort') === key ? 'true' : 'false');
+                    var k = b.getAttribute('data-sort'), on = k === key;
+                    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+                    // The active button names the order in force; the others
+                    // name what a first click on them would give.
+                    b.textContent = LABELS[k][on && dir === -1 ? 1 : 0];
+                    b.title = on ? 'Click again to reverse' : '';
                 });
-                try { localStorage.setItem('gallerySort', key); } catch (e) { /* private window */ }
+                current = { key: key, dir: dir };
+                try { localStorage.setItem('gallerySort', key + ':' + dir); } catch (e) { /* private window */ }
             }
 
             buttons.forEach(function (b) {
-                b.addEventListener('click', function () { apply(b.getAttribute('data-sort')); });
+                b.addEventListener('click', function () {
+                    var k = b.getAttribute('data-sort');
+                    apply(k, k === current.key ? -current.dir : 1);
+                });
             });
             var saved = null;
             try { saved = localStorage.getItem('gallerySort'); } catch (e) { saved = null; }
-            apply(saved || 'added');
+            var parts = (saved || 'added:1').split(':');
+            apply(parts[0], parts[1] === '-1' ? -1 : 1);
         })();
     </script>
 </body>
