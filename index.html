@@ -217,6 +217,45 @@
             display: block;
         }
 
+        /* --- Gallery sort: newest first (default), A-Z, or by distance --- */
+        .gallery-sort {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0 0 1.5rem;
+        }
+
+        .gallery-sort-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #8b9bb4;
+            margin-right: 0.25rem;
+        }
+
+        .sort-btn {
+            background-color: var(--card-bg);
+            border: 1px solid rgba(62, 100, 255, 0.25);
+            border-radius: 999px;
+            color: var(--text-color);
+            font-family: inherit;
+            font-size: 0.85rem;
+            padding: 0.35rem 0.9rem;
+            cursor: pointer;
+            transition: border-color 0.2s, background-color 0.2s;
+        }
+
+        .sort-btn:hover {
+            border-color: rgba(62, 100, 255, 0.6);
+        }
+
+        .sort-btn[aria-pressed="true"] {
+            background-color: rgba(62, 100, 255, 0.15);
+            border-color: var(--accent-color);
+            color: #fff;
+        }
+
         /* --- Live panel --- */
         .live-status {
             display: flex;
@@ -1001,7 +1040,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button> &middot; <button type="button" class="share-btn" id="subscribe-btn" aria-expanded="false" aria-controls="subscribe-form">Subscribe</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-10-17 17:13 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-10-17 18:25 EDT</p>
         <!-- Subscribe: POSTs to /api/subscribe on the web host (iris-subscribe
              service); a confirmation email follows, nothing is sent before it
              is clicked. The hp field is a honeypot: hidden, must stay empty. -->
@@ -1033,8 +1072,23 @@
 
     <div class="container" id="gallery-panel" role="tabpanel" aria-labelledby="tab-gallery">
 
+        <!-- Sorting. Every gallery entry carries two attributes:
+               data-added="YYYY-MM-DD"   the day the entry went on the site
+               data-distance-ly="N"      distance in light years, a plain number
+             A GALAXY CLUSTER is sorted by the FURTHEST object in its picture
+             (owner, 2026-10-17), e.g. a lensed background galaxy behind the
+             cluster, not the cluster's own distance. An entry with no
+             data-distance-ly falls back to its DISTANCE line, and with neither
+             it sorts last under Distance. -->
+        <div class="gallery-sort" role="group" aria-label="Sort the images">
+            <span class="gallery-sort-label">Sort</span>
+            <button type="button" class="sort-btn" data-sort="added" aria-pressed="true">Newest first</button>
+            <button type="button" class="sort-btn" data-sort="name" aria-pressed="false">A&ndash;Z</button>
+            <button type="button" class="sort-btn" data-sort="distance" aria-pressed="false">Nearest first</button>
+        </div>
+
         <!-- IC1318 -->
-        <article id="ic1318" class="dso-section">
+        <article id="ic1318" class="dso-section" data-added="2025-12-23" data-distance-ly="5000">
             <div class="dso-image-container">
                 <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/ic1318.jpg" alt="IC1318" class="dso-image">
             </div>
@@ -1056,7 +1110,7 @@
         </article>
 
         <!-- IC5146 -->
-        <article id="ic5146" class="dso-section">
+        <article id="ic5146" class="dso-section" data-added="2026-03-16" data-distance-ly="4000">
             <div class="dso-image-container">
                 <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/ic5146.jpg" alt="IC5146" class="dso-image">
             </div>
@@ -1078,7 +1132,7 @@
         </article>
 
         <!-- IC727 -->
-        <article id="ic727" class="dso-section">
+        <article id="ic727" class="dso-section" data-added="2025-12-23" data-distance-ly="30000000">
             <div class="dso-image-container">
                 <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/ic727.jpg" alt="IC727" class="dso-image">
             </div>
@@ -1100,7 +1154,7 @@
         </article>
 
         <!-- M13 -->
-        <article id="m13" class="dso-section">
+        <article id="m13" class="dso-section" data-added="2025-12-23" data-distance-ly="25000">
             <div class="dso-image-container">
                 <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/m13.jpg" alt="M13" class="dso-image">
             </div>
@@ -1122,7 +1176,7 @@
         </article>
 
         <!-- M33 -->
-        <article id="m33" class="dso-section">
+        <article id="m33" class="dso-section" data-added="2026-09-24" data-distance-ly="2700000">
             <div class="dso-image-container">
                 <img src="images/m33.jpg?v=2026-10-04" alt="The Triangulum Galaxy: a loose face-on spiral with blue-white arms, brown dust lanes, a cream-colored core and dozens of pink star-forming regions, the largest of them, NGC 604, at lower left." class="dso-image">
             </div>
@@ -1195,7 +1249,7 @@
         </article>
 
         <!-- M51 -->
-        <article id="m51" class="dso-section">
+        <article id="m51" class="dso-section" data-added="2025-12-23" data-distance-ly="23000000">
             <div class="dso-image-container">
                 <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/m51.jpg" alt="M51" class="dso-image">
             </div>
@@ -1217,7 +1271,7 @@
         </article>
 
         <!-- M57 -->
-        <article id="m57" class="dso-section">
+        <article id="m57" class="dso-section" data-added="2025-12-23" data-distance-ly="2300">
             <div class="dso-image-container">
                 <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/m57.jpg" alt="M57" class="dso-image">
             </div>
@@ -1239,7 +1293,7 @@
         </article>
 
         <!-- M63 -->
-        <article id="m63" class="dso-section">
+        <article id="m63" class="dso-section" data-added="2025-12-23" data-distance-ly="29000000">
             <div class="dso-image-container">
                 <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/m63.jpg" alt="M63" class="dso-image">
             </div>
@@ -1261,7 +1315,7 @@
         </article>
 
         <!-- M74 -->
-        <article id="m74" class="dso-section">
+        <article id="m74" class="dso-section" data-added="2026-01-20" data-distance-ly="32000000">
             <div class="dso-image-container">
                 <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/m74.jpg" alt="M74" class="dso-image">
             </div>
@@ -1283,7 +1337,7 @@
         </article>
 
         <!-- M94 -->
-        <article id="m94" class="dso-section">
+        <article id="m94" class="dso-section" data-added="2026-03-16" data-distance-ly="16000000">
             <div class="dso-image-container">
                 <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/m94.jpg" alt="M94" class="dso-image">
             </div>
@@ -1305,7 +1359,7 @@
         </article>
 
         <!-- M101 -->
-        <article id="m101" class="dso-section">
+        <article id="m101" class="dso-section" data-added="2025-12-23" data-distance-ly="21000000">
             <div class="dso-image-container">
                 <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/m101.jpg" alt="M101" class="dso-image">
             </div>
@@ -1327,7 +1381,7 @@
         </article>
 
         <!-- M106 -->
-        <article id="m106" class="dso-section">
+        <article id="m106" class="dso-section" data-added="2025-12-23" data-distance-ly="23500000">
             <div class="dso-image-container">
                 <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/m106.jpg" alt="M106" class="dso-image">
             </div>
@@ -1349,7 +1403,7 @@
         </article>
 
         <!-- NGC1275 -->
-        <article id="ngc1275" class="dso-section">
+        <article id="ngc1275" class="dso-section" data-added="2026-01-20" data-distance-ly="230000000">
             <div class="dso-image-container">
                 <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/ngc1275.jpg" alt="NGC1275" class="dso-image">
             </div>
@@ -1371,7 +1425,7 @@
         </article>
 
         <!-- NGC3190 -->
-        <article id="ngc3190" class="dso-section">
+        <article id="ngc3190" class="dso-section" data-added="2026-03-16" data-distance-ly="70000000">
             <div class="dso-image-container">
                 <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/ngc3190.jpg" alt="NGC3190" class="dso-image">
             </div>
@@ -1393,7 +1447,7 @@
         </article>
 
         <!-- NGC4565 -->
-        <article id="ngc4565" class="dso-section">
+        <article id="ngc4565" class="dso-section" data-added="2026-01-20" data-distance-ly="47000000">
             <div class="dso-image-container">
                 <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/ngc4565.jpg" alt="NGC4565" class="dso-image">
             </div>
@@ -1415,7 +1469,7 @@
         </article>
 
         <!-- NGC6339 -->
-        <article id="ngc6339" class="dso-section">
+        <article id="ngc6339" class="dso-section" data-added="2025-12-23" data-distance-ly="94000000">
             <div class="dso-image-container">
                 <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/ngc6339.jpg" alt="NGC6339" class="dso-image">
             </div>
@@ -1437,7 +1491,7 @@
         </article>
 
         <!-- NGC6888 -->
-        <article id="ngc6888" class="dso-section">
+        <article id="ngc6888" class="dso-section" data-added="2025-12-23" data-distance-ly="5000">
             <div class="dso-image-container">
                 <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/ngc6888.jpg" alt="NGC6888" class="dso-image">
             </div>
@@ -1459,7 +1513,7 @@
         </article>
 
         <!-- NGC7331 -->
-        <article id="ngc7331" class="dso-section">
+        <article id="ngc7331" class="dso-section" data-added="2025-12-23" data-distance-ly="40000000">
             <div class="dso-image-container">
                 <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/ngc7331.jpg" alt="NGC7331" class="dso-image">
             </div>
@@ -1481,7 +1535,7 @@
         </article>
 
         <!-- NGC7380 -->
-        <article id="ngc7380" class="dso-section">
+        <article id="ngc7380" class="dso-section" data-added="2026-10-04" data-distance-ly="7200">
             <div class="dso-image-container">
                 <img src="images/ngc7380.jpg" alt="The Wizard Nebula in narrowband: a broad magenta cloud of glowing gas filling the right of the frame, bounded on the left and top by gold-orange ridges and dark dust pillars, with the young star cluster scattered across the bright interior." class="dso-image">
             </div>
@@ -1553,7 +1607,7 @@
         </article>
 
         <!-- NGC7635 -->
-        <article id="ngc7635" class="dso-section">
+        <article id="ngc7635" class="dso-section" data-added="2025-12-23" data-distance-ly="7100">
             <div class="dso-image-container">
                 <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/ngc7635.jpg" alt="NGC7635" class="dso-image">
             </div>
@@ -1575,7 +1629,7 @@
         </article>
 
         <!-- NGC891 -->
-        <article id="ngc891" class="dso-section">
+        <article id="ngc891" class="dso-section" data-added="2025-12-23" data-distance-ly="30000000">
             <div class="dso-image-container">
                 <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/ngc891.jpg" alt="NGC891" class="dso-image">
             </div>
@@ -1597,7 +1651,7 @@
         </article>
 
         <!-- NGC925 -->
-        <article id="ngc925" class="dso-section">
+        <article id="ngc925" class="dso-section" data-added="2026-01-20" data-distance-ly="30000000">
             <div class="dso-image-container">
                 <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/ngc925.jpg" alt="NGC925" class="dso-image">
             </div>
@@ -1620,7 +1674,7 @@
 
         <!-- SH2-101 -->
         <!-- Soap Bubble -->
-        <article id="soap-bubble" class="dso-section">
+        <article id="soap-bubble" class="dso-section" data-added="2026-08-15">
             <div class="dso-image-container">
                 <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/soap_bubble_hoo.jpg" alt="The Soap Bubble Nebula: a faint teal spherical shell left of center in a wide field of red hydrogen emission and dense stars in Cygnus" class="dso-image">
             </div>
@@ -1705,7 +1759,7 @@
             </div>
         </article>
 
-        <article id="sh2-101" class="dso-section">
+        <article id="sh2-101" class="dso-section" data-added="2025-12-23" data-distance-ly="6000">
             <div class="dso-image-container">
                 <img src="https://raw.githubusercontent.com/taylorhogan/taylorhogan.github.io/main/images/sh2-101.jpg" alt="SH2-101" class="dso-image">
             </div>
@@ -1727,7 +1781,7 @@
         </article>
 
         <!-- SH2-92 -->
-        <article id="sh2-92" class="dso-section">
+        <article id="sh2-92" class="dso-section" data-added="2026-08-04" data-distance-ly="13000">
             <div class="dso-image-container">
                 <img src="images/sh2-92.jpg" alt="SH2-92" class="dso-image">
             </div>
@@ -1753,7 +1807,7 @@
         </article>
 
         <!-- Elephant's Trunk -->
-        <article id="trunk" class="dso-section">
+        <article id="trunk" class="dso-section" data-added="2026-08-30" data-distance-ly="2400">
             <div class="dso-image-container">
                 <img src="images/trunk_final.jpg" alt="The Elephant's Trunk Nebula in the HSO palette: a dark winding column of dust silhouetted against a red and magenta field of glowing hydrogen, its edges rimmed in orange where the ionization front burns." class="dso-image">
             </div>
@@ -8909,6 +8963,73 @@ score    = snr * shape * quality * flatness</code></pre>
                 if (history.replaceState) { history.replaceState(null, '', location.pathname + location.search); }
             }
             void defaultNote;
+        })();
+    </script>
+    <script>
+        // Gallery sort: newest first (the default), A-Z, or nearest first.
+        // Each card carries data-added and data-distance-ly (see the comment at
+        // the top of the gallery; a galaxy cluster uses its furthest object).
+        // Only the cards' order changes: the deck code binds to each card, not
+        // to its position, so an open card stays open and links still land.
+        (function () {
+            var panel = document.getElementById('gallery-panel');
+            var bar = panel && panel.querySelector('.gallery-sort');
+            if (!bar) { return; }
+            var cards = Array.prototype.slice.call(panel.querySelectorAll(':scope > .dso-section'));
+            cards.forEach(function (c, i) { c._pageOrder = i; });
+
+            var SCALE = { million: 1e6, billion: 1e9 };
+            function distanceLy(card) {
+                var v = parseFloat(card.getAttribute('data-distance-ly'));
+                if (isFinite(v)) { return v; }
+                // Fallback: the DISTANCE line, e.g. "~2.7 MILLION LIGHT YEARS"
+                // or "~12,000-14,000 LIGHT YEARS" (a range sorts by its middle).
+                var meta = card.querySelector('.dso-meta');
+                var m = meta && /DISTANCE:\s*~?\s*([\d.,]+)(?:\s*[–-]\s*([\d.,]+))?\s*(MILLION|BILLION)?\s*LIGHT/i
+                    .exec(meta.textContent);
+                if (!m) { return Infinity; }
+                var a = parseFloat(m[1].replace(/,/g, ''));
+                var b = m[2] ? parseFloat(m[2].replace(/,/g, '')) : a;
+                return ((a + b) / 2) * (m[3] ? SCALE[m[3].toLowerCase()] : 1);
+            }
+            // Spaces dropped, so "NGC 7380" sorts with "NGC7331" and "IC 1396A"
+            // with "IC1318" -- the titles are not consistent about the space.
+            function title(card) {
+                var t = card.querySelector('.dso-title');
+                return (t ? t.textContent : card.id).replace(/\s+/g, '');
+            }
+            var KEYS = {
+                // Newest first; entries added the same day keep their page order.
+                added: function (a, b) {
+                    var da = a.getAttribute('data-added') || '', db = b.getAttribute('data-added') || '';
+                    return da < db ? 1 : da > db ? -1 : a._pageOrder - b._pageOrder;
+                },
+                // Natural order, so M13 comes before M101 and NGC891 before NGC4565.
+                name: function (a, b) {
+                    return title(a).localeCompare(title(b), undefined, { numeric: true, sensitivity: 'base' });
+                },
+                distance: function (a, b) {
+                    var x = distanceLy(a), y = distanceLy(b);
+                    return x === y ? a._pageOrder - b._pageOrder : (x < y ? -1 : 1);
+                }
+            };
+            var buttons = Array.prototype.slice.call(bar.querySelectorAll('.sort-btn'));
+
+            function apply(key) {
+                if (!KEYS[key]) { key = 'added'; }
+                cards.slice().sort(KEYS[key]).forEach(function (c) { panel.appendChild(c); });
+                buttons.forEach(function (b) {
+                    b.setAttribute('aria-pressed', b.getAttribute('data-sort') === key ? 'true' : 'false');
+                });
+                try { localStorage.setItem('gallerySort', key); } catch (e) { /* private window */ }
+            }
+
+            buttons.forEach(function (b) {
+                b.addEventListener('click', function () { apply(b.getAttribute('data-sort')); });
+            });
+            var saved = null;
+            try { saved = localStorage.getItem('gallerySort'); } catch (e) { saved = null; }
+            apply(saved || 'added');
         })();
     </script>
 </body>
