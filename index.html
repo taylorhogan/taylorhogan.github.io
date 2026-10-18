@@ -1040,7 +1040,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button><span id="subscribe-wrap" hidden> &middot; <button type="button" class="share-btn" id="subscribe-btn" aria-expanded="false" aria-controls="subscribe-form">Subscribe</button></span><!-- hidden 2026-10-17: the subscriber service (iris-subscribe) is not installed on the web host yet; /api/subscribe is a 404. Remove `hidden` once it is. --></p>
-        <p class="last-updated" id="last-updated">Updated 2026-10-17 23:03 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-10-18 12:42 EDT</p>
         <!-- Subscribe: POSTs to /api/subscribe on the web host (iris-subscribe
              service); a confirmation email follows, nothing is sent before it
              is clicked. The hp field is a honeypot: hidden, must stay empty. -->
@@ -1419,6 +1419,108 @@
                     <span class="time-travel-title">On Earth: 230 Million Years Ago</span>
                     <p>
                         The photons left during the Triassic period, when the supercontinent Pangaea was forming. Early dinosaurs and mammals were emerging after the Permian extinction. Vast forests of cycads and ferns covered the land, and the first flying reptiles appeared in a world recovering from mass extinction.
+                    </p>
+                </div>
+            </div>
+        </article>
+
+        
+        <!-- NGC2146 -->
+        <article id="ngc2146" class="dso-section" data-added="2026-10-18" data-distance-ly="70000000">
+            <div class="dso-image-container">
+                <img src="images/ngc2146.jpg?v=2026-10-18" alt="NGC 2146, the Dusty Hand: a tilted galaxy with a warm, golden core crossed by dark, twisted lanes of dust, faint pink knots of star formation scattered through it, and a pale blue outer disc drawn out to lower right, among sharp point-like stars." class="dso-image">
+            </div>
+            <div class="dso-content">
+                <h2 class="dso-title">NGC2146 - The Dusty Hand</h2>
+                <div class="dso-meta">DISTANCE: ~70 MILLION LIGHT YEARS | TYPE: STARBURST BARRED SPIRAL GALAXY | 56 L + 32 R + 27 G + 25 B &times; 300 s | 11.7 HOURS OVER FOUR NIGHTS | DENOISED + DECONVOLVED</div>
+
+                <p class="science-text">
+                    NGC 2146 is a spiral galaxy in Camelopardalis, low in our northern sky, that
+                    is forming stars far faster than a calm spiral like the Milky Way. The
+                    reason is written across its middle: a lane of dust, bent and twisted where
+                    it crosses the bright core, which is one of the galaxy's own spiral arms
+                    wrenched through some 45 degrees. A close pass by a smaller galaxy, around
+                    800 million years ago, is thought to have done it, and the disturbance is
+                    still driving gas into the center, where it collapses into new stars. That
+                    is what "starburst" means. The pink knots along the dust are clouds of
+                    hydrogen lit by those young stars; the golden glow behind them is the older
+                    population of the core, reddened further by the dust in front of it; the
+                    faint blue apron to the lower right is the outer disc, pulled out of shape
+                    by the same encounter.
+                </p>
+
+                <p class="science-text">
+                    The picture is luminance, red, green and blue from four nights between 5
+                    and 8 October 2026. The stack was denoised and then deconvolved: the
+                    blur that the atmosphere and the optics put on every star and every lane of
+                    dust was measured from the field's own stars and taken back out with forty
+                    iterations of Richardson-Lucy. How that works, why the denoising has to come
+                    first, and what stops it drawing dark rings around the stars, is in
+                    <a href="#quintet-deblur">Undoing the blur: deconvolving Stephan's Quintet</a>.
+                    The sharpened image is for looking at; nothing is measured from it.
+                </p>
+
+                <div class="time-travel-box">
+                    <span class="time-travel-title">On Earth: ~70 Million Years Ago</span>
+                    <p>
+                        This light left NGC 2146 near the end of the Cretaceous. Dinosaurs were
+                        still everywhere: duck-billed hadrosaurs grazed in herds, horned dinosaurs
+                        were common, and tyrannosaurs were the top predators. A
+                        shallow sea still split North America down the middle, flowering plants
+                        were spreading across the continents, and small mammals lived in the
+                        undergrowth. The asteroid that would end it all was still a few million
+                        years away.
+                    </p>
+                </div>
+            </div>
+        </article>
+
+        <!-- Stephan's Quintet: sorted by its furthest members (~300 Mly), not NGC 7320 in front -->
+        <article id="stephans-quintet" class="dso-section" data-added="2026-10-18" data-distance-ly="300000000">
+            <div class="dso-image-container">
+                <img src="images/stephans-quintet.jpg?v=2026-10-18" alt="Stephan's Quintet, deconvolved: four golden galaxies in a tight group at left, two of them a close pair with separate nuclei wrapped in looping arms and a tidal tail curving below, a small round elliptical above, and on the right a larger blue-white spiral, NGC 7320, studded with knots of star formation." class="dso-image">
+            </div>
+            <div class="dso-content">
+                <h2 class="dso-title">HCG92 - Stephan's Quintet</h2>
+                <div class="dso-meta">DISTANCE: ~300 MILLION LIGHT YEARS (NGC 7320: ~40 MILLION) | TYPE: COMPACT GALAXY GROUP | 100 L + 136 RGB &times; 300 s | DENOISED + DECONVOLVED</div>
+
+                <p class="science-text">
+                    Stephan's Quintet is five galaxies in Pegasus that are not all neighbors.
+                    Four of them, NGC 7317, NGC 7318A, NGC 7318B and NGC 7319, are a true group
+                    about 300 million light years away, close enough to one another to be
+                    colliding: the pair at the center of the frame, with their two nuclei and
+                    looping arms, is NGC 7318A and B, and the tail sweeping round below them is
+                    gas and stars torn out by the encounter. NGC 7318B is falling through the
+                    group at about 900 kilometers a second, and the shock where it hits
+                    the group's gas is one of the largest known anywhere. The fifth galaxy, the
+                    bluer spiral on the right, is NGC 7320, a foreground galaxy only about 40
+                    million light years away that happens to sit along the same line of sight.
+                </p>
+
+                <p class="science-text">
+                    That difference is not taken on trust here. With a narrow filter chosen so
+                    that a hydrogen line moves into it only at the distant group's speed, the
+                    four far galaxies glow and NGC 7320 stays dark, which is the measurement in
+                    <a href="#quintet-redshift">Five galaxies that only look like neighbors</a>.
+                    This picture is the same luminance, red, green and blue data, denoised and
+                    then deconvolved with forty iterations of Richardson-Lucy, which takes the
+                    stars from 2.0 to 1.0 arcseconds and separates the two nuclei of the
+                    colliding pair; color saturation is raised for display. The method, and the
+                    split-half test that says the new detail is real, is in
+                    <a href="#quintet-deblur">Undoing the blur: deconvolving Stephan's Quintet</a>.
+                </p>
+
+                <div class="time-travel-box">
+                    <span class="time-travel-title">On Earth: ~300 Million Years Ago</span>
+                    <p>
+                        The light from the colliding four left them in the late Carboniferous.
+                        The continents were closing into a single landmass, Pangaea, and vast
+                        swamp forests of giant club mosses and tree ferns were laying down the
+                        coal that would be mined three hundred million years later. The air was
+                        rich enough in oxygen for dragonflies with wings the span of a hawk's.
+                        The first reptiles, and the ancestors of the mammals, had only just
+                        appeared. The light from NGC 7320, in front of them, left only 40
+                        million years ago, when the first whales were taking to the sea.
                     </p>
                 </div>
             </div>
