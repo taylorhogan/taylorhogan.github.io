@@ -1040,7 +1040,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button><span id="subscribe-wrap" hidden> &middot; <button type="button" class="share-btn" id="subscribe-btn" aria-expanded="false" aria-controls="subscribe-form">Subscribe</button></span><!-- hidden 2026-10-17: the subscriber service (iris-subscribe) is not installed on the web host yet; /api/subscribe is a 404. Remove `hidden` once it is. --></p>
-        <p class="last-updated" id="last-updated">Updated 2026-10-21 13:57 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-10-23 07:15 EDT</p>
         <!-- Subscribe: POSTs to /api/subscribe on the web host (iris-subscribe
              service); a confirmation email follows, nothing is sent before it
              is clicked. The hp field is a honeypot: hidden, must stay empty. -->
@@ -8083,7 +8083,7 @@ score    = snr * shape * quality * flatness</code></pre>
 
         <div class="live-sky" id="live-sky" hidden>
             <h3 id="live-sky-title">Where it is pointing</h3>
-            <img id="live-sky-img" alt="All-sky chart: zenith at the center, horizon at the rim, compass points around the edge, with the region blocked by trees shaded and the current target circled">
+            <img id="live-sky-img" alt="All-sky chart: zenith at the center, horizon at the rim, compass points around the edge, with the region blocked by trees shaded, the current target circled with its altitude and azimuth, and the night's other targets marked with their start times or as done">
             <p class="live-caption" id="live-caption"></p>
         </div>
 
@@ -8804,6 +8804,7 @@ score    = snr * shape * quality * flatness</code></pre>
                             head.textContent = 'The observatory is sleeping';
                             cap.innerHTML = '<span class="live-stale">Last chart '
                                 + ago(s.generated) + ' \u2014 the feed has gone quiet.</span>';
+                            cap.hidden = false;
                             wrap.hidden = false;
                             var lwx = document.getElementById('live-latest');
                             if (lwx) { lwx.hidden = true; }
@@ -8828,19 +8829,12 @@ score    = snr * shape * quality * flatness</code></pre>
                         head.textContent = s.target
                             ? (planned ? 'Tonight: ' : 'Tracking ') + s.target
                             : 'No target selected';
-                        var bits = [];
-                        if (s.target) {
-                            bits.push('<strong>' + s.target + '</strong>'
-                                + (planned ? ' (planned, not yet imaging) is ' : ' is ')
-                                + s.state + ', at altitude ' + s.alt_deg
-                                + '\u00b0 and azimuth ' + s.az_deg + '\u00b0');
-                            if (s.good_hours != null) {
-                                bits.push(s.good_hours
-                                    + ' usable hours tonight, counted against the tree line rather than the horizon');
-                            }
-                        }
-                        bits.push('chart generated ' + ago(s.generated));
-                        cap.innerHTML = bits.join('. ') + '.';
+                        // No caption under a fresh chart (owner, 2026-10-23):
+                        // the chart labels the running target and every other
+                        // target of the night itself. The caption comes back
+                        // only to say the feed has gone stale.
+                        cap.innerHTML = '';
+                        cap.hidden = true;
                         img.src = '/live/skymap.jpg?t=' + Date.now();
                         wrap.hidden = false;
 
