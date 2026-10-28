@@ -1040,7 +1040,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button><span id="subscribe-wrap" hidden> &middot; <button type="button" class="share-btn" id="subscribe-btn" aria-expanded="false" aria-controls="subscribe-form">Subscribe</button></span><!-- hidden 2026-10-17: the subscriber service (iris-subscribe) is not installed on the web host yet; /api/subscribe is a 404. Remove `hidden` once it is. --></p>
-        <p class="last-updated" id="last-updated">Updated 2026-10-28 07:40 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-10-28 09:30 EDT</p>
         <!-- Subscribe: POSTs to /api/subscribe on the web host (iris-subscribe
              service); a confirmation email follows, nothing is sent before it
              is clicked. The hp field is a honeypot: hidden, must stay empty. -->
@@ -2127,6 +2127,140 @@
     </div>
 
     <div class="container" id="notes-panel" role="tabpanel" aria-labelledby="tab-notes">
+
+        <article id="cepheids-first-curves" class="note">
+            <h2 class="note-title">First light curves: Hubble's star and three Cepheids in Cassiopeia</h2>
+            <div class="note-meta"><span class="note-date">2026-10-28</span> &middot; VARIABLE STARS &middot; M31 V1, 12 NIGHTS, 7&ndash;16 &times; 5 MIN LUMINANCE A NIGHT; CF CAS, CG CAS, CE CAS A+B, 7 NIGHTS, 10 S LUMINANCE &middot; APERTURE PHOTOMETRY AGAINST GAIA DR3 &middot; STATUS: MONITORING CONTINUES, NO DISTANCE YET</div>
+
+            <h3>Abstract</h3>
+
+            <p class="science-text note-abstract">
+                Twenty days ago <a href="#three-slots">the planner learned to fit a third target</a>
+                into the night so that Hubble's variable star V1 in Andromeda could have an hour
+                every clear night. Twelve nights later we have caught V1 rising by a full magnitude
+                to its maximum and fading steadily for ten nights since, the classic Cepheid shape.
+                The maximum came one to three days before the date the star's published ephemeris
+                predicts, which is what a period quoted to one decimal place does after 188 cycles.
+                In parallel, a short half-hour pointing in Cassiopeia caught three much brighter
+                Cepheids with periods near five days. Folded on their catalog periods, CF Cas lands on
+                a smooth curve with 0.035 magnitudes of scatter and peaks within three hours of
+                where a 66-year-old ephemeris says it should, after nearly five thousand cycles.
+                These are measurements of timing and shape. No distance comes out of them yet: that
+                needs V1's full cycle, which the faint half of its pulse will finish in mid-November.
+            </p>
+
+            <figure>
+                <a href="images/cepheid_v1.png" target="_blank" rel="noopener noreferrer">
+                    <img src="images/cepheid_v1.png" alt="Brightness of Hubble's V1 against date from October 8 to October 27, 2026: faint at magnitude 19.35 on October 8, at its brightest, 18.30, on October 17 and 18, then fading steadily to 18.86 by October 27. A dashed line marks the night of October 19, when the ephemeris predicts the maximum; the star was already fading by then. One night, October 14, is drawn hollow with a large error bar.">
+                </a>
+                <figcaption><strong>Hubble's V1, one point per night.</strong> Each point is the mean
+                    of that night's five-minute luminance frames; brighter is up. The dashed line is
+                    the night the ephemeris on our queue entry puts the maximum. The hollow point is
+                    a night whose frames disagreed with each other by 0.7 magnitudes and is not used
+                    in anything below.</figcaption>
+            </figure>
+
+            <h3>What a Cepheid is, and why the timing matters</h3>
+
+            <p class="science-text">
+                A Cepheid is a yellow supergiant that swells and shrinks on a fixed beat, brightening
+                quickly and fading slowly, over and over. Henrietta Leavitt found in 1912 that the
+                longer the beat, the more luminous the star, so the period tells you how bright the
+                star really is and its faintness in the sky then tells you how far away it is. That
+                is how Hubble used V1 in 1923 to show that Andromeda is a separate galaxy. To repeat
+                his measurement we need two things from the light curve: the period, and the star's
+                average brightness over a whole cycle. Neither is finished. What twelve nights can
+                already test is whether we are measuring the right star correctly, and the cleanest
+                test is timing: a Cepheid's beat is regular enough that a maximum predicted years in
+                advance should arrive on schedule.
+            </p>
+
+            <h3>V1: the maximum, a little early</h3>
+
+            <p class="science-text">
+                V1 was at magnitude 19.35 on October 8, at 18.30 on both October 17 and 18, and has
+                faded by about 0.06 magnitudes a night since, to 18.86 on October 27. That is a range
+                of 1.06 magnitudes against the 0.9 published in the V band. The two are on different
+                scales (ours is the Gaia G scale, measured through a clear luminance filter, not
+                Johnson V), so the comparison is a sanity check, not a measurement. The ephemeris on
+                our queue entry, a maximum on 22 August 2010 and every 31.4 days after, puts this
+                cycle's maximum on the night of October 19. Our point that night was taken about an
+                hour before the predicted moment and the star was already 0.06 magnitudes fainter
+                than on the two nights before. A Cepheid fades slowly after its peak, so the peak was
+                behind us: somewhere between October 15 and 18, one to three days early.
+            </p>
+
+            <p class="science-text">
+                We do not read that as the star changing. The period on the entry is written to one
+                decimal place, and 188 cycles have passed since the reference maximum. A period that
+                is really 31.39 days instead of 31.40 puts the maximum 1.9 days early by now. The
+                second maximum, due around November 18, settles it: two maxima a cycle apart give the
+                period directly, without the ephemeris.
+            </p>
+
+            <h3>Three Cepheids in Cassiopeia, folded</h3>
+
+            <figure>
+                <a href="images/cepheid_ngc7790.png" target="_blank" rel="noopener noreferrer">
+                    <img src="images/cepheid_ngc7790.png" alt="Three panels. Left: CF Cas folded on 4.875 days, seven nights shown twice over two cycles, lying close to a sine curve of amplitude 0.44 magnitudes peaking at phase 1. Middle: CG Cas folded on 4.366 days, amplitude 0.85 magnitudes, with more scatter. Right: the blended pair CE Cas A and B against date, varying between 10.02 and 10.33 without a single period.">
+                </a>
+                <figcaption><strong>Folded on the catalog periods.</strong> Phase 0 (and 1) is where the
+                    catalog ephemeris puts maximum light; each night appears twice so the cycle reads
+                    across the join. The orange curve is the best-fitting sine at the catalog period,
+                    a simple shape, not a Cepheid template. Right: the CE Cas pair against date,
+                    because two periods in one aperture do not fold.</figcaption>
+            </figure>
+
+            <p class="science-text">
+                The second pointing sits between the cluster NGC 7790 and Berkeley 58, so that one
+                field holds four Cepheids: CF Cas (period 4.875 days), CG Cas (4.366) and the pair
+                CE Cas A and B (5.141 and 4.479). They are about a thousand times brighter than V1, so
+                the frames are seconds long, not five minutes, and the comparison stars are chosen
+                two to four magnitudes brighter to match, by the exposure. Seven nights from October 20 to 27 cover about a
+                cycle and a half of each.
+            </p>
+
+            <p class="science-text">
+                <strong>CF Cas</strong> is the clean one. Folded on its catalog period with the
+                catalog's reference maximum of 28 March 1960, the seven nights lie on a sine of 0.44
+                magnitudes with 0.035 magnitudes of scatter, and the fitted maximum falls 0.12 days
+                before the predicted one, after 4,987 cycles. <strong>CG Cas</strong> shows the larger
+                swing its catalog range implies, 0.85 magnitudes, but scatters three times as much,
+                0.115. That is the comparison stars, not the Cepheid: around CG Cas they disagree
+                with one another by 0.15 to 0.19 magnitudes in every frame, against 0.02 to 0.09
+                around CF Cas, so its zero point wanders from night to night. Its two brightest
+                nights fall at catalog phases 0.04 and 0.13, within half a day of the predicted
+                maxima. <strong>CE Cas A and B</strong> are 2.5 arcseconds apart, inside one 3-arcsecond
+                aperture, so we measure their sum. It varies between 10.02 and 10.33
+                as the two beats drift in and out of step, and no single period describes it.
+            </p>
+
+            <h3>Caveats</h3>
+
+            <p class="science-text">
+                Every magnitude here is on the Gaia G scale through a luminance filter; comparing
+                amplitudes or mean brightness with V-band literature needs a color term we have not
+                measured. Seven nights fold well on a known period but cannot find a period on their
+                own: a search within ten percent of CF Cas's catalog period moves the best fit to 4.70
+                days with almost the same scatter, so these nights confirm the catalog period rather
+                than measure it. The moon was full on October 25 and 26, and V1's errors grew from
+                0.02 to 0.11 magnitudes across that week. A sine is the wrong shape for a Cepheid,
+                which rises faster than it falls; it is used here only to find the amplitude and the
+                timing, and it tends to put the maximum slightly late.
+            </p>
+
+            <h3>Next</h3>
+
+            <p class="science-text">
+                V1 keeps its hour every clear night through about November 20, for the minimum and
+                the second maximum: the period from two maxima, then the mean brightness over a full
+                cycle, then the distance, the same way Hubble did it. The Cassiopeia field needs about
+                another week for the period search to stand on its own, and CG Cas needs better
+                comparison stars. CF Cas is a member of NGC 7790, whose distance is known
+                independently from its stars, so it is the natural first check of the
+                period-luminosity relation with our own photometry.
+            </p>
+        </article>
 
         <article id="learned-deblur" class="note">
             <h2 class="note-title">Learning to undo the blur: a network that moves light</h2>
