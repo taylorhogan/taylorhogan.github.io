@@ -1040,7 +1040,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button><span id="subscribe-wrap" hidden> &middot; <button type="button" class="share-btn" id="subscribe-btn" aria-expanded="false" aria-controls="subscribe-form">Subscribe</button></span><!-- hidden 2026-10-17: the subscriber service (iris-subscribe) is not installed on the web host yet; /api/subscribe is a 404. Remove `hidden` once it is. --></p>
-        <p class="last-updated" id="last-updated">Updated 2026-10-23 07:15 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-10-28 03:30 EDT</p>
         <!-- Subscribe: POSTs to /api/subscribe on the web host (iris-subscribe
              service); a confirmation email follows, nothing is sent before it
              is clicked. The hp field is a honeypot: hidden, must stay empty. -->
@@ -9091,6 +9091,16 @@ score    = snr * shape * quality * flatness</code></pre>
                         // were actually detected. The pair is the measurement —
                         // a count on its own says nothing without the total it
                         // came from.
+                        // The share of a clear sky's catalogue stars that the
+                        // plate solve matched. Unlike the raw count it cannot be
+                        // inflated by rain or cloud fragments, so it is shown
+                        // even when the raw count is not.
+                        var clearLine = '';
+                        if (s.night && s.clear_pct != null) {
+                            clearLine = 'Catalog stars seen: <strong>' + s.clear_pct
+                                + '% of a clear sky</strong>'
+                                + (s.moon_up_bright ? ' (bright moon up, so read it low)' : '');
+                        }
                         if (s.night && s.completeness && s.completeness.length) {
                             var rows = '';
                             var tn = 0, tf = 0;
@@ -9107,7 +9117,8 @@ score    = snr * shape * quality * flatness</code></pre>
                                 + '</tr></thead><tbody>' + rows + '</tbody>'
                                 + '<tfoot><tr><td>all</td><td>' + tn + '</td><td>' + tf
                                 + '</td><td>' + Math.round(100 * tf / Math.max(tn, 1))
-                                + '%</td></tr></tfoot></table>';
+                                + '%</td></tr></tfoot></table>'
+                                + (clearLine ? '<p>' + clearLine + '.</p>' : '');
                             img.src = '/live/sky.jpg?t=' + Date.now();
                             wrap.hidden = false;
                             return;
@@ -9129,6 +9140,7 @@ score    = snr * shape * quality * flatness</code></pre>
                                 + '— ' + s.false_positives + ' of ' + s.stars
                                 + ' detections are false by the negative-image control, '
                                 + 'which is what rain or heavy cloud looks like');
+                            if (clearLine) bits.push(clearLine);
                         } else {
                             bits.push('<strong>' + s.stars + ' stars</strong> detected');
                             if (s.limiting_mag != null) {
@@ -9151,6 +9163,7 @@ score    = snr * shape * quality * flatness</code></pre>
                                     + s.false_positives + ' false '
                                     + (s.false_positives === 1 ? 'detection' : 'detections'));
                             }
+                            if (clearLine) bits.push(clearLine);
                         }
                         bits.push('photographed ' + ago(s.captured || s.generated));
                         cap.innerHTML = bits.join('. ') + '.';
