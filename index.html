@@ -1040,7 +1040,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button><span id="subscribe-wrap" hidden> &middot; <button type="button" class="share-btn" id="subscribe-btn" aria-expanded="false" aria-controls="subscribe-form">Subscribe</button></span><!-- hidden 2026-10-17: the subscriber service (iris-subscribe) is not installed on the web host yet; /api/subscribe is a 404. Remove `hidden` once it is. --></p>
-        <p class="last-updated" id="last-updated">Updated 2026-10-28 03:30 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-10-28 07:40 EDT</p>
         <!-- Subscribe: POSTs to /api/subscribe on the web host (iris-subscribe
              service); a confirmation email follows, nothing is sent before it
              is clicked. The hp field is a honeypot: hidden, must stay empty. -->
@@ -9118,7 +9118,17 @@ score    = snr * shape * quality * flatness</code></pre>
                                 + '<tfoot><tr><td>all</td><td>' + tn + '</td><td>' + tf
                                 + '</td><td>' + Math.round(100 * tf / Math.max(tn, 1))
                                 + '%</td></tr></tfoot></table>'
-                                + (clearLine ? '<p>' + clearLine + '.</p>' : '');
+                                + (clearLine ? '<p>' + clearLine + '.</p>' : '')
+                                // A noisy frame (moon, cloud) still gets the table:
+                                // noise rarely lands on a catalog star, and the
+                                // negative-image control says how often it did.
+                                + (s.trustworthy === false
+                                    ? '<p>Noisy frame: ' + s.false_positives + ' of ' + s.stars
+                                      + ' raw detections are noise by the negative-image control, so the '
+                                      + 'raw count is not shown. Matched against the catalog, the noise '
+                                      + 'accounts for about ' + (s.chance_matched || 0) + ' of the '
+                                      + tf + ' detected.</p>'
+                                    : '');
                             img.src = '/live/sky.jpg?t=' + Date.now();
                             wrap.hidden = false;
                             return;
