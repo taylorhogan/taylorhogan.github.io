@@ -314,6 +314,48 @@
             max-width: 720px;
         }
 
+        /* The target board (/live/targets.json): the queue as the observatory's
+           own registry sees it. One row per target, the state as a badge. */
+        #live-targets-table {
+            width: 100%;
+            max-width: 720px;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+        }
+        #live-targets-table th, #live-targets-table td {
+            text-align: left;
+            padding: 0.35rem 0.5rem;
+            border-bottom: 1px solid rgba(139, 155, 180, 0.18);
+            white-space: nowrap;
+            vertical-align: top;
+        }
+        #live-targets-table th {
+            color: #8b9bb4;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.7rem;
+        }
+        #live-targets-table td.tb-frames { color: #8b9bb4; }
+        .tb-state {
+            display: inline-block;
+            padding: 0.05rem 0.45rem;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            letter-spacing: 0.5px;
+            background: rgba(139, 155, 180, 0.15);
+            color: #c9d1d9;
+        }
+        .tb-state.ACQUIRING { background: rgba(88, 166, 255, 0.18); color: #9ecbff; }
+        .tb-state.CONVERGED { background: rgba(63, 185, 80, 0.18); color: #7ee787; }
+        .tb-state.QUEUED { background: rgba(139, 155, 180, 0.15); }
+        .tb-state.WISHED { color: #8b9bb4; }
+        .tb-state.RETIRED { color: #6e7681; }
+        .tb-note { color: #8b9bb4; font-size: 0.75rem; white-space: normal; }
+        .tb-tonight { color: #f0c040; }
+        .tb-stop { color: #7ee787; }
+        .tb-draft { color: #d2a8ff; }
+
         /* Per-filter frame counts under the stats chart's heading. Sized to be
            read at arm's length, not squinted at: the count is the point of the
            panel, so it gets body-text weight rather than caption treatment. */
@@ -8291,6 +8333,25 @@ score    = snr * shape * quality * flatness</code></pre>
             <div id="live-machine-stages"></div>
         </div>
 
+        <!--
+            The target board: every queued object with the state the
+            observatory's own registry gives it (wished, queued, acquiring,
+            converged, retired), its frames per filter, tonight's slot, what
+            the auto-stop would retire, and any publish draft awaiting a word.
+            Read from /live/targets.json, written beside status.json by the
+            same job. Hidden when the feed is quiet or empty.
+        -->
+        <div class="live-sky" id="live-targets" hidden>
+            <h3 id="live-targets-title">The queue</h3>
+            <p class="live-caption" id="live-targets-caption"></p>
+            <div style="overflow-x:auto;">
+                <table id="live-targets-table">
+                    <thead><tr><th>Target</th><th>State</th><th>Frames</th><th>Tonight</th><th>Notes</th></tr></thead>
+                    <tbody id="live-targets-body"></tbody>
+                </table>
+            </div>
+        </div>
+
         <div class="live-sky" id="live-skycam" hidden>
             <h3 id="live-skycam-title">The sky right now</h3>
             <img id="live-skycam-img" alt="Wide-angle photograph of the whole sky from a camera beside the telescope, looking straight up, with trees around the edges of the frame">
@@ -9166,6 +9227,87 @@ score    = snr * shape * quality * flatness</code></pre>
                 if (!document.hidden) { refresh(); }
             });
             window.addEventListener('pageshow', function () { refresh(); });
+        })();
+
+        (function () {
+            // The target board. Its own fetch and its own stale rule, so a
+            // failure here never hides the panels above, and theirs never
+            // hides this one.
+            var STALE_MIN = 90;
+            var wrap = document.getElementById('live-targets');
+            var body = document.getElementById('live-targets-body');
+            var cap = document.getElementById('live-targets-caption');
+            if (!wrap || !body) { return; }
+            function esc(t) {
+                return String(t == null ? '' : t).replace(/[&<>"]/g, function (c) {
+                    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+                });
+            }
+            function framesText(t) {
+                var keys = Object.keys(t.filters || {});
+                if (!keys.length) { return t.frames ? String(t.frames) : '\u2014'; }
+                return keys.map(function (f) {
+                    var v = t.filters[f];
+                    return f + ' ' + (v.frames == null ? '?' : v.frames);
+                }).join(' \u00b7 ');
+            }
+            function notes(t) {
+                var out = [];
+                if (t.would_stop && t.would_stop.length) {
+                    out.push('<span class="tb-stop">would retire: ' + esc(t.would_stop.join('; ')) + '</span>');
+                }
+                if (t.draft) {
+                    out.push('<span class="tb-draft">draft ' + esc(t.draft.recipe || '') + ' (' + esc(t.draft.written_by)
+                        + '): ' + esc(t.draft.decision) + (t.draft.auto_publish_on ? ', auto ' + esc(t.draft.auto_publish_on) : '') + '</span>');
+                }
+                if (t.held) { out.push('held'); }
+                if (t.filter_plan) {
+                    var fp = Object.keys(t.filter_plan).map(function (k) { return k + '=' + t.filter_plan[k]; }).join(' ');
+                    out.push('filters ' + esc(fp) + (t.filter_plan_until ? ' until ' + esc(t.filter_plan_until) : ''));
+                }
+                if (t.max_hours) { out.push('max ' + esc(t.max_hours) + ' h'); }
+                if (t.moon && t.moon !== 'avoid') { out.push('moon ' + esc(t.moon)); }
+                if (t.lightcurve) { out.push('light curve'); }
+                if (t.on_site) { out.push('on the site'); }
+                return out.join(' \u00b7 ');
+            }
+            function render(b) {
+                var rows = (b.targets || []).filter(function (t) { return t.state !== 'RETIRED' || t.draft; });
+                if (!rows.length) { wrap.hidden = true; return; }
+                body.innerHTML = rows.map(function (t) {
+                    return '<tr><td>' + esc(t.dso) + '</td>'
+                        + '<td><span class="tb-state ' + esc(t.state) + '">' + esc(t.state).toLowerCase() + '</span></td>'
+                        + '<td class="tb-frames">' + esc(framesText(t)) + '</td>'
+                        + '<td class="tb-tonight">' + esc(t.tonight || '') + '</td>'
+                        + '<td class="tb-note">' + notes(t) + '</td></tr>';
+                }).join('');
+                var c = b.counts || {};
+                var parts = ['ACQUIRING', 'CONVERGED', 'QUEUED', 'WISHED', 'RETIRED'].filter(function (k) { return c[k]; })
+                    .map(function (k) { return c[k] + ' ' + k.toLowerCase(); });
+                var fl = b.flags || {};
+                cap.textContent = parts.join(', ')
+                    + (b.tonight && b.tonight.best ? '. Tonight: ' + b.tonight.best + (b.tonight.will_image === false ? ' (no imaging)' : '') : '')
+                    + '. Auto-stop ' + (fl.auto_stop || '?') + ', filter advisor ' + (fl.filter_advisor || '?')
+                    + ', publishing ' + (fl.gate || '?') + '.';
+                wrap.hidden = false;
+            }
+            function refreshBoard() {
+                fetch('/live/targets.json', { cache: 'no-store' })
+                    .then(function (r) { return r.ok ? r.json() : null; })
+                    .then(function (b) {
+                        if (!b || !b.generated) { wrap.hidden = true; return; }
+                        var age = (Date.now() - new Date(b.generated).getTime()) / 60000;
+                        if (age > STALE_MIN) { wrap.hidden = true; return; }
+                        render(b);
+                    })
+                    .catch(function (err) {
+                        console.warn('target board failed:', err);
+                        wrap.hidden = true;
+                    });
+            }
+            refreshBoard();
+            setInterval(refreshBoard, 120000);
+            document.addEventListener('visibilitychange', function () { if (!document.hidden) { refreshBoard(); } });
         })();
 
         (function () {
