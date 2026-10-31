@@ -337,6 +337,25 @@
             font-size: 0.7rem;
         }
         #live-targets-table td.tb-frames { color: #8b9bb4; }
+        /* One group per state, its header row a toggle (2026-10-31): the
+           queue grew past a screen and the states are what a reader scans
+           by. Which groups are folded is remembered per browser. */
+        #live-targets-table tr.tb-group td {
+            color: #c9d3e6;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+            padding-top: 0.6rem;
+            border-bottom: 1px solid rgba(139, 155, 180, 0.35);
+        }
+        #live-targets-table tr.tb-group td .tb-caret {
+            display: inline-block;
+            width: 1em;
+            color: #8b9bb4;
+            transition: transform 0.15s;
+        }
+        #live-targets-table tr.tb-group.open td .tb-caret { transform: rotate(90deg); }
+        #live-targets-table tr.tb-group td .tb-count { color: #8b9bb4; font-weight: 400; margin-left: 0.4rem; }
         .tb-state {
             display: inline-block;
             padding: 0.05rem 0.45rem;
@@ -9271,16 +9290,52 @@ score    = snr * shape * quality * flatness</code></pre>
                 if (t.on_site) { out.push('on the site'); }
                 return out.join(' \u00b7 ');
             }
+            // Which state groups are folded, remembered per browser. Default:
+            // the states with something happening are open, the wish list and
+            // the retired are folded.
+            var ORDER = ['ACQUIRING', 'CONVERGED', 'QUEUED', 'WISHED', 'RETIRED'];
+            var DEFAULT_FOLDED = { WISHED: true, RETIRED: true };
+            var FOLD_KEY = 'live-targets-folded';
+            function loadFolded() {
+                try {
+                    var v = JSON.parse(localStorage.getItem(FOLD_KEY) || 'null');
+                    if (v && typeof v === 'object') { return v; }
+                } catch (e) { /* no storage: defaults */ }
+                return Object.assign({}, DEFAULT_FOLDED);
+            }
+            function saveFolded(f) {
+                try { localStorage.setItem(FOLD_KEY, JSON.stringify(f)); } catch (e) { /* ignore */ }
+            }
+            var folded = loadFolded();
+            function rowHtml(t) {
+                return '<tr class="tb-row" data-state="' + esc(t.state) + '"><td>' + esc(t.dso) + '</td>'
+                    + '<td><span class="tb-state ' + esc(t.state) + '">' + esc(t.state).toLowerCase() + '</span></td>'
+                    + '<td class="tb-frames">' + esc(framesText(t)) + '</td>'
+                    + '<td class="tb-tonight">' + esc(t.tonight || '') + '</td>'
+                    + '<td class="tb-note">' + notes(t) + '</td></tr>';
+            }
+            function applyFold() {
+                Array.prototype.forEach.call(body.querySelectorAll('tr.tb-row'), function (tr) {
+                    tr.hidden = !!folded[tr.getAttribute('data-state')];
+                });
+                Array.prototype.forEach.call(body.querySelectorAll('tr.tb-group'), function (tr) {
+                    tr.classList.toggle('open', !folded[tr.getAttribute('data-state')]);
+                });
+            }
             function render(b) {
                 var rows = (b.targets || []).filter(function (t) { return t.state !== 'RETIRED' || t.draft; });
                 if (!rows.length) { wrap.hidden = true; return; }
-                body.innerHTML = rows.map(function (t) {
-                    return '<tr><td>' + esc(t.dso) + '</td>'
-                        + '<td><span class="tb-state ' + esc(t.state) + '">' + esc(t.state).toLowerCase() + '</span></td>'
-                        + '<td class="tb-frames">' + esc(framesText(t)) + '</td>'
-                        + '<td class="tb-tonight">' + esc(t.tonight || '') + '</td>'
-                        + '<td class="tb-note">' + notes(t) + '</td></tr>';
+                var groups = {};
+                rows.forEach(function (t) { (groups[t.state] = groups[t.state] || []).push(t); });
+                var states = ORDER.filter(function (k) { return groups[k]; })
+                    .concat(Object.keys(groups).filter(function (k) { return ORDER.indexOf(k) < 0; }));
+                body.innerHTML = states.map(function (k) {
+                    return '<tr class="tb-group" data-state="' + esc(k) + '"><td colspan="5">'
+                        + '<span class="tb-caret">\u25B8</span>' + esc(k).toLowerCase()
+                        + '<span class="tb-count">' + groups[k].length + '</span></td></tr>'
+                        + groups[k].map(rowHtml).join('');
                 }).join('');
+                applyFold();
                 var c = b.counts || {};
                 var parts = ['ACQUIRING', 'CONVERGED', 'QUEUED', 'WISHED', 'RETIRED'].filter(function (k) { return c[k]; })
                     .map(function (k) { return c[k] + ' ' + k.toLowerCase(); });
@@ -9305,6 +9360,14 @@ score    = snr * shape * quality * flatness</code></pre>
                         wrap.hidden = true;
                     });
             }
+            body.addEventListener('click', function (ev) {
+                var tr = ev.target && ev.target.closest ? ev.target.closest('tr.tb-group') : null;
+                if (!tr || !body.contains(tr)) { return; }
+                var k = tr.getAttribute('data-state');
+                folded[k] = !folded[k];
+                saveFolded(folded);
+                applyFold();
+            });
             refreshBoard();
             setInterval(refreshBoard, 120000);
             document.addEventListener('visibilitychange', function () { if (!document.hidden) { refreshBoard(); } });
