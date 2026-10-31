@@ -9367,14 +9367,17 @@ score    = snr * shape * quality * flatness</code></pre>
                         // were actually detected. The pair is the measurement —
                         // a count on its own says nothing without the total it
                         // came from.
-                        // The share of a clear sky's catalogue stars that the
-                        // plate solve matched. Unlike the raw count it cannot be
-                        // inflated by rain or cloud fragments, so it is shown
-                        // even when the raw count is not.
+                        // The share of the catalog's stars to magnitude 5 in
+                        // the field that the plate solve matched: both sides
+                        // counted over the same stars (2026-10-31; before that
+                        // the matches ran to magnitude 6 against a magnitude-5
+                        // total and a clear night read 113 %). Unlike the raw
+                        // count it cannot be inflated by rain or cloud
+                        // fragments, so it is shown even when the raw count is not.
                         var clearLine = '';
-                        if (s.night && s.clear_pct != null) {
-                            clearLine = 'Catalog stars seen: <strong>' + s.clear_pct
-                                + '% of a clear sky</strong>'
+                        if (s.night && s.seen_pct != null) {
+                            clearLine = 'Catalog stars to magnitude 5 seen: <strong>' + s.seen_pct
+                                + '%</strong> (' + s.seen_v5 + ' of ' + s.cat_v5 + ')'
                                 + (s.moon_up_bright ? ' (bright moon up, so read it low)' : '');
                         }
                         if (s.night && s.completeness && s.completeness.length) {
