@@ -1132,7 +1132,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button><span id="subscribe-wrap" hidden> &middot; <button type="button" class="share-btn" id="subscribe-btn" aria-expanded="false" aria-controls="subscribe-form">Subscribe</button></span><!-- hidden 2026-10-17: the subscriber service (iris-subscribe) is not installed on the web host yet; /api/subscribe is a 404. Remove `hidden` once it is. --></p>
-        <p class="last-updated" id="last-updated">Updated 2026-10-28 09:30 EDT</p>
+        <p class="last-updated" id="last-updated">Updated 2026-11-01 14:58 EST</p>
         <!-- Subscribe: POSTs to /api/subscribe on the web host (iris-subscribe
              service); a confirmation email follows, nothing is sent before it
              is clicked. The hp field is a honeypot: hidden, must stay empty. -->
@@ -2219,6 +2219,145 @@
     </div>
 
     <div class="container" id="notes-panel" role="tabpanel" aria-labelledby="tab-notes">
+
+        <article id="nightstand-display" class="note">
+            <h2 class="note-title">A telescope status light for the nightstand, or how to stop checking your phone at 2 a.m.</h2>
+            <div class="note-meta"><span class="note-date">2026-11-01</span> &middot; HARDWARE &middot; M5STACK CORE2 v1.3 (ESP32, 320&times;240 TOUCH SCREEN) &middot; READ-ONLY, POLLS THE OBSERVATORY EVERY 30 S &middot; STATUS: ON THE NIGHTSTAND, THE PHONE IS IN THE OTHER ROOM &middot; WRITTEN ENTIRELY BY CLAUDE (AI)</div>
+
+            <h3>Abstract</h3>
+
+            <p class="science-text note-abstract">
+                Iris runs all night by herself, and her owner kept waking up to check on her. The
+                check took ten seconds. Unlocking the phone to do it took the next forty minutes,
+                because the phone also has the news, the mail and everything else on it. The fix is a
+                five-centimeter square computer on the nightstand that shows only what the telescope
+                is doing: the time, the frame counts, how sharp the stars are and how clear the sky is,
+                in type big enough to read without glasses. It cannot do anything else. It has no
+                browser, no feed and no notifications, and the observatory refuses every request from
+                it except one read-only status call. A week in, it works: one glance at 2 a.m.
+                answers "is everything fine?", and the answer is usually yes. We have no data on
+                hours of sleep saved, only a phone that now stays in the other room.
+            </p>
+
+            <figure>
+                <a href="images/core2_nightstand.jpg" target="_blank" rel="noopener noreferrer">
+                    <img src="images/core2_nightstand.jpg" alt="A small white-framed square display standing on a dark charging base on a wooden nightstand, a pair of reading glasses beside it. The screen reads FWHM median, then in large colored type: Ha 1.89 in red, O-III 1.71 in cyan, S-II 1.62 in yellow.">
+                </a>
+                <figcaption><strong>The display at night, next to the reading glasses it was built
+                    to make unnecessary.</strong> This page is the night's median star size in each
+                    narrowband filter, in arcseconds. Smaller is sharper, and anything under 2 is a good
+                    night here.</figcaption>
+            </figure>
+
+            <h3>The problem: a ten-second question with a forty-minute answer</h3>
+
+            <p class="science-text">
+                An unattended telescope still has an owner, and the owner still wonders. Did the
+                roof open? Is the sky clear? Is it actually taking pictures, or sitting in an error?
+                The honest answer to all of these is in the web chat, and the web chat is on the phone.
+                Picking up a phone at 2 a.m. to look at one number is like going into the kitchen
+                for a glass of water and coming out with half a cheesecake. The number is on the
+                screen; so is everything that happened in the world since midnight. By the time
+                you have read about all of it, the telescope has finished another six frames and
+                you are wide awake.
+            </p>
+
+            <p class="science-text">
+                What was needed was the opposite of a phone: a screen that knows exactly one thing
+                and cannot be talked into showing anything else.
+            </p>
+
+            <h3>What it is</h3>
+
+            <p class="science-text">
+                The box is an <a href="https://docs.m5stack.com/en/core/Core2%20v1.3" target="_blank" rel="noopener noreferrer">M5Stack Core2</a>,
+                an ESP32 microcontroller with a 320&times;240 touch screen and a battery, in a plastic case
+                about five centimeters on a side. It joins the house Wi-Fi and every 30 seconds asks the
+                observatory computer one question, <code>GET /api/dash</code>, which answers with a small
+                JSON summary. The display does no thinking. The observatory decides what is fine
+                (green), what deserves a look (amber) and what needs action now (red), and the box only
+                paints what it is told.
+            </p>
+
+            <p class="science-text">
+                It cycles through a few pages, each in type you can read across a dark room:
+            </p>
+
+            <ul class="science-text">
+                <li><strong>Time and temperature</strong>, because you were going to check anyway.</li>
+                <li><strong>The sky camera's newest frame</strong>, a fisheye view of the whole sky.</li>
+                <li><strong>Frame counts</strong> for tonight's target, per filter.</li>
+                <li><strong>Star size</strong>: the night's median and the newest frame (the picture above).</li>
+                <li><strong>Sky clarity</strong> as a percentage of the stars a clear night shows,
+                    the same number as the Sky right now panel on this site.</li>
+            </ul>
+
+            <p class="science-text">
+                Outside imaging hours it shows the last target of the previous night, so in the morning
+                it doubles as a report card.
+            </p>
+
+            <h3>Rules that keep it boring</h3>
+
+            <p class="science-text">
+                A status light that lies is worse than none, and a status light that can <em>do</em>
+                things is a remote control. So it follows a few rules:
+            </p>
+
+            <ul class="science-text">
+                <li><strong>It cannot act.</strong> The observatory's web server lets this one address
+                    reach exactly one path, and only to read it. The three touch buttons change only
+                    what this screen shows (screen off, an info page, brightness, previous and next page,
+                    pause), and nothing they do leaves the box.</li>
+                <li><strong>It never asks the hardware directly.</strong> The roof status it shows comes from
+                    the newest picture the safety camera already took, never a fresh look. Driving a camera
+                    so a nightstand gadget can feel informed is how you start a safety incident.</li>
+                <li><strong>An old answer turns grey.</strong> If no good reply has arrived for three
+                    minutes, the whole screen greys out and shows how old the data is, so a stale "roof
+                    shut" is never read as a current one.</li>
+                <li><strong>It dims after sunset</strong>, and a red level brings it back to full
+                    brightness. A problem is meant to be seen. Everything else is meant to be slept through.</li>
+                <li><strong>It updates itself.</strong> New firmware is signed on the observatory computer,
+                    and the box checks the signature before it switches over, so improving it does not
+                    mean unplugging it from the nightstand.</li>
+            </ul>
+
+            <h3>What did not work</h3>
+
+            <p class="science-text">
+                The first night brightness was so dim (12 out of 255) that the screen was readable
+                only if you were already awake, which defeats the purpose; it went up to 25 the next
+                day. The imaging pages first came on during the evening calibration frames, so the box
+                proudly reported "imaging" while the telescope was photographing the inside of a closed
+                roof; they now appear only while real frames are arriving. And on the night of
+                October 28, a hand fumbling in the dark held down the pause button and froze the
+                rotation on one page until morning. A pause now lasts at most ten minutes and says so
+                in a yellow bar.
+            </p>
+
+            <h3>Results</h3>
+
+            <p class="science-text">
+                The honest result is qualitative. Nobody measured sleep before or after, and we are
+                not going to run a sleep study for a five-centimeter screen. What changed is
+                behavior: the 2 a.m. question now gets answered from bed in one glance, and the phone
+                stays across the room. The night of the picture above, it said Ha 1.89, O-III 1.71,
+                S-II 1.62 arcseconds, and that was the end of the conversation. The telescope kept
+                working. The owner went back to sleep.
+            </p>
+
+            <p class="science-text">
+                Code: the server side is <code>cmd_processing/dash.py</code> and the firmware is
+                <code>devices/core2_dash/core2_dash.ino</code> in the srt repository.
+            </p>
+
+            <p class="science-text">
+                <em>A note on authorship: this article was written entirely by Claude, the AI that also
+                writes much of Iris's code, from a one-line request and the photo above. The owner
+                supplied the joke about doom scrolling and the nightstand; every word here is
+                Claude's.</em>
+            </p>
+        </article>
 
         <article id="cepheids-first-curves" class="note">
             <h2 class="note-title">First light curves: Hubble's star and three Cepheids in Cassiopeia</h2>
