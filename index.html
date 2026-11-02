@@ -1132,7 +1132,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button><span id="subscribe-wrap" hidden> &middot; <button type="button" class="share-btn" id="subscribe-btn" aria-expanded="false" aria-controls="subscribe-form">Subscribe</button></span><!-- hidden 2026-10-17: the subscriber service (iris-subscribe) is not installed on the web host yet; /api/subscribe is a 404. Remove `hidden` once it is. --></p>
-        <p class="last-updated" id="last-updated">Updated 2026-11-01 14:58 EST</p>
+        <p class="last-updated" id="last-updated">Updated 2026-11-02 06:56 EST</p>
         <!-- Subscribe: POSTs to /api/subscribe on the web host (iris-subscribe
              service); a confirmation email follows, nothing is sent before it
              is clicked. The hp field is a honeypot: hidden, must stay empty. -->
@@ -2219,6 +2219,134 @@
     </div>
 
     <div class="container" id="notes-panel" role="tabpanel" aria-labelledby="tab-notes">
+
+        <article id="auto-stop-filters" class="note">
+            <h2 class="note-title">Two decisions the telescope now makes by itself: when a target is done, and which filters to shoot</h2>
+            <div class="note-meta"><span class="note-date">2026-11-02</span> &middot; AUTOMATION &middot; AUTO-STOP AND THE FILTER ADVISOR, LIVE FROM TODAY'S NOON PLAN &middot; FIRST RETIREMENTS: IC 410 (BOTH TESTS), MELOTTE 15 (FRAME CAP) &middot; STATUS: LIVE</div>
+
+            <h3>Abstract</h3>
+
+            <p class="science-text note-abstract">
+                Iris already chose her targets, opened the roof and took the pictures by herself, but
+                two decisions still came from a person every few days: <em>this target has enough,
+                move on</em>, and <em>tonight, shoot more of this filter than that one</em>. As of
+                today both are made by the machine, from measurements of the frames already on disk.
+                A target is retired when two independent tests agree: its stack has stopped improving
+                with more frames, and it holds a minimum number of good frames in every filter. A
+                cap of twice those minimums stops a target that never satisfies both. Each night's
+                filter ratio goes to whatever the stack is shortest of, weighted by how noisy each
+                channel's stack is, and tilted by the seeing forecast and the moon. The first noon
+                with both live retires IC 410, which passed both tests, and Melotte 15, which hit the
+                cap with its oxygen channel still improving slowly.
+            </p>
+
+            <h3>Gap one: knowing when to stop</h3>
+
+            <p class="science-text">
+                A deep-sky picture gets cleaner with every frame, but more and more slowly: the noise
+                falls as the square root of the frame count, so the hundredth frame does a tenth of
+                what the first ten did. Somewhere along that curve another night stops showing in the
+                picture, and until now a person decided where by looking. The automated recipe asks
+                two questions and needs a yes to both:
+            </p>
+
+            <ul class="science-text">
+                <li><strong>Has the stack stopped improving?</strong> For each filter, smaller stacks
+                    drawn from the frames are compared with the stack of all of them, which gives a
+                    curve of residual noise against frame count. A filter is done when the last part
+                    of that curve falls by less than 0.40% per added frame, with at least 16 frames
+                    measured and the residual under 25%.</li>
+                <li><strong>Are there enough good frames?</strong> Minimum counts of five-minute frames
+                    per filter: 40 each of hydrogen-alpha, oxygen and sulfur for a nebula; 60
+                    luminance, 24 each of red, green and blue, and 36 hydrogen-alpha for a galaxy.
+                    Only frames the stacker would keep count, and for the detail channel (hydrogen
+                    for a nebula, luminance for a galaxy) only sharp ones, at 2.4 arcseconds or better.</li>
+            </ul>
+
+            <p class="science-text">
+                The two tests catch different failures. The curve alone retired IC 410 on 19 oxygen
+                frames: the stack had stopped changing, but only because those few frames were all
+                there was. The frame count alone would keep shooting a channel whose stack has long
+                stopped improving. Requiring both opens a third failure: a target that never satisfies
+                both would hold its slot forever. So a target that has <em>shot</em> twice its frame
+                minimums (240 frames for a nebula, 264 for a galaxy, about 20 hours) is retired anyway,
+                with a push that says so. A variable-star monitor is judged differently: it is done
+                when its light curve has a nightly point in 8 of 10 phase bins. Any retirement is undone
+                with one command, <code>reopen</code>.
+            </p>
+
+            <h3>Gap two: choosing the filters</h3>
+
+            <p class="science-text">
+                A night on one target is split among filters as a ratio, such as hydrogen 1 : sulfur 4.
+                That ratio used to come from a fixed split by object type, corrected by hand when it was
+                clearly wrong. The filter advisor now writes it at noon, in this order of precedence: a
+                ratio the owner set explicitly wins; a variable-star monitor keeps its own fixed recipe;
+                otherwise the advisor decides; and a target with no frames yet gets the fixed split by type.
+            </p>
+
+            <p class="science-text">The advisor's recipe:</p>
+
+            <ul class="science-text">
+                <li><strong>Shortfall first.</strong> Each filter's need is its frame minimum less the
+                    good frames it already has.</li>
+                <li><strong>Weighted by noise.</strong> Each filter's need is weighted by how noisy its
+                    stack is (nebula brightness over sky noise, measured on the stack): the noisiest
+                    channel gets up to four times the weight of the cleanest. IC 410 was 2 hydrogen and 3
+                    sulfur frames short, but its sulfur stack was 2.7 times noisier, so the ratio went
+                    from 3 : 4 to <strong>1 : 4</strong>.</li>
+                <li><strong>Goals met, curve not flat.</strong> The night goes to the filters whose
+                    curve is still falling, in proportion to how fast. Melotte 15 had every minimum met
+                    but its oxygen still improving by 1.6% per frame, so it got <strong>oxygen 4 :
+                    sulfur 1</strong> and no hydrogen.</li>
+                <li><strong>A weak line gets nothing more.</strong> An oxygen or sulfur signal below a
+                    tenth of the hydrogen, once 20 frames have measured it, would only add a channel of
+                    noise.</li>
+                <li><strong>Seeing tilts the detail channel.</strong> With a good forecast (wind at
+                    1.5 km under 20 km/h, the predictor measured on this site) the detail channel's
+                    share is multiplied by 1.5. On a poor night it gets a token share and the other
+                    filters take the hours, because they gain little from sharp seeing.</li>
+                <li><strong>The moon moves light to the narrow filters.</strong> Above half lit and up,
+                    luminance and blue are halved, oxygen cut to 0.7 and hydrogen raised by half, from a measurement of
+                    what a bright moon costs each filter on this telescope.</li>
+            </ul>
+
+            <h3>What it looks like in practice</h3>
+
+            <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr><th style="text-align:left">Target</th><th>Good frames (Ha / O-III / S-II)</th><th>Curve</th><th style="text-align:left">Verdict</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td style="text-align:left">IC 410</td><td>40 sharp / 47 / 57</td><td>flat in all three (under 0.1%/frame)</td><td style="text-align:left"><strong>Retired</strong>: both tests passed</td></tr>
+                    <tr><td style="text-align:left">Melotte 15</td><td>76 sharp / 79 / 64</td><td>O-III still falling 1.6%/frame</td><td style="text-align:left"><strong>Retired</strong>: 250 frames shot, over the 240 cap</td></tr>
+                    <tr><td style="text-align:left">Hubble's V1</td><td colspan="2">light curve in 8 of 10 phase bins</td><td style="text-align:left"><strong>Held</strong> by the owner through Nov 22, for its second maximum</td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <h3>What we do not know yet</h3>
+
+            <p class="science-text">
+                The frame minimums are judgment, not measurement. Forty hydrogen frames is probably
+                more than a bright nebula needs: IC 410's hydrogen stack is still twice as clean as its
+                sulfur at the minimum, and lowering it waits on a side-by-side look at a stack with
+                fewer frames. Melotte 15's oxygen was retired while still improving, which is the cap
+                doing its job, but whether the faint teal in its picture is good enough is a question
+                for eyes, not code. And the slope of the convergence curve jumps by about 30% whenever
+                the frame count crosses a Fibonacci number, because of how the subsets are chosen, so
+                it can weigh a ratio rounded to whole numbers but is not read as a fine measurement.
+                Both rules first ran in shadow mode, posting what they would have done beside what was
+                actually done: the filter advisor for two weeks, auto-stop for four days.
+            </p>
+
+            <p class="science-text">
+                Code: <code>control/auto_stop.py</code>, <code>fits_processing/filter_advisor.py</code>
+                and <code>fits_processing/convergence.py</code> in the srt repository; the plan is
+                <code>docs/AUTOMATION_PLAN.md</code>.
+            </p>
+        </article>
 
         <article id="nightstand-display" class="note">
             <h2 class="note-title">A telescope status light for the nightstand, or how to stop checking your phone at 2 a.m.</h2>
