@@ -2276,6 +2276,179 @@
 
     <div class="container" id="notes-panel" role="tabpanel" aria-labelledby="tab-notes">
 
+        <article id="starless-ic410" class="note">
+            <h2 class="note-title">IC 410 without its stars: a network that lifts the star field off a nebula</h2>
+            <div class="note-meta"><span class="note-date">2026-11-05</span> &middot; PROCESSING &middot; IC 410, H&alpha; 51, O-III 53, S-II 66 &times; 5 MIN, SHO PALETTE &middot; A U-NET TRAINED ON OUR OWN STACKS WITH INJECTED STARS, JUDGED ON A FIELD IT NEVER SAW &middot; STATUS: IN THE MORNING RENDER FROM TODAY, BESIDE EVERY PALETTE PICTURE &middot; WRITTEN WITH CLAUDE (AI)</div>
+
+            <h3>Abstract</h3>
+
+            <p class="science-text note-abstract">
+                In a narrowband picture the stars are not the subject: several thousand of them sit
+                in front of, behind and inside the gas, and in a palette render the software has
+                to find every one of them so that the colour scaling does not turn them magenta.
+                Over the autumn that star handling grew into a stack of hand rules, and every new
+                field found the rule the last one had not needed. This note replaces the rules'
+                hardest part with a small neural network, trained only on this telescope's own
+                stacks, that takes a filter's plane and returns it without its stars. The stars are
+                the difference, so no light is made or lost. The training signal is manufactured:
+                real backgrounds with their stars filled, and known stars put back in from the
+                field's own measured star profile. Judged on the Elephant's Trunk, a field it had
+                never seen, it removed 338 of 358 stars cleanly and left the gas untouched; the few
+                it leaves, the brightest stars' cores and arms and the faintest specks, are filled
+                from their surroundings. The result is a starless twin of every palette picture,
+                on the same stretch, from today's morning render on.
+            </p>
+
+            <div class="figure-pair">
+                <figure>
+                    <a href="images/starless_ic410_with_stars.jpg" target="_blank" rel="noopener noreferrer">
+                        <img src="images/starless_ic410_with_stars.jpg" alt="IC 410 in the SHO palette: a mottled red and teal emission nebula with a dark cavity, two tadpole-shaped globules below centre, and a dense field of white stars.">
+                    </a>
+                    <figcaption><strong>With stars.</strong> The morning render of IC 410 in the
+                        Hubble palette: sulphur red, hydrogen green, oxygen blue, each channel
+                        scaled so its nebula sits at the same level, the stars kept neutral by
+                        the pipeline's rules. The picture the observatory pushes to the phone.</figcaption>
+                </figure>
+                <figure>
+                    <a href="images/starless_ic410_starless.jpg" target="_blank" rel="noopener noreferrer">
+                        <img src="images/starless_ic410_starless.jpg" alt="The same field of IC 410 with every star removed: only the red and teal gas, the dark cavity and the two tadpoles remain.">
+                    </a>
+                    <figcaption><strong>Starless.</strong> The same three stacks, the same white
+                        point, black points and channel scaling, no stars. Nothing was painted in:
+                        every pixel is the measured gas with the stars' light taken out, and the
+                        few pixels under each bright star filled from their surroundings.</figcaption>
+                </figure>
+            </div>
+
+            <h3>Why take the stars out</h3>
+
+            <p class="science-text">
+                Two reasons. The first is for the eye. The gas's structure, the rims, the cavity
+                blown by the young cluster, the two globules being eroded by its ultraviolet,
+                reads more clearly when the star field is not competing with it, and many imagers
+                now show a starless version beside the ordinary one for exactly that reason.
+            </p>
+
+            <p class="science-text">
+                The second is for the pipeline. The Hubble palette scales each channel by a
+                different factor, here sulphur by 4.3 and oxygen by 1.8, hydrogen by 1, and stars
+                must not take that scaling or every one of them turns magenta. So the software
+                finds each star, protects it, and puts its light back uncoloured. That protection
+                became a stack of hand rules: how large a disc a star gets for its brightness,
+                how to find the faint ones on the denoised planes, how long its diffraction arms
+                are, how to fill under it. Every new field found a case: red specks, red spikes, a
+                magenta ring around the brightest star. A method that separates stars from gas in
+                one step replaces all of that, and gives the starless picture for free.
+            </p>
+
+            <h3>The model</h3>
+
+            <p class="science-text">
+                The separator is a U-Net, the same architecture already used here for denoising
+                and for the <a href="#learned-deblur">learned deconvolution</a>, with 7.8 million
+                parameters. It takes one filter's stacked plane, in units of its own sky noise,
+                and returns that plane without its stars. The stars are then the difference
+                between what went in and what came out, so the two pictures above add up to the
+                original exactly.
+            </p>
+
+            <h3>The training data, and the trap in it</h3>
+
+            <p class="science-text">
+                A network learns whatever its training targets contain, and that is the trap. The
+                obvious way to make targets, removing stars by hand or by the existing rules and
+                training the network to copy the result, teaches it the rules' faults along with
+                their virtues; it can never do better than its teacher. So the targets were built
+                the other way round, from things that are known exactly. Thirteen stacked planes
+                from five of our own nebulae (IC 410 itself, Melotte 15, the Crab, IC 1396 and the
+                Squid) had their detected stars filled from their surroundings, leaving the gas,
+                the sky and its noise as the camera recorded them. On top of each training patch
+                synthetic stars were then added using the field's own measured star profile, the
+                median of its real stars with the diffraction spikes included, at brightnesses from
+                below the noise to saturation. Because the stars were put in, the right answer,
+                the background alone, is known to the pixel. Compact knots of nebulosity a little
+                broader than a star were added too, so the network learns that a small bright knot
+                of gas is not a star and must stay. Two thousand 512-pixel patches were drawn
+                fresh for each of forty passes; the training took about ninety minutes.
+            </p>
+
+            <h3>How it was judged</h3>
+
+            <p class="science-text">
+                Not by its training score. Two fields, the Elephant's Trunk and NGC 7380, were kept
+                out of training entirely, and the Trunk became the examination. On it the first
+                model removed 338 of the 358 stars a detector finds in a 24-megapixel region, left
+                the gas untouched to within three thousandths of a count away from the stars, and
+                produced a star layer with no nebula leaking into it. Its one failure was the two
+                or three brightest stars in any field, which kept a small bright nub inside a
+                faint dark ring.
+            </p>
+
+            <p class="science-text">
+                Three further variants were trained the same day to chase that nub: one with many
+                more bright stars in the training mix, one with a loss term that counts the
+                fraction of each star's light left behind, one with real bright stars cut from the
+                data instead of synthetic ones. Each moved the bright-star error around rather than
+                removing it, and the first, trained on a diet of saturated giants, learned that any
+                broad light near a bright thing is a star and began eating nebula. The real field
+                decided every time, and the training numbers had said otherwise. The lesson is the
+                oldest one in the business: judge on data the model has never seen, and by eye.
+            </p>
+
+            <h3>Finishing the job without learning</h3>
+
+            <p class="science-text">
+                The remaining defects were small and local, and small local defects are what simple
+                methods are for. Three fills, each taking its replacement pixels from the
+                surrounding gas, close them: the compact nub under each bright star (on IC 410, 21
+                to 39 stars per filter above 1,200 counts); the far diffraction arms of the
+                brightest stars, which the network leaves and which the palette scaling would
+                otherwise paint as red crosses, along the spider's measured 65&deg; and 155&deg;
+                axes; and the faint stars below the network's threshold, 4,613 of them on this
+                field covering 12 % of its area, each of which would otherwise take the sulphur
+                channel's factor of 4.3 and show as a red dot. The detector that finds them carries
+                a guard so that a compact knot of gas, like the heads of the Tadpoles, is not
+                treated as a star. The three starless planes are then denoised, as the ordinary
+                render's planes are, and composed on exactly the white point, black points and
+                channel factors measured on the planes <em>with</em> stars, because the white
+                point of a picture is its stars and must not be re-measured once they are gone.
+                That is why the two pictures at the top are twins.
+            </p>
+
+            <div class="figure-pair">
+                <figure>
+                    <a href="images/starless_ic410_tadpoles_with_stars.jpg" target="_blank" rel="noopener noreferrer">
+                        <img src="images/starless_ic410_tadpoles_with_stars.jpg" alt="Detail of the two Tadpole globules with the star field present.">
+                    </a>
+                    <figcaption><strong>The Tadpoles, with stars.</strong> Full resolution.</figcaption>
+                </figure>
+                <figure>
+                    <a href="images/starless_ic410_tadpoles_starless.jpg" target="_blank" rel="noopener noreferrer">
+                        <img src="images/starless_ic410_tadpoles_starless.jpg" alt="The same detail of the Tadpoles with the stars removed; the globules, their bright rims and the knot at the head of the right-hand one remain.">
+                    </a>
+                    <figcaption><strong>The Tadpoles, starless.</strong> The bright rims, the
+                        filament trailing from the left-hand globule and the knot at the head of
+                        the right-hand one are all gas, and all survive. The faint ring at the
+                        lower right marks one of the brightest stars, the one blemish the method
+                        still leaves.</figcaption>
+                </figure>
+            </div>
+
+            <h3>What it is not yet</h3>
+
+            <p class="science-text">
+                It handles one filter at a time and narrowband palettes only; nobody has asked for
+                a starless galaxy. The four brightest stars in a field still leave a faint ring
+                just outside the filled disc, a one-constant adjustment that is next. And the hand
+                rules for star colour in the ordinary render have not been replaced yet: that is
+                the step after, and it will be judged the same way, on IC 410, Melotte 15 and
+                NGC 7317 beside the current pictures, by eye. From today the starless composite is
+                written beside every palette render the observatory makes, each morning, as a
+                second view of the same night's data. The pictures are for looking at; nothing is
+                measured from them.
+            </p>
+        </article>
+
         <article id="auto-stop-filters" class="note">
             <h2 class="note-title">Two decisions the telescope now makes by itself: when a target is done, and which filters to shoot</h2>
             <div class="note-meta"><span class="note-date">2026-11-02</span> &middot; AUTOMATION &middot; AUTO-STOP AND THE FILTER ADVISOR, LIVE FROM TODAY'S NOON PLAN &middot; FIRST RETIREMENTS: IC 410 (BOTH TESTS), MELOTTE 15 (FRAME CAP) &middot; STATUS: LIVE</div>
