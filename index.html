@@ -2483,6 +2483,352 @@
 
     <div class="container" id="notes-panel" role="tabpanel" aria-labelledby="tab-notes">
 
+        <article id="machine-caption" class="note">
+            <h2 class="note-title">Who writes the caption: two open models on the observatory's own computer, one checking the other</h2>
+            <div class="note-meta"><span class="note-date">2026-11-06</span> &middot; AUTOMATION &middot; GEMMA 4 (31B) WRITES, QWEN3-VL (32B) CHECKS, ON THE OBSERVATORY'S GB10 &middot; SIX TARGETS BENCHED AGAINST THEIR HAND-WRITTEN ENTRIES</div>
+
+            <h3>Abstract</h3>
+
+            <p class="science-text note-abstract">
+                Iris decides what to image each night, which filters to use, when a target has
+                enough signal, how to render it and whether the render is good enough, and offers
+                the result for the gallery with one word to approve it. The one thing still written
+                by a person was the paragraph under the picture. This note describes how the
+                observatory's own computer now writes it: an open-weight language model that reads
+                the picture, the measured record and an encyclopaedia paragraph about the object,
+                drafts the entry in the house voice, and hands it to a second model from a
+                different lab whose only job is to find what is wrong with it. Nothing leaves the
+                building and no account is involved. Benched on the six targets that already had a
+                hand-written entry, the writer produced an entry we would publish with one or two
+                edits on five of them; the critic caught real errors in every draft it was given,
+                and once, wrongly, broke a correct title. Every remaining error of fact was in the
+                history box, where the models had nothing to check against, so that box is no
+                longer theirs: a table of 43 eras, from the last century to the first galaxies,
+                now supplies it by arithmetic, and the eras are a
+                <a href="#on-earth">timeline at the foot of the gallery</a>.
+            </p>
+
+            <h3>What the telescope already decides</h3>
+
+            <p class="science-text">
+                By the start of November the observatory ran a night with no human touch. At noon
+                the conductor reads the forecast, the moon, the disk and the queue and plans the
+                slots: which targets, in what order, for how long. For each slot the filter advisor
+                reads the frames already on disk, the seeing, the moon and each nebula's measured
+                brightness in each line, and sets the mix, as described in
+                <a href="#auto-stop-filters">Two decisions the telescope now makes by itself</a>.
+                The night runs itself, roof to roof. Each morning the convergence curve is
+                recomputed and a target whose curve has flattened and whose frame goals are met is
+                retired. The Spark stacks, denoises with a network trained on this telescope's own
+                frames, deconvolves with <a href="#learned-deblur">another</a>, picks the palette
+                from what the frames hold, crops to the subject and writes a
+                <a href="#starless-ic410">starless twin</a>. A final render is judged on its
+                stretch, sky, clipping and star colour, and a pass becomes a draft: the picture,
+                and the frame counts, hours and nights measured from the data.
+            </p>
+
+            <p class="science-text">
+                Between the draft and the card in the chat there was a hole. The entry's prose was
+                meant to come from a hosted model through an API key, and the Spark never had one,
+                so every draft said two sentences of facts and that a fuller description would
+                follow. Nobody approves that. The thirty-three entries on this site were written by
+                hand, and that is the standard: a paragraph that is true, specific and in the house
+                voice, or nothing. We chose not to take the shortcut of an account. Nothing the
+                observatory depends on should die with a subscription, and the computer that makes
+                the pictures has memory enough to run a capable open model itself.
+            </p>
+
+            <h3>Two sources of truth, and a model between them</h3>
+
+            <p class="science-text">
+                A language model knows a great deal about the sky and is wrong about some of it in
+                ways it cannot tell from the parts it has right. So the design never asks it to be
+                an astronomer. It is asked to be a writer, and given two things it may not alter.
+                The first is the measured record: filters, frames the stack used, hours, nights,
+                processing, and the distance on record, which goes into the entry's meta line
+                straight from the data. The second is the reference block: the encyclopaedia
+                introduction for the object, fetched by its name, then by its catalogue aliases,
+                then by search when it has no page of its own (Melotte 15 has none; the Heart
+                Nebula's page names it), with the object's type and the observatory's related
+                notes. Everything the model says about the object must come from the reference or
+                be something it is certain is well established, and anything in neither place it
+                must list separately as a claim. The claims print on the approval card, so the
+                person approving sees which sentences rest on the model's memory rather than on the
+                record. Six entries from this site are shown as examples of the voice, never the
+                target's own: shown its own M 76 entry, the first draft paraphrased it,
+                cross-references and all.
+            </p>
+
+            <figure>
+                <svg viewBox="0 0 1000 540" role="img" aria-label="Flow of a gallery entry from a converged target to the site: the measured record, the reference block, the picture and the voice feed the writer; the critic reviews text only; one rewrite; the era table supplies the On Earth box; the article goes to the card and, on approval, the site" style="width:100%;height:auto;display:block;font-family:system-ui,sans-serif;font-size:13px">
+                    <defs>
+                        <marker id="mc-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="currentColor" opacity=".6"/></marker>
+                        <marker id="mc-arrowr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#4fb3c4"/></marker>
+                    </defs>
+                    <g fill="currentColor">
+                        <text x="20" y="24" font-size="11" opacity=".7" letter-spacing="1">BEFORE THE PROSE: ALREADY RUNNING EVERY DAY</text>
+                        <rect x="20" y="36" width="150" height="50" rx="4" fill="none" stroke="currentColor" stroke-opacity=".35"/>
+                        <text x="95" y="57" text-anchor="middle">Target converged</text><text x="95" y="74" text-anchor="middle" font-size="11" opacity=".7">curve flat, goals met, or cap</text>
+                        <rect x="210" y="36" width="150" height="50" rx="4" fill="none" stroke="currentColor" stroke-opacity=".35"/>
+                        <text x="285" y="57" text-anchor="middle">Final render</text><text x="285" y="74" text-anchor="middle" font-size="11" opacity=".7">quality check passed</text>
+                        <rect x="400" y="36" width="150" height="50" rx="4" fill="none" stroke="currentColor" stroke-opacity=".35"/>
+                        <text x="475" y="57" text-anchor="middle">Draft folder</text><text x="475" y="74" text-anchor="middle" font-size="11" opacity=".7">picture, subs, stats</text>
+                        <path d="M170 61 H208" stroke="currentColor" stroke-opacity=".6" fill="none" marker-end="url(#mc-arrow)"/>
+                        <path d="M360 61 H398" stroke="currentColor" stroke-opacity=".6" fill="none" marker-end="url(#mc-arrow)"/>
+                        <path d="M475 86 V126" stroke="currentColor" stroke-opacity=".6" fill="none" marker-end="url(#mc-arrow)"/>
+
+                        <text x="20" y="118" font-size="11" opacity=".7" letter-spacing="1">WHAT THE WRITER IS GIVEN</text>
+                        <rect x="20" y="130" width="200" height="64" rx="4" fill="none" stroke="#5fae70" stroke-width="1.6"/>
+                        <text x="120" y="151" text-anchor="middle">Measured record</text><text x="120" y="168" text-anchor="middle" font-size="11" opacity=".7">filters, frames, hours, nights,</text><text x="120" y="182" text-anchor="middle" font-size="11" opacity=".7">recipe, distance on record</text>
+                        <rect x="240" y="130" width="200" height="64" rx="4" fill="none" stroke="#5fae70" stroke-width="1.6"/>
+                        <text x="340" y="151" text-anchor="middle">Reference block</text><text x="340" y="168" text-anchor="middle" font-size="11" opacity=".7">encyclopaedia intro by name, alias</text><text x="340" y="182" text-anchor="middle" font-size="11" opacity=".7">or search; type; related notes</text>
+                        <rect x="460" y="130" width="150" height="64" rx="4" fill="none" stroke="currentColor" stroke-opacity=".35"/>
+                        <text x="535" y="151" text-anchor="middle">The picture</text><text x="535" y="168" text-anchor="middle" font-size="11" opacity=".7">1024 px, read by the</text><text x="535" y="182" text-anchor="middle" font-size="11" opacity=".7">model's vision encoder</text>
+                        <rect x="630" y="130" width="170" height="64" rx="4" fill="none" stroke="currentColor" stroke-opacity=".35"/>
+                        <text x="715" y="151" text-anchor="middle">The voice</text><text x="715" y="168" text-anchor="middle" font-size="11" opacity=".7">six entries from this site,</text><text x="715" y="182" text-anchor="middle" font-size="11" opacity=".7">never the target's own</text>
+                        <path d="M120 194 V230 H440 M340 194 V230 M535 194 V230 H460 M715 194 V230 H560" stroke="currentColor" stroke-opacity=".6" fill="none"/>
+                        <path d="M450 230 V256" stroke="currentColor" stroke-opacity=".6" fill="none" marker-end="url(#mc-arrow)"/>
+
+                        <text x="20" y="250" font-size="11" opacity=".7" letter-spacing="1">THE LOOP ON THE GB10: ABOUT TWO MINUTES, FIVE WITH A REWRITE</text>
+                        <rect x="340" y="258" width="220" height="64" rx="4" fill="none" stroke="#e0a458" stroke-width="2"/>
+                        <text x="450" y="280" text-anchor="middle">Writer: Gemma 4 31B</text><text x="450" y="297" text-anchor="middle" font-size="11" opacity=".7">the eight fields as JSON,</text><text x="450" y="311" text-anchor="middle" font-size="11" opacity=".7">and its claims; thinking off</text>
+                        <path d="M560 290 H638" stroke="currentColor" stroke-opacity=".6" fill="none" marker-end="url(#mc-arrow)"/>
+                        <text x="599" y="282" text-anchor="middle" font-size="11" opacity=".7">draft</text>
+                        <rect x="640" y="258" width="220" height="64" rx="4" fill="none" stroke="#4fb3c4" stroke-width="2"/>
+                        <text x="750" y="280" text-anchor="middle">Critic: Qwen3-VL 32B</text><text x="750" y="297" text-anchor="middle" font-size="11" opacity=".7">text only, no picture: defects only,</text><text x="750" y="311" text-anchor="middle" font-size="11" opacity=".7">each with the words at fault</text>
+                        <path d="M750 322 V360 H450 V324" stroke="#4fb3c4" stroke-dasharray="5 4" fill="none" marker-end="url(#mc-arrowr)"/>
+                        <text x="600" y="352" text-anchor="middle" font-size="11" fill="#4fb3c4">defects found: one rewrite (the facts outrank a wrong note), one more review</text>
+
+                        <rect x="40" y="380" width="220" height="54" rx="4" fill="none" stroke="#c76fa0" stroke-width="1.6"/>
+                        <text x="150" y="401" text-anchor="middle">Era table</text><text x="150" y="418" text-anchor="middle" font-size="11" opacity=".7">43 eras; the year picks one; no model</text>
+                        <path d="M260 407 H338" stroke="currentColor" stroke-opacity=".6" fill="none" marker-end="url(#mc-arrow)"/>
+                        <rect x="340" y="380" width="220" height="54" rx="4" fill="none" stroke="currentColor" stroke-opacity=".35"/>
+                        <text x="450" y="401" text-anchor="middle">On Earth box</text><text x="450" y="418" text-anchor="middle" font-size="11" opacity=".7">one sentence, a link to the era</text>
+                        <path d="M560 407 H638" stroke="currentColor" stroke-opacity=".6" fill="none" marker-end="url(#mc-arrow)"/>
+                        <path d="M860 290 H900 V407 H862" stroke="currentColor" stroke-opacity=".6" fill="none" marker-end="url(#mc-arrow)"/>
+                        <rect x="640" y="380" width="220" height="54" rx="4" fill="none" stroke="currentColor" stroke-opacity=".35"/>
+                        <text x="750" y="401" text-anchor="middle">The article</text><text x="750" y="418" text-anchor="middle" font-size="11" opacity=".7">text, claims, the critic's notes, spelling fixed</text>
+
+                        <path d="M750 434 V470" stroke="currentColor" stroke-opacity=".6" fill="none" marker-end="url(#mc-arrow)"/>
+                        <rect x="640" y="472" width="220" height="54" rx="4" fill="none" stroke="#9f86d8" stroke-width="2"/>
+                        <text x="750" y="493" text-anchor="middle">Card in the chat</text><text x="750" y="510" text-anchor="middle" font-size="11" opacity=".7">who wrote, who checked; approve or reject</text>
+                        <path d="M640 499 H562" stroke="currentColor" stroke-opacity=".6" fill="none" marker-end="url(#mc-arrow)"/>
+                        <rect x="340" y="472" width="220" height="54" rx="4" fill="none" stroke="currentColor" stroke-opacity=".35"/>
+                        <text x="450" y="493" text-anchor="middle">The gallery</text><text x="450" y="510" text-anchor="middle" font-size="11" opacity=".7">meta line from the data, never the text</text>
+                        <text x="20" y="478" font-size="11" opacity=".7" letter-spacing="1">NEVER THE MACHINE'S</text>
+                        <text x="20" y="496" font-size="11" opacity=".8">the numbers in the meta line</text>
+                        <text x="20" y="511" font-size="11" opacity=".8">whether to publish</text>
+                        <text x="20" y="526" font-size="11" opacity=".8">history: the era table only</text>
+                    </g>
+                </svg>
+                <figcaption><strong>One entry, start to finish.</strong> Everything above the loop
+                    already runs every morning. The loop is new: two different models, one writing
+                    and one checking, with the record (green) and the reference as the only
+                    authority either is allowed. The On Earth box (magenta) bypasses both. The
+                    owner's approval (violet) is the last gate and the only one that publishes.</figcaption>
+            </figure>
+
+            <h3>Why two models</h3>
+
+            <p class="science-text">
+                The first version had the writer check its own draft, and it caught something: on
+                M 76 the draft said the light had left in AD 500, and the review noticed that 2,500
+                light years means about 500 BC. But that is an arithmetic slip against a stated
+                number, the easiest kind. A plausible detail the writer believed while writing it
+                would believe again while reviewing, because it is the same model with the same
+                blind spots. So the critic is a different model from a different lab, Gemma from
+                Google DeepMind and Qwen from Alibaba, trained on different corpora by different
+                teams. The critic is told the draft is another model's work and to trust nothing in
+                it, only the record and the reference. It sees no picture, so it cannot be charmed
+                by the image into agreeing with a description of it. It answers with defects only,
+                in four classes, each with the exact words at fault: a measured number contradicted,
+                a statement the reference does not support, a break in the house style, no related
+                note linked. The writer gets the list and one chance to fix it, told that the facts
+                outrank the critic; a second review decides what still stands, and whatever stands
+                prints on the card beside the writer's claims.
+            </p>
+
+            <p class="science-text">
+                Both models run on the observatory's GB10, a desktop machine with 121 GB of memory
+                shared between its processor and its graphics unit. They are served by Ollama,
+                installed under the observatory user's own home directory with no system
+                privileges; the writer starts the server itself when it finds the port silent, and
+                the models unload a quarter of an hour after the last call so the graphics unit is
+                the morning render's again. Each is a dense model of about 31 billion parameters
+                with a half-billion-parameter vision encoder, stored in 8-bit precision at 34 and 36
+                GB. Gemma 4 ships with a thinking mode on by default, a private reasoning pass
+                before the answer; its first draft on the bench took thirteen minutes and 3,566
+                tokens for a 600-token article. On a one-line question with and without the mode it
+                gave the same answer in four seconds and in eighty-nine. Thinking is off.
+            </p>
+
+            <h3>The bench</h3>
+
+            <p class="science-text">
+                Six targets on this site have a hand-written entry: IC 410, M 1, M 76, Melotte 15,
+                NGC 1961 and NGC 6946. Each model wrote all six with the other as critic, from the
+                same record, reference and picture the hand had, and each machine entry was read
+                against the record, the reference and the hand-written entry. The question for
+                each was whether the owner would approve it with at most one edit. Errors are
+                statements that are wrong; doubts are loose, unsourced or unlisted claims;
+                spellings are American forms, which the site does not use.
+            </p>
+
+            <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr><th style="text-align:left">Target</th><th style="text-align:left">Writer</th><th>Seconds</th><th>Errors</th><th>Doubts</th><th>Spellings</th><th style="text-align:left">Verdict</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td style="text-align:left">IC 410</td><td style="text-align:left">Gemma 4</td><td>124</td><td>0</td><td>2</td><td>2</td><td style="text-align:left">approve with two edits</td></tr>
+                    <tr><td style="text-align:left">IC 410</td><td style="text-align:left">Qwen3-VL</td><td>335</td><td>2</td><td>3</td><td>2</td><td style="text-align:left">approve with three edits</td></tr>
+                    <tr><td style="text-align:left">M 1</td><td style="text-align:left">Gemma 4</td><td>111</td><td>2</td><td>1</td><td>3</td><td style="text-align:left">approve with two edits</td></tr>
+                    <tr><td style="text-align:left">M 1</td><td style="text-align:left">Qwen3-VL</td><td>449</td><td>6</td><td>4</td><td>3</td><td style="text-align:left">reject</td></tr>
+                    <tr><td style="text-align:left">M 76</td><td style="text-align:left">Gemma 4</td><td>103</td><td>1</td><td>2</td><td>2</td><td style="text-align:left">approve with one edit</td></tr>
+                    <tr><td style="text-align:left">M 76</td><td style="text-align:left">Qwen3-VL</td><td>322</td><td>1</td><td>4</td><td>0</td><td style="text-align:left">approve with one edit</td></tr>
+                    <tr><td style="text-align:left">Melotte 15</td><td style="text-align:left">Gemma 4</td><td>385</td><td>0</td><td>4</td><td>1</td><td style="text-align:left">reject: no reference, no type</td></tr>
+                    <tr><td style="text-align:left">Melotte 15</td><td style="text-align:left">Qwen3-VL</td><td>340</td><td>2</td><td>4</td><td>3</td><td style="text-align:left">reject: wrong constellation</td></tr>
+                    <tr><td style="text-align:left">NGC 1961</td><td style="text-align:left">Gemma 4</td><td>113</td><td>0</td><td>2</td><td>3</td><td style="text-align:left">approve with one edit</td></tr>
+                    <tr><td style="text-align:left">NGC 1961</td><td style="text-align:left">Qwen3-VL</td><td>337</td><td>3</td><td>2</td><td>3</td><td style="text-align:left">approve with three edits</td></tr>
+                    <tr><td style="text-align:left">NGC 6946</td><td style="text-align:left">Gemma 4</td><td>114</td><td>0</td><td>2</td><td>3</td><td style="text-align:left">approve with spelling</td></tr>
+                    <tr><td style="text-align:left">NGC 6946</td><td style="text-align:left">Qwen3-VL</td><td>285</td><td>3</td><td>2</td><td>3</td><td style="text-align:left">approve with three edits</td></tr>
+                </tbody>
+            </table>
+            </div>
+
+            <p class="science-text">
+                The count matters less than what the errors were made of. Four of Qwen's were
+                caused by its critic: Gemma read the title rule, "ID - Name", as wanting a space
+                after the catalogue prefix, said so on four targets, and Qwen changed four correct
+                titles to wrong ones. Five more came from one rule on M 1: told to link every one of
+                that target's nine related notes, Qwen invented a reason for each, the Crab's
+                filaments "explored" in a note about an artefact in stacked frames, Crab data
+                "used" for a colour-magnitude diagram. Every other error, and all of Gemma's, was in
+                the On Earth box: Uruk writing at 4500 BC, a town rising a thousand years after it
+                had been abandoned, the Triassic at 180 million years, no polar ice in the
+                Oligocene. Neither critic caught one, because nothing either was given covers
+                history.
+            </p>
+
+            <p class="science-text">
+                The reference is everything. Melotte 15 had no aliases on file and no page of its
+                own, so both writers had nothing but the frame counts. Gemma's first draft put it in
+                Aquila with invented gas physics; Qwen's review caught all nine statements and the
+                rewrite retreated to "Deep Space Object, type unknown", honest and unpublishable.
+                Qwen's own draft put it in Perseus and kept it. With the Heart Nebula's page, which
+                the lookup now finds by search, both would have had what the hand had. As critics
+                the roles reversed: Gemma found something real in every Qwen draft in about twenty
+                seconds but misread the title rule every time; Qwen passed every Gemma draft in a
+                few seconds with no notes, except Melotte 15, where it caught everything. A critic
+                reads carefully when there is a reference to check against and waves a draft
+                through when there is not. And neither lists all its claims: both treat a fact they
+                are sure of as needing no flag.
+            </p>
+
+            <p class="science-text">
+                The verdict from the run: Gemma 4 writes, Qwen3-VL checks. Gemma's prose is
+                tighter, invents less and stays closer to the reference. Qwen's picture paragraphs
+                are the better, the heads of the Tadpoles lit green and yellow and the tails fading,
+                which is the one thing worth borrowing. Each fault above became a rule the same day:
+                the critic answers in defects only, with a must-change flag, and praise is dropped
+                before the writer sees it; the critic gets the writer's own example title; the facts
+                outrank a note; one to three related notes are linked and never described; nothing
+                about the observatory's own work with a target may be stated beyond the processing
+                in the record; British spelling is asked for, checked for, and enforced by a word
+                list on the way out; a span of dates is not a claim about every date in it.
+            </p>
+
+            <h3>The history box, taken away from the models</h3>
+
+            <p class="science-text">
+                The box under each picture says what was happening on Earth when the light left,
+                and it was the weakest part of every machine entry for a simple reason: the object
+                paragraph has the reference and the picture paragraph has the record, but the
+                history box had nothing, and memory is where these models are confidently wrong
+                about dates. The fix was the owner's: the eras have all been covered by other
+                objects already, so write them once. A table of 43 eras, contiguous from the last
+                hundred years to the first galaxies, 14 billion years, each with a name, a span, a
+                one-line summary and a paragraph, written to be true rather than vivid. The year the
+                light left, which is the distance in light years counted back from today, picks the
+                era by arithmetic; the box is one sentence naming it and linking its section of the
+                <a href="#on-earth">timeline at the foot of the gallery</a>, which holds the
+                paragraph. The model writes nothing in it. A quasar two billion light years off
+                lands in the Palaeoproterozoic as surely as M 76 lands in classical antiquity. The
+                boxes written by hand stay as they are.
+            </p>
+
+            <h3>IC 410, by hand and by machine</h3>
+
+            <p class="science-text">
+                The same target, the same picture, the same record. The
+                <a href="#ic410">hand-written entry</a> is in the gallery. The entry below was
+                written this evening by the pair as it now stands, in 125 seconds: Gemma's draft
+                passed Qwen's review with no notes, so there was no rewrite; one claim was listed;
+                the spelling backstop had nothing to change; every measured number is right and
+                every object fact is in the reference. Nothing in it was touched by a person.
+            </p>
+
+            <div class="machine-entry" style="border-left:3px solid currentColor;padding:.2rem 0 .2rem 1.1rem;opacity:.92">
+                <p class="science-text"><strong>IC410 - The Tadpole Nebula</strong> &middot; ~12,000 LIGHT YEARS &middot; EMISSION NEBULA</p>
+                <p class="science-text">
+                    IC 410 is an emission nebula in the constellation Auriga, located about 12,000
+                    light years away. It forms part of a larger star-forming complex that includes
+                    the Flaming Star Nebula and the open clusters M36 and M38. The nebula is best
+                    known for two dense structures of gas and dust, each roughly 10 light years
+                    long, which resemble tadpoles with long tails. These pillars are shaped by the
+                    radiation and stellar winds from nearby young stars, which erode the less dense
+                    gas and leave behind the denser cores.
+                </p>
+                <p class="science-text">
+                    The picture is made through three narrowband filters, sulphur, hydrogen and
+                    oxygen, and shown in the Hubble palette where sulphur is red, hydrogen is green
+                    and oxygen is blue. The teal and blue regions are oxygen, while the red and
+                    yellow tones trace the sulphur and hydrogen in the denser gas of the tadpoles.
+                    The data was collected over five nights between 27 October and 1 November 2026,
+                    using 54 S-II, 39 Ha and 47 O-III frames of 300 seconds each. The stack was
+                    denoised, and a luminance built from the three channels was sharpened using the
+                    learned deconvolution network described in
+                    <a href="#auto-stop-filters">Two decisions the telescope now makes by itself: when a target is done, and which filters to shoot</a>.
+                    The image was then cropped to focus on the central structures; the sharpened
+                    result is for looking at and nothing is measured from it.
+                </p>
+                <p class="science-text"><strong>On Earth: ~12,000 Years Ago.</strong> This light
+                    left IC 410 about 12,000 years ago, in <a href="#era-last-glacial">the last ice age</a>:
+                    ice sheets over Canada and Scandinavia, mammoths, cave painting, people reaching
+                    the Americas.</p>
+                <p class="science-text" style="font-size:.92em;opacity:.85"><em>Claim listed by the writer:</em> the tadpole pillars
+                    are shaped by radiation and stellar winds from nearby young stars.
+                    <em>The critic's notes:</em> none.</p>
+            </div>
+
+            <p class="science-text">
+                Read beside the hand's, the machine's is correct, shorter, and looks at the picture
+                less: the cavity, the dark bay and the heads facing the stars are not in it. One
+                fault survives, of a kind the critic cannot see. The second paragraph says the
+                deconvolution network is "described in" the linked note, which is in fact about
+                auto-stop and filter choice. The writer was told to link the note and not to say
+                what it found, and split the difference by attributing the wrong content to it; the
+                critic has only the note's title, and let it pass. That is the next rule: a linked
+                note may be introduced by its title and nothing more.
+            </p>
+
+            <h3>What it is not yet</h3>
+
+            <p class="science-text">
+                The bench has not been rerun with every fix in, so the error counts above include
+                faults the harness has since removed and are an upper bound on the models. The
+                writer is not yet told to look harder at the picture. A critic with little to check
+                against passes a draft quickly, so the reference block is the whole defence: a
+                target with no page and no aliases still produces an honest "unknown" rather than
+                an entry, and that is the right failure. The claims lists are incomplete, and
+                nothing yet measures by how much. And the first draft to reach the chat from a
+                target the pipeline retired on its own has not happened yet; when it does, the card
+                will say who wrote it, who checked it, what it claims, and what the critic still
+                objects to, and the owner's one word will be the last check, as it is for every
+                entry on this page.
+            </p>
+        </article>
+
         <article id="starless-ic410" class="note">
             <h2 class="note-title">IC 410 without its stars: a network that lifts the star field off a nebula</h2>
             <div class="note-meta"><span class="note-date">2026-11-05</span> &middot; PROCESSING &middot; IC 410, H&alpha; 51, O-III 53, S-II 66 &times; 5 MIN, SHO PALETTE &middot; A U-NET TRAINED ON OUR OWN STACKS WITH INJECTED STARS, JUDGED ON A FIELD IT NEVER SAW &middot; STATUS: IN THE MORNING RENDER FROM TODAY, BESIDE EVERY PALETTE PICTURE &middot; WRITTEN WITH CLAUDE (AI)</div>
