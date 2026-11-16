@@ -2487,6 +2487,155 @@
 
     <div class="container" id="notes-panel" role="tabpanel" aria-labelledby="tab-notes">
 
+        <article id="asteroid-megaira" class="note">
+            <h2 class="note-title">A visitor in the frame: the asteroid Megaira crosses NGC 1055</h2>
+            <div class="note-meta"><span class="note-date">2026-11-16</span> &middot; SOLAR SYSTEM &middot; NGC 1055, NIGHT OF 2026-11-15, 25 &times; 5 MIN (L 2, R 10, G 8, B 5) &middot; 464 MEGAIRA, IDENTIFIED WITH JPL'S SMALL-BODY IDENTIFICATION SERVICE &middot; STATUS: ONE NIGHT, OUR FIRST ASTEROID &middot; WRITTEN WITH CLAUDE (AI)</div>
+
+            <h3>Abstract</h3>
+
+            <p class="science-text note-abstract">
+                The first night on the edge-on galaxy NGC 1055 left a rainbow in the picture: a short
+                line of red, green and blue blobs below the galaxy, in the corner of the field. It is
+                an asteroid. The telescope changes filters in blocks of five frames, and the object
+                moved far enough between blocks that each filter caught it in a different place and
+                painted that place its own color. Measured frame by frame, it tracks a straight line
+                across the field at 32.6 arcseconds an hour, and the field, solved against Gaia, puts
+                that line within 1.3 arcseconds of where NASA's ephemeris puts 464 Megaira, a 77-kilometer
+                main-belt asteroid discovered in 1901, moving at 32.6 arcseconds an hour in the same
+                direction. Its light reached us in 11.6 minutes. The galaxy's took about fifty million
+                years.
+            </p>
+
+            <figure>
+                <a href="images/megaira_ngc1055.jpg" target="_blank" rel="noopener noreferrer">
+                    <img src="images/megaira_ngc1055.jpg" alt="A dark star field with the edge-on spiral galaxy NGC 1055 right of center, a bright yellow-white star with diffraction spikes to its left and a blue-white star below. In the lower right corner is a short diagonal line of small red, green and blue blobs: the asteroid.">
+                </a>
+                <figcaption><strong>NGC 1055, with company.</strong> One night, twenty-five
+                    five-minute frames, built from the red, green and blue stacks with the learned
+                    deconvolution on a luminance made from them. The colored dashes in the lower right
+                    are one object, 464 Megaira, seen through five filter blocks over two and a quarter
+                    hours.</figcaption>
+            </figure>
+
+            <h3>Why it is a rainbow</h3>
+
+            <p class="science-text">
+                The sequence that night ran five red frames, then five green, five blue, five red
+                again and three green, with a luminance frame between blocks. A star sits in the same
+                place in every block, so its colors land on top of one another and it comes out white
+                or yellow. An asteroid does not sit still. In the twenty minutes of one block it
+                drifts about eleven arcseconds, a short dash, and in the ten minutes between blocks
+                it moves on, so the next filter paints a fresh dash beside the last one. Read the
+                dashes in the order the filters ran and the colors fall out: red, green, blue, red,
+                green, from the bottom of the line to the top. The blue dash is the strongest because
+                all five blue frames fell in one block and the stacker kept it, while the red and green
+                frames were split across two positions and the stacker, which rejects what is not in
+                most of its frames, kept only part of each.
+            </p>
+
+            <figure>
+                <a href="images/megaira_trail.jpg" target="_blank" rel="noopener noreferrer">
+                    <img src="images/megaira_trail.jpg" alt="Two square panels. Left: a close crop of the finished picture showing the diagonal line of red, green and blue dashes beside a bright white star. Right: the same field with the three color stacks shown in pure red, green and blue over a noisy sky, each dash labeled with its filter and the time of its block, from R at 01:52 to 02:13 at the bottom to G at 04:01 to 04:12 at the top. A 30 arcsecond scale bar sits in each corner.">
+                </a>
+                <figcaption><strong>The same patch of sky two ways.</strong> Left, as it appears in
+                    the picture. Right, the red, green and blue stacks each drawn in its own color,
+                    stretched hard so the sky noise shows, with the five filter blocks labeled by
+                    their times in UT. The object moves from lower right to upper left, west and a
+                    little north, about 76 arcseconds in all.</figcaption>
+            </figure>
+
+            <h3>Pinning it down</h3>
+
+            <p class="science-text">
+                A rainbow in a stack is a hint, not a measurement, so we went back to the individual
+                frames. In each of the twenty-five, the frame was registered to the red stack, the
+                stars were masked out, and the brightest thing left in the region was found. Twenty-three
+                of the frames give a position on one straight line, with a scatter of about two
+                arcseconds, and the line is traveled at a steady 1.9 pixels a minute. The two
+                misses were frames whose search landed on something else and were dropped. The red
+                stack was then solved against Gaia DR3, 44 stars matched to 0.28 arcseconds, which
+                turns pixels into sky: at 03:00 UT the object was at right ascension 2h 42m 18.4s,
+                declination +0&deg; 25&prime; 32&Prime;, moving 32.5 arcseconds an hour west and 3.1 north.
+            </p>
+
+            <p class="science-text">
+                We gave that position, time and our location to JPL's small-body identification
+                service, which lists every known asteroid near a point in the sky at a moment. Of the
+                two thousand it checked within a few degrees, one was there: <strong>464 Megaira</strong>,
+                predicted 1.3 arcseconds from our measured position, moving 32.6 arcseconds an hour
+                west and 3.6 north. The next candidate was a degree and a half away. Laid over the
+                whole track, the ephemeris runs through our points with a residual of under one
+                arcsecond east-west and three north-south, the latter being the direction along which
+                our frame-to-frame registration was weakest.
+            </p>
+
+            <figure>
+                <a href="images/megaira_track.png" target="_blank" rel="noopener noreferrer">
+                    <img src="images/megaira_track.png" alt="Two panels. Left: offset in arcseconds against UT from 1.6 to 4.4 hours; circles for east-west fall on a steep dashed line descending from +40 to minus 40, squares for north-south on a gently rising dotted line, points colored red, green, blue and gray by filter, all near the lines. Right: magnitude against time for nine red frames, clustered at 11.97 to 12.07, with a dashed line at 12.3 marking JPL's prediction on this scale.">
+                </a>
+                <figcaption><strong>Where it was and how bright.</strong> Left: each frame's
+                    measured offset from the 03:00 UT position, east-west as circles and north-south as
+                    squares, colored by filter, against JPL's ephemeris for Megaira as lines. Right: the
+                    asteroid's brightness in the nine good red frames, measured against about 65 Gaia
+                    stars in each frame, on the Gaia red (RP) scale.</figcaption>
+            </figure>
+
+            <h3>How bright, and what the light says</h3>
+
+            <p class="science-text">
+                In the red frames Megaira measures magnitude 12.02, with a frame-to-frame scatter of
+                0.04, against Gaia stars in the same frames. JPL predicts V 12.87 for that night; a
+                sunlit gray surface is about half a magnitude brighter on Gaia's red scale than in
+                V, so the prediction reads about 12.3 here and we are a quarter of a magnitude
+                brighter than it. That is within what the prediction can promise: it is built from a
+                mean brightness, and Megaira turns once every 12.9 hours, so its brightness breathes
+                by a few tenths as it spins. The two groups of red frames, an hour and a half apart,
+                differ by 0.06 magnitudes in the same sense, a hint of that breathing and no more.
+            </p>
+
+            <p class="science-text">
+                Megaira was found on a photographic plate by Max Wolf at Heidelberg on 9 January
+                1901; Wolf was the pioneer of finding asteroids by photography rather than by eye. It is a C-type body, the
+                dark, carbon-rich kind that makes up most of the outer main belt, 77 kilometers
+                across and reflecting 4.5 percent of the light that falls on it, about as dark as
+                fresh asphalt. It orbits the Sun every 4.7 years at an average distance of 2.8
+                astronomical units. On the night of November 15 it was 2.34 astronomical units from
+                the Sun and 1.39 from us, a few weeks before its opposition, which is why it was
+                moving so briskly: most of that 32 arcseconds an hour is our own motion, the Earth
+                overtaking it on the inside track. Its light took 11.6 minutes to reach the
+                telescope. The light from NGC 1055 behind it left the galaxy about fifty million
+                years ago.
+            </p>
+
+            <h3>Caveats</h3>
+
+            <p class="science-text">
+                One night and one field do not add anything to Megaira's orbit, which has been
+                measured over 125 years; the match is a test of our astrometry, not a contribution to
+                theirs. Our magnitude is on the Gaia red scale through a red filter, not Johnson V, and
+                the half-magnitude color correction above is the one for a Sun-colored surface, taken
+                as read rather than measured. The frame-to-frame registration used a simple
+                cross-correlation against the red stack and was off by twenty pixels on a few frames
+                with large dither; those frames are the outliers in the plot and the reason the
+                north-south residual is three arcseconds rather than one. The picture itself is thin:
+                two luminance frames were too few to use, so the luminance was made from the color
+                channels, and the galaxy will be shot again.
+            </p>
+
+            <h3>Next</h3>
+
+            <p class="science-text">
+                NGC 1055 stays on the queue; more nights will bury the asteroid, since the stacker
+                rejects what is not in most of its frames, and the finished picture will not carry
+                it. The lesson for the pipeline is that a moving object leaves a signature any
+                script can find: a source present in one filter block and absent in the others, on a
+                straight line through time. A check for that signature in the morning render, with
+                the same JPL lookup, would name every asteroid that wanders through a field, and at
+                this depth, around magnitude 20 in a five-minute frame, there will be more of them
+                than we have noticed.
+            </p>
+        </article>
+
         <article id="machine-caption" class="note">
             <h2 class="note-title">Who writes the caption: two open models on the observatory's own computer, one checking the other</h2>
             <div class="note-meta"><span class="note-date">2026-11-06</span> &middot; AUTOMATION &middot; GEMMA 4 (31B) WRITES, QWEN3-VL (32B) CHECKS, ON THE OBSERVATORY'S GB10 &middot; SIX TARGETS BENCHED AGAINST THEIR HAND-WRITTEN ENTRIES</div>
