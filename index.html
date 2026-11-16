@@ -596,7 +596,7 @@
 
         .dso-section.expanded .dso-title,
         .dso-section.expanded .dso-image-container {
-            cursor: pointer;
+            cursor: zoom-in;   /* the picture opens in the lightbox once the card is open */
         }
 
         .dso-section.expanded .dso-title::after {
@@ -9862,6 +9862,25 @@ score    = snr * shape * quality * flatness</code></pre>
                 });
             });
 
+            // Gallery photographs (2026-11-16): on an expanded card the picture
+            // opens here, at the full 2400 px file the page holds, with the
+            // entry's title as the caption. On a collapsed card the tap still
+            // expands the card, because there the picture IS the card. The
+            // click is stopped so the card's own toggle does not fold the entry
+            // away under the overlay.
+            document.querySelectorAll('.dso-section .dso-image-container img').forEach(function (pic) {
+                pic.addEventListener('click', function (ev) {
+                    var card = pic.closest('.dso-section');
+                    if (!card || !card.classList.contains('expanded')) {
+                        return;
+                    }
+                    ev.preventDefault();
+                    ev.stopPropagation();
+                    var title = card.querySelector('.dso-title');
+                    open(pic.getAttribute('src'), pic.alt, title ? title.textContent.trim() : '');
+                });
+            });
+
             img.addEventListener('click', function () {
                 box.dataset.zoom = box.dataset.zoom === 'true' ? 'false' : 'true';
             });
@@ -9920,10 +9939,12 @@ score    = snr * shape * quality * flatness</code></pre>
                     keep: ['.dso-title', '.dso-meta'],
                     bodyClass: 'dso-body',
                     heading: '.dso-title',
-                    // The picture toggles as well as the heading. It is the
-                    // biggest thing on the card and the obvious thing to click
-                    // twice, so having the second click do nothing reads as
-                    // broken. Selector is resolved against the card, not the
+                    // The picture expands a collapsed card as the heading does:
+                    // it is the biggest thing on the card and the obvious thing
+                    // to tap. Once the card is open the picture opens in the
+                    // lightbox instead (the lightbox block above stops the click
+                    // before it reaches this toggle); the heading still folds the
+                    // card. Selector is resolved against the card, not the
                     // content wrapper -- the image sits outside .dso-content.
                     alsoToggles: ['.dso-image-container'],
                     excerpt: false,
