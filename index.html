@@ -409,29 +409,33 @@
         /* Per-filter frame counts under the stats chart's heading. Sized to be
            read at arm's length, not squinted at: the count is the point of the
            panel, so it gets body-text weight rather than caption treatment. */
-        #live-stats-filters, #live-stats-tonight {
-            display: flex;
-            flex-wrap: wrap;
+        /* One grid holds both rows (all nights, and tonight or last night), a
+           label column then one column per filter in the all-nights order, so
+           the same filter sits in the same column and the boxes line up
+           (owner, 2026-11-18). The script sets the column count. */
+        #live-stats-filters {
+            display: grid;
+            grid-template-columns: max-content;
             gap: 0.45rem;
+            align-items: stretch;
             max-width: 720px;
             margin: 0.15rem 0 0.7rem;
+            overflow-x: auto;        /* a narrow phone scrolls the row; the columns stay aligned */
         }
 
-        #live-stats-tonight {
-            margin-top: -0.35rem;
-        }
-
-        #live-stats-tonight .filter-label {
+        #live-stats-filters .filter-label {
             align-self: center;
             font-size: 0.95rem;
             color: #9fb0c8;
             letter-spacing: 0.02em;
             padding-right: 0.15rem;
+            white-space: nowrap;
         }
 
-        #live-stats-filters .filter-count, #live-stats-tonight .filter-count {
-            display: inline-flex;
+        #live-stats-filters .filter-count {
+            display: flex;
             align-items: baseline;
+            justify-content: space-between;
             gap: 0.4rem;
             padding: 0.3rem 0.75rem;
             border: 1px solid #2a3550;
@@ -439,17 +443,23 @@
             background: #121826;
         }
 
-        #live-stats-filters .filter-name, #live-stats-tonight .filter-name {
+        #live-stats-filters .filter-name {
             font-size: 0.95rem;
             color: #9fb0c8;
             letter-spacing: 0.02em;
         }
 
-        #live-stats-filters .filter-n, #live-stats-tonight .filter-n {
+        #live-stats-filters .filter-n {
             font-size: 1.25rem;
             font-weight: 700;
             color: var(--text-color);
             font-variant-numeric: tabular-nums;
+        }
+
+        /* A filter the night has not touched yet: the box stays, the zero is quiet. */
+        #live-stats-filters .filter-none .filter-n {
+            color: #5a6882;
+            font-weight: 500;
         }
 
         /* The night's stages. Rendered from the machine table published in
@@ -9596,12 +9606,12 @@ score    = snr * shape * quality * flatness</code></pre>
                 size: how much of each channel is in the bank is the number
                 people come to this panel for, and it should not need zooming.
             -->
+            <!-- Two rows on one grid: all nights, and under it the latest night
+                 alone (owner, 2026-11-18): tonight once it has a frame, else last
+                 night through the day; the night being the frame times shifted
+                 back twelve hours. The second row is left out until a night has
+                 a frame; the same filter sits in the same column in both. -->
             <div id="live-stats-filters"></div>
-            <!-- The same row for the latest night alone (owner, 2026-11-18): tonight
-                 once it has a frame, else last night through the day; the night
-                 being the frame times shifted back twelve hours; absent until
-                 the target has a frame tonight. -->
-            <div id="live-stats-tonight" class="live-stats-row" hidden></div>
             <img id="live-stats-img" alt="Four-panel chart of every frame taken of this target: star width, number of stars detected, eccentricity and sky brightness, colored by filter">
             <p class="live-caption" id="live-stats-caption"></p>
         </div>
@@ -10463,48 +10473,45 @@ score    = snr * shape * quality * flatness</code></pre>
                             // showing an empty row.
                             var fbox = document.getElementById('live-stats-filters');
                             var fhtml = '';
+                            var order = [];            // the all-nights order, biggest first
                             if (s.stats_by_filter) {
                                 for (var fk in s.stats_by_filter) {
-                                    if (!Object.prototype.hasOwnProperty.call(
-                                            s.stats_by_filter, fk)) { continue; }
-                                    fhtml += '<span class="filter-count">'
-                                        + '<span class="filter-name">' + fk + '</span>'
-                                        + '<span class="filter-n">'
-                                        + s.stats_by_filter[fk] + '</span></span>';
+                                    if (Object.prototype.hasOwnProperty.call(
+                                            s.stats_by_filter, fk)) { order.push(fk); }
                                 }
                             } else if (s.stats_filters && s.stats_filters.length) {
-                                for (var fi = 0; fi < s.stats_filters.length; fi++) {
-                                    fhtml += '<span class="filter-count">'
-                                        + '<span class="filter-name">'
-                                        + s.stats_filters[fi] + '</span></span>';
+                                order = s.stats_filters.slice();
+                            }
+                            var cell = function (name, n, quiet) {
+                                return '<span class="filter-count' + (quiet ? ' filter-none' : '') + '">'
+                                    + '<span class="filter-name">' + name + '</span>'
+                                    + (n === null ? '' : '<span class="filter-n">' + n + '</span>')
+                                    + '</span>';
+                            };
+                            // Row one: every night. Row two, in the SAME columns:
+                            // the latest night ("tonight" once it has a frame,
+                            // "last night" through the day), a quiet zero where
+                            // that night has not touched a filter; no row two
+                            // when the feed has none (or predates the field).
+                            if (order.length) {
+                                fhtml += '<span class="filter-label">all nights</span>';
+                                for (var oi = 0; oi < order.length; oi++) {
+                                    fhtml += cell(order[oi], s.stats_by_filter
+                                        ? s.stats_by_filter[order[oi]] : null, false);
                                 }
+                                if (s.tonight_by_filter) {
+                                    fhtml += '<span class="filter-label">'
+                                        + String(s.tonight_label || 'tonight').replace(/[<>&]/g, '')
+                                        + '</span>';
+                                    for (var ti = 0; ti < order.length; ti++) {
+                                        var tn = s.tonight_by_filter[order[ti]] || 0;
+                                        fhtml += cell(order[ti], tn, tn === 0);
+                                    }
+                                }
+                                fbox.style.gridTemplateColumns =
+                                    'max-content repeat(' + order.length + ', minmax(5.5rem, max-content))';
                             }
                             fbox.innerHTML = fhtml;
-
-                            // Tonight's frames alone, the same row with a
-                            // label, under the total; nothing when the target
-                            // has none tonight (or the feed predates the field).
-                            var tbox = document.getElementById('live-stats-tonight');
-                            var thtml = '';
-                            if (s.tonight_by_filter) {
-                                for (var tk in s.tonight_by_filter) {
-                                    if (!Object.prototype.hasOwnProperty.call(
-                                            s.tonight_by_filter, tk)) { continue; }
-                                    thtml += '<span class="filter-count">'
-                                        + '<span class="filter-name">' + tk + '</span>'
-                                        + '<span class="filter-n">'
-                                        + s.tonight_by_filter[tk] + '</span></span>';
-                                }
-                            }
-                            if (thtml) {
-                                // "tonight" once the night has a frame, "last night" through the day
-                                tbox.innerHTML = '<span class="filter-label">'
-                                    + String(s.tonight_label || 'tonight').replace(/[<>&]/g, '') + '</span>' + thtml;
-                                tbox.hidden = false;
-                            } else {
-                                tbox.innerHTML = '';
-                                tbox.hidden = true;
-                            }
 
                             var sbits = [];
                             if (s.stats_frames != null) {
