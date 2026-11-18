@@ -409,7 +409,7 @@
         /* Per-filter frame counts under the stats chart's heading. Sized to be
            read at arm's length, not squinted at: the count is the point of the
            panel, so it gets body-text weight rather than caption treatment. */
-        #live-stats-filters {
+        #live-stats-filters, #live-stats-tonight {
             display: flex;
             flex-wrap: wrap;
             gap: 0.45rem;
@@ -417,7 +417,19 @@
             margin: 0.15rem 0 0.7rem;
         }
 
-        #live-stats-filters .filter-count {
+        #live-stats-tonight {
+            margin-top: -0.35rem;
+        }
+
+        #live-stats-tonight .filter-label {
+            align-self: center;
+            font-size: 0.95rem;
+            color: #9fb0c8;
+            letter-spacing: 0.02em;
+            padding-right: 0.15rem;
+        }
+
+        #live-stats-filters .filter-count, #live-stats-tonight .filter-count {
             display: inline-flex;
             align-items: baseline;
             gap: 0.4rem;
@@ -427,13 +439,13 @@
             background: #121826;
         }
 
-        #live-stats-filters .filter-name {
+        #live-stats-filters .filter-name, #live-stats-tonight .filter-name {
             font-size: 0.95rem;
             color: #9fb0c8;
             letter-spacing: 0.02em;
         }
 
-        #live-stats-filters .filter-n {
+        #live-stats-filters .filter-n, #live-stats-tonight .filter-n {
             font-size: 1.25rem;
             font-weight: 700;
             color: var(--text-color);
@@ -9585,6 +9597,10 @@ score    = snr * shape * quality * flatness</code></pre>
                 people come to this panel for, and it should not need zooming.
             -->
             <div id="live-stats-filters"></div>
+            <!-- The same row for tonight alone (owner, 2026-11-18), the night
+                 being the frame times shifted back twelve hours; absent until
+                 the target has a frame tonight. -->
+            <div id="live-stats-tonight" class="live-stats-row" hidden></div>
             <img id="live-stats-img" alt="Four-panel chart of every frame taken of this target: star width, number of stars detected, eccentricity and sky brightness, colored by filter">
             <p class="live-caption" id="live-stats-caption"></p>
         </div>
@@ -10463,6 +10479,29 @@ score    = snr * shape * quality * flatness</code></pre>
                                 }
                             }
                             fbox.innerHTML = fhtml;
+
+                            // Tonight's frames alone, the same row with a
+                            // label, under the total; nothing when the target
+                            // has none tonight (or the feed predates the field).
+                            var tbox = document.getElementById('live-stats-tonight');
+                            var thtml = '';
+                            if (s.tonight_by_filter) {
+                                for (var tk in s.tonight_by_filter) {
+                                    if (!Object.prototype.hasOwnProperty.call(
+                                            s.tonight_by_filter, tk)) { continue; }
+                                    thtml += '<span class="filter-count">'
+                                        + '<span class="filter-name">' + tk + '</span>'
+                                        + '<span class="filter-n">'
+                                        + s.tonight_by_filter[tk] + '</span></span>';
+                                }
+                            }
+                            if (thtml) {
+                                tbox.innerHTML = '<span class="filter-label">tonight</span>' + thtml;
+                                tbox.hidden = false;
+                            } else {
+                                tbox.innerHTML = '';
+                                tbox.hidden = true;
+                            }
 
                             var sbits = [];
                             if (s.stats_frames != null) {
