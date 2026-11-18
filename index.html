@@ -9597,7 +9597,8 @@ score    = snr * shape * quality * flatness</code></pre>
                 people come to this panel for, and it should not need zooming.
             -->
             <div id="live-stats-filters"></div>
-            <!-- The same row for tonight alone (owner, 2026-11-18), the night
+            <!-- The same row for the latest night alone (owner, 2026-11-18): tonight
+                 once it has a frame, else last night through the day; the night
                  being the frame times shifted back twelve hours; absent until
                  the target has a frame tonight. -->
             <div id="live-stats-tonight" class="live-stats-row" hidden></div>
@@ -10496,7 +10497,9 @@ score    = snr * shape * quality * flatness</code></pre>
                                 }
                             }
                             if (thtml) {
-                                tbox.innerHTML = '<span class="filter-label">tonight</span>' + thtml;
+                                // "tonight" once the night has a frame, "last night" through the day
+                                tbox.innerHTML = '<span class="filter-label">'
+                                    + String(s.tonight_label || 'tonight').replace(/[<>&]/g, '') + '</span>' + thtml;
                                 tbox.hidden = false;
                             } else {
                                 tbox.innerHTML = '';
