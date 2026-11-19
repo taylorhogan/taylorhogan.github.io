@@ -1154,7 +1154,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button><span id="subscribe-wrap" hidden> &middot; <button type="button" class="share-btn" id="subscribe-btn" aria-expanded="false" aria-controls="subscribe-form">Subscribe</button></span><!-- hidden 2026-10-17: the subscriber service (iris-subscribe) is not installed on the web host yet; /api/subscribe is a 404. Remove `hidden` once it is. --></p>
-        <p class="last-updated" id="last-updated">Updated 2026-11-02 06:56 EST</p>
+        <p class="last-updated" id="last-updated">Updated 2026-11-19 04:33 EST</p>
         <!-- Subscribe: POSTs to /api/subscribe on the web host (iris-subscribe
              service); a confirmation email follows, nothing is sent before it
              is clicked. The hp field is a honeypot: hidden, must stay empty. -->
@@ -10638,7 +10638,7 @@ score    = snr * shape * quality * flatness</code></pre>
                 try { localStorage.setItem(FOLD_KEY, JSON.stringify(f)); } catch (e) { /* ignore */ }
             }
             var folded = loadFolded();
-            // The bar: the worst filter's sharp frames over its goal, that
+            // The bar: the worst filter's counted frames over its goal (the advisor's rule), that
             // filter named; the dot: the convergence verdict. The hover text
             // carries the counts, the pace and the nights to go.
             function progressHtml(t) {
@@ -10648,7 +10648,10 @@ score    = snr * shape * quality * flatness</code></pre>
                 var tip = [];
                 if (p.goals) {
                     tip.push(Object.keys(p.goals).map(function (f) {
-                        return f + ' ' + ((p.sharp || {})[f] || 0) + ' of ' + p.goals[f] + ' sharp';
+                        // Sharp frames count only for the detail filter (L, or Ha on a
+                        // nebula); the others count usable ones (2026-11-19).
+                        var n = (p.counted || p.sharp || {})[f] || 0;
+                        return f + ' ' + n + ' of ' + p.goals[f] + ((!p.detail || f === p.detail) ? ' sharp' : '');
                     }).join(', '));
                 }
                 tip.push(p.curve ? 'curve: noise-limited' : 'curve: still falling');
