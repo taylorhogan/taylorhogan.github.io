@@ -1153,12 +1153,14 @@
 <body data-mode="live">
     <header>
         <h1>Iris Lab Notes</h1>
-        <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button><span id="subscribe-wrap"> &middot; <button type="button" class="share-btn" id="subscribe-btn" aria-expanded="false" aria-controls="subscribe-form">Subscribe</button></span><!-- shown again 2026-11-21: iris-subscribe installed on the web host (hidden 10-17 to 11-21 while /api/subscribe was a 404). --></p>
-        <p class="last-updated" id="last-updated">Updated 2026-11-21 13:06 EST</p>
+        <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
+        <p class="last-updated" id="last-updated">Updated 2026-11-21 13:28 EST</p>
         <!-- Subscribe: POSTs to /api/subscribe on the web host (iris-subscribe
              service); a confirmation email follows, nothing is sent before it
-             is clicked. The hp field is a honeypot: hidden, must stay empty. -->
-        <form id="subscribe-form" class="subscribe-form" hidden novalidate>
+             is clicked. The hp field is a honeypot: hidden, must stay empty.
+             Always shown since 2026-11-21 (owner): before, a Subscribe link
+             in the line above had to be clicked to open it. -->
+        <form id="subscribe-form" class="subscribe-form" novalidate>
             <label for="subscribe-email" class="subscribe-label">Email me when a new note or image is published</label>
             <div class="subscribe-row">
                 <input type="email" id="subscribe-email" name="email" placeholder="you@example.com" autocomplete="email" required>
@@ -11258,21 +11260,15 @@ score    = snr * shape * quality * flatness</code></pre>
         // Subscribe form + the messages the confirm/unsubscribe links land on
         // (#subscribed / #unsubscribed). Same-origin fetch; the CSP allows it.
         (function () {
-            var btn = document.getElementById('subscribe-btn');
             var form = document.getElementById('subscribe-form');
             var note = document.getElementById('subscribe-note');
             var email = document.getElementById('subscribe-email');
             var send = form.querySelector('.subscribe-send');
             var defaultNote = note.textContent;
+            // The form is always shown (2026-11-21); this only sets the note.
             function open(msg, state) {
-                form.hidden = false;
-                btn.setAttribute('aria-expanded', 'true');
                 if (msg) { note.textContent = msg; form.dataset.state = state || ''; }
             }
-            btn.addEventListener('click', function () {
-                if (form.hidden) { open(); email.focus(); }
-                else { form.hidden = true; btn.setAttribute('aria-expanded', 'false'); }
-            });
             form.addEventListener('submit', function (ev) {
                 ev.preventDefault();
                 var addr = (email.value || '').trim();
