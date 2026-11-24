@@ -811,6 +811,23 @@
             background-color: #000;
         }
 
+        /* The flow chart of the color-from-mono note (2026-11-24). */
+        .flow { display:grid; grid-template-columns:1fr 2.2rem 1fr 2.2rem 1fr; gap:0.6rem 0; align-items:center; margin:1.5rem 0; }
+        .flow img { width:100%; border-radius:6px; background:#000; display:block; }
+        .flow .lab { font-size:0.8rem; color:#b9c4d4; text-align:center; margin:0.3rem 0 0; line-height:1.3; }
+        .flow .arr { color:#8b9bb4; text-align:center; font-size:1.6rem; line-height:1; }
+        .flow .head { font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; color:#8b9bb4; text-align:center; }
+        .flow .rowname { grid-column:1 / -1; font-size:0.8rem; text-transform:uppercase; letter-spacing:1px; margin-top:0.6rem; }
+        .merge { display:grid; grid-template-columns:1fr 2.2rem 1fr 2.2rem 1fr 2.2rem 1fr; gap:0 0; align-items:center; margin:0.5rem 0 1.5rem; }
+        .merge img { width:100%; border-radius:6px; background:#000; display:block; }
+        .merge .lab { font-size:0.8rem; color:#b9c4d4; text-align:center; margin:0.3rem 0 0; line-height:1.3; }
+        .merge .arr { color:#8b9bb4; text-align:center; font-size:1.6rem; line-height:1; }
+        .pair { display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; }
+        .pair img { width:100%; border-radius:6px; background:#000; display:block; }
+        .pair .lab { font-size:0.85rem; color:#b9c4d4; text-align:center; margin:0.3rem 0 0; }
+        .sii { color:#ff6b6b; } .ha { color:#7bdc7b; } .oiii { color:#7fa8ff; }
+        @media (max-width:640px) { .science-text { text-align:left; } .flow { grid-template-columns:1fr 1.4rem 1fr 1.4rem 1fr; } .merge { grid-template-columns:1fr 1.4rem 1fr; } .merge .wide-only { display:none; } }
+
         /* Video in a note behaves like its figures do. */
         .note figure video {
             width: 100%;
@@ -1154,7 +1171,7 @@
     <header>
         <h1>Iris Lab Notes</h1>
         <p><a href="https://github.com/taylorhogan/srt" target="_blank" rel="noopener noreferrer">SRT on GitHub</a> &middot; <button type="button" class="share-btn" id="share-btn" aria-live="polite">Share</button></p>
-        <p class="last-updated" id="last-updated">Updated 2026-11-21 13:28 EST</p>
+        <p class="last-updated" id="last-updated">Updated 2026-11-24 17:45 EST</p>
         <!-- Subscribe: POSTs to /api/subscribe on the web host (iris-subscribe
              service); a confirmation email follows, nothing is sent before it
              is clicked. The hp field is a honeypot: hidden, must stay empty.
@@ -2538,6 +2555,152 @@
     <!-- on-earth:end -->
 
     <div class="container" id="notes-panel" role="tabpanel" aria-labelledby="tab-notes">
+
+        <article id="color-from-mono" class="note">
+            <h2 class="note-title">How a black-and-white camera makes a color picture</h2>
+            <div class="note-meta"><span class="note-date">2026-11-24</span> &middot; HOW IT WORKS &middot; IC 405, 4 NIGHTS 2026-11-20 TO 2026-11-24, 101 &times; 5 MIN (H&alpha; 46, O III 30, S II 25) &middot; QHY600M MONOCHROME CAMERA ON THE 0.43 M CDK</div>
+
+            <h3>Abstract</h3>
+
+            <p class="science-text note-abstract">
+                The camera on Iris cannot see color. Every picture it takes is a grid of brightness numbers, one per pixel, and nothing else. Yet the gallery is full of color. This note follows one object, the Flaming Star Nebula IC 405, from the single five-minute exposures the telescope took on four November nights to the finished picture: how the frames through each filter are added together, how three black-and-white stacks become one color image, and what the two neural networks at the end of the chain do and do not do. It is the chart on the wall for anyone who has asked how a monochrome camera produces a red and gold nebula.
+            </p>
+
+
+            <figure>
+                <img src="images/color_mono_SHO_learned_full.jpg?v=2026-11-24" alt="The finished color picture of IC 405: red and gold clouds of gas filling the frame, with greener gas around the bright star AE Aurigae near the center and a dark blue sky at the top right.">
+                <figcaption><strong>IC 405, the Flaming Star Nebula, finished.</strong> Sulfur in red, hydrogen in green, oxygen in blue, from 101 five-minute frames on four nights between 2026-11-20 and 2026-11-24. The field is 41 by 27 arcminutes, a little more than the full Moon across. Everything below is how this picture was made from a camera that sees no color.</figcaption>
+            </figure>
+
+            <h3>A camera that sees only brightness</h3>
+
+            <p class="science-text">
+                The sensor in Iris's camera is a rectangle of 9,576 by 6,388 tiny light buckets, 61 million of them. During an exposure each bucket counts the photons that land in it, and at the end the camera reads out one number per bucket. That is the whole picture: a table of counts. A bucket does not know whether the photons it caught were red or blue, so the camera has no idea what color anything is. The camera in a phone solves this by covering its pixels with a checkerboard of tiny red, green and blue filters, so that each pixel sees one color and the software guesses the other two from its neighbors. An astronomy camera leaves the filters off, for two reasons: every pixel then catches every photon, which matters when the subject is faint, and the filters can instead be chosen for the job. Iris carries a wheel of seven filters in front of the sensor and turns it between exposures.
+            </p>
+
+            <p class="science-text">
+                Three of those filters are the ones this note uses. Each passes a single narrow slice of the spectrum, a band only three nanometers wide, chosen to match the light of one glowing gas: hydrogen (the line called H-alpha, deep red), oxygen (O III, blue-green) and sulfur (S II, a slightly deeper red than hydrogen). Through such a filter the night sky itself, moonlight and city glow included, is mostly blocked, while the gas that shines at exactly that wavelength comes through. A frame through the hydrogen filter is a map of where the hydrogen is glowing. It is still black and white.
+            </p>
+
+            <h3>One frame</h3>
+
+            <p class="science-text">
+                Here is a single good five-minute exposure through each of the three filters, as the camera delivered it, shown with its brightness scale stretched hard so that the faint light shows. Hydrogen is the strongest of the three, and in one frame the nebula is already there as a grainy haze around the bright star AE Aurigae. Oxygen and sulfur are another matter. In the oxygen frame there is nothing to see at all except stars and grain, and the sulfur frame is barely better. That is not a fault: the nebula is simply fainter than the frame's own noise in those two lines.
+            </p>
+
+            <div class="pair">
+                <div><img src="images/color_mono_Ha_sub_full.jpg?v=2026-11-24" alt="A single five-minute exposure of IC 405 through the hydrogen filter: a grainy grey field of stars with a faint haze of nebula around a bright star."><p class="lab"><span class="ha">Hydrogen</span>, one 5-minute frame</p></div>
+                <div><img src="images/color_mono_O-III_sub_full.jpg?v=2026-11-24" alt="A single five-minute exposure through the oxygen filter: uniform grey grain and stars, no nebula visible."><p class="lab"><span class="oiii">Oxygen</span>, one 5-minute frame</p></div>
+            </div>
+            <figure>
+                <figcaption><strong>Two single frames, same stretch.</strong> Each frame is shown on the scale its finished stack uses, so what you see is how far one exposure falls short. The grain is noise: the random scatter in the photon counts, plus the camera's own electronic hiss. In the hydrogen frame the nebula is about as bright as the noise, so it shows as a haze. In the oxygen frame the nebula is an eighth of the noise and is invisible.</figcaption>
+            </figure>
+
+            <table>
+                <thead><tr><th>Filter</th><th>Frames shot</th><th>Frames used</th><th>Nebula in one frame</th><th>Noise in one frame</th><th>Noise in the stack</th></tr></thead>
+                <tbody>
+                    <tr><td>Hydrogen (H&alpha;)</td><td>95</td><td>46</td><td>8 counts</td><td>9 counts</td><td>1.3 counts</td></tr>
+                    <tr><td>Oxygen (O III)</td><td>58</td><td>30</td><td>2 counts</td><td>17 counts</td><td>2.6 counts</td></tr>
+                    <tr><td>Sulfur (S II)</td><td>55</td><td>25</td><td>2.5 counts</td><td>9 counts</td><td>1.6 counts</td></tr>
+                </tbody>
+            </table>
+
+            <p class="science-text">
+                The "nebula" column is the brightness of the glowing gas over the sky, measured on the bright part of the nebula, in the camera's counts per five-minute frame. The noise column is the pixel-to-pixel scatter of the same frame. A signal smaller than the noise cannot be seen in one frame, however the picture is stretched. Not every frame that was shot was used: about half the hydrogen frames were taken at an earlier camera setting before it was changed for narrowband work, and the rest of the gap is frames that a sharpness test set aside, mostly from hours of poor seeing or a bright moon.
+            </p>
+
+            <h3>Many frames: the stack</h3>
+
+            <p class="science-text">
+                The cure for noise is more light, and the way to collect more light without a longer single exposure is to take many exposures and add them. Noise is random, so when frames are added it partly cancels, while the nebula, which is in the same place every time, adds up in full. The rule of thumb is that the noise falls by the square root of the number of frames: 46 hydrogen frames should cut it by a factor of about seven, and the table says they did. Before the frames can be added they have to be lined up to a fraction of a pixel, because the telescope is deliberately nudged a little between exposures (see <a href="#dither">Missing on purpose</a>), and each frame is first corrected for the camera's own fixed signature, the slight unevenness of its pixels and of the light across the field, using calibration frames taken with the shutter effectively closed and against an evenly lit screen. Frames with a satellite or an aircraft through them are not thrown away; at each pixel the combine drops the few values that disagree with the rest, so the trail disappears.
+            </p>
+
+            <p class="science-text">
+                The result is one black-and-white image per filter, deeper than any single frame. The same patch of sky, around AE Aurigae, from one frame and from the stack:
+            </p>
+
+            <div class="flow">
+                <div class="head">One 5-minute frame</div><div></div><div class="head">All frames stacked</div><div></div><div class="head">Given a color</div>
+                <div class="rowname sii">Sulfur, 25 frames</div>
+                <div><img src="images/color_mono_S-II_sub_zoom.jpg?v=2026-11-24" alt="Sulfur: a single frame, grainy, the nebula faint."></div><div class="arr">&rarr;</div>
+                <div><img src="images/color_mono_S-II_stack_zoom.jpg?v=2026-11-24" alt="Sulfur: the stack of 25 frames, smooth, the nebula's filaments visible."></div><div class="arr">&rarr;</div>
+                <div><img src="images/color_mono_S-II_stack_zoom_tint.jpg?v=2026-11-24" alt="The sulfur stack shown in red."></div>
+                <div class="rowname ha">Hydrogen, 46 frames</div>
+                <div><img src="images/color_mono_Ha_sub_zoom.jpg?v=2026-11-24" alt="Hydrogen: a single frame, grainy, the nebula a haze."></div><div class="arr">&rarr;</div>
+                <div><img src="images/color_mono_Ha_stack_zoom.jpg?v=2026-11-24" alt="Hydrogen: the stack of 46 frames, smooth, the nebula bright with structure."></div><div class="arr">&rarr;</div>
+                <div><img src="images/color_mono_Ha_stack_zoom_tint.jpg?v=2026-11-24" alt="The hydrogen stack shown in green."></div>
+                <div class="rowname oiii">Oxygen, 30 frames</div>
+                <div><img src="images/color_mono_O-III_sub_zoom.jpg?v=2026-11-24" alt="Oxygen: a single frame, grain and stars only."></div><div class="arr">&rarr;</div>
+                <div><img src="images/color_mono_O-III_stack_zoom.jpg?v=2026-11-24" alt="Oxygen: the stack of 30 frames, a faint smooth glow now visible."></div><div class="arr">&rarr;</div>
+                <div><img src="images/color_mono_O-III_stack_zoom_tint.jpg?v=2026-11-24" alt="The oxygen stack shown in blue."></div>
+            </div>
+            <figure>
+                <figcaption><strong>From one frame to a stack, filter by filter.</strong> Each square is the same 1,200-pixel patch of the field at full resolution, about 5 arcminutes across, with the bright star AE Aurigae at the top right. Left: a single frame. Middle: every accepted frame through that filter, lined up and combined. Right: the stack painted in the color it will contribute. The oxygen glow, invisible in one frame, is there in the stack, and it is where the colors will come from.</figcaption>
+            </figure>
+
+            <h3>Three stacks, three colors</h3>
+
+            <p class="science-text">
+                A color on a screen is three numbers, how much red, green and blue to light at that pixel. So a color picture needs three black-and-white images, one per channel, and that is exactly what three filters give. The only question is which filter drives which channel. For a picture meant to look as the eye would see it, the answer is obvious: a red filter drives red, green drives green, blue drives blue. For these three narrowband filters there is no right answer, because two of them are red and the eye could never separate them. The convention used here is the one the Hubble Space Telescope made famous: sulfur into red, hydrogen into green, oxygen into blue, the three in order of wavelength from longest to shortest. Add the three tinted stacks from the chart above, and this is what comes out:
+            </p>
+
+            <div class="merge">
+                <div><img src="images/color_mono_S-II_stack_zoom_tint.jpg?v=2026-11-24" alt="Sulfur stack in red."><p class="lab"><span class="sii">S II &rarr; red</span></p></div>
+                <div class="arr wide-only">+</div>
+                <div class="wide-only"><img src="images/color_mono_Ha_stack_zoom_tint.jpg?v=2026-11-24" alt="Hydrogen stack in green."><p class="lab"><span class="ha">H&alpha; &rarr; green</span></p></div>
+                <div class="arr wide-only">+</div>
+                <div class="wide-only"><img src="images/color_mono_O-III_stack_zoom_tint.jpg?v=2026-11-24" alt="Oxygen stack in blue."><p class="lab"><span class="oiii">O III &rarr; blue</span></p></div>
+                <div class="arr">=</div>
+                <div><img src="images/color_mono_rgb_sum_zoom.jpg?v=2026-11-24" alt="The plain sum of the three tinted stacks: a green nebula with magenta stars."><p class="lab">The plain sum</p></div>
+            </div>
+            <figure>
+                <figcaption><strong>The three stacks simply added.</strong> This is a real color image made from the monochrome camera, and it already shows the principle. It also shows the two problems every narrowband picture has to solve: the nebula is green, and the stars are magenta.</figcaption>
+            </figure>
+
+            <p class="science-text">
+                The nebula is green because hydrogen really is three to four times brighter than the other two gases here, and hydrogen was put into green. That is the true ratio, and it is dull. The classic look stretches each filter onto its own full range, so that the brightest sulfur is as red as the brightest hydrogen is green, and the colors then say <em>where</em> each gas is rather than how much there is of it. The stars are magenta for a reason that is almost the opposite: a star shines through all three filters about equally, but the hydrogen filter sits on an absorption line in the star's own light, so the star is a little fainter in green than in red and blue, and red plus blue is magenta. The pipeline therefore finds the stars separately, keeps them white, and applies the per-filter scaling to the gas only. The same patch after those two steps is the first of the three stages below.
+            </p>
+
+            <h3>Denoise, then sharpen</h3>
+
+            <p class="science-text">
+                The combined picture is still noisy, most of all in the oxygen channel, which had the fewest photons and shows up as blue speckle over the whole field. Two neural networks finish the job, and both were trained on this telescope's own frames rather than on anyone else's pictures. The first removes noise. It was taught by the trick described in <a href="#noise2noise">Learning to denoise without ever seeing a clean image</a>: show it two stacks of the same field made from different halves of the frames, each with its own independent noise, and ask it to predict one from the other. The only thing the two have in common is the sky, so the only way to get good at the task is to learn what the sky looks like and what noise looks like, and to keep the one and drop the other. The second network undoes some of the blur that the atmosphere and the optics put on every star. It was trained by taking the observatory's own sharp stacks, blurring them by the measured shape of a star on a given night (see <a href="#psf">What shape is a star?</a>), and asking it to move the light back where it came from; the account is in <a href="#learned-deblur">Learning to undo the blur: a network that moves light</a>. Only the brightness is sharpened. The color planes stay as stacked, and the sharpened brightness relights them.
+            </p>
+
+            <div class="merge">
+                <div><img src="images/color_mono_SHO_raw_zoom.jpg?v=2026-11-24" alt="The pipeline's combined color image: red and green nebula, white stars, blue speckle in the dark areas."><p class="lab">Combined, stars kept white</p></div>
+                <div class="arr">&rarr;</div>
+                <div><img src="images/color_mono_SHO_denoised_zoom.jpg?v=2026-11-24" alt="The same patch after the denoising network: the speckle gone, the filaments smooth."><p class="lab">Denoised</p></div>
+                <div class="arr">&rarr;</div>
+                <div><img src="images/color_mono_SHO_learned_zoom.jpg?v=2026-11-24" alt="The same patch after the sharpening network: smaller stars, crisper filaments."><p class="lab">Sharpened</p></div>
+            </div>
+            <figure>
+                <figcaption><strong>The last three steps on the same patch.</strong> Left: the three stacks combined, each gas on its own range and the stars kept white. Middle: after the denoising network; the blue speckle, which was the oxygen channel's noise, is gone and the filaments are continuous. Right: after the sharpening network; the stars are tighter and the edges of the gas crisper. Nothing has been painted in. Both networks can only rearrange the light that the stacks recorded, and the article on the denoiser says plainly that nothing is measured from a picture that has been through them.</figcaption>
+            </figure>
+
+            <h3>The whole chain on one page</h3>
+
+            <figure>
+                <img src="images/color_mono_Ha_stack_full.jpg?v=2026-11-24" alt="The full hydrogen stack of IC 405 in black and white: bright filaments of gas across the field, AE Aurigae at the center.">
+                <figcaption><strong>The deepest of the three stacks, hydrogen, before any color.</strong> 46 five-minute frames, 3.8 hours. Everything in the finished picture is already here in shape; what the other two filters add is the color, which is to say the chemistry.</figcaption>
+            </figure>
+
+
+            <h3>Mapped color and true color</h3>
+
+            <p class="science-text">
+                The picture above is a map, not a photograph in the ordinary sense: its colors say which gas is where, and the eye would never see them. The same method with the camera's red, green and blue filters gives a picture that is as close to the eye's view as the telescope can manage, apart from being far more sensitive. Iris shot IC 405 that way too, on the nights of 2026-11-18 and 2026-11-19, with a fourth, clear filter for a sharp brightness layer. Here it is, to set beside the picture at the top:
+            </p>
+
+            <figure>
+                <img src="images/color_mono_LRGB_learned_full.jpg?v=2026-11-24" alt="IC 405 in true color: a dark field of white, blue and orange stars, with the bright blue-white star AE Aurigae surrounded by a blue haze and faint red wisps of gas to its left and lower left.">
+                <figcaption><strong>The same field through red, green and blue filters.</strong> 59 five-minute frames (clear 20, red 21, green 10, blue 8), the same stacking, the same two networks. Now the stars have their real colors, orange and blue-white, and the nebula is two things at once: a blue haze around AE Aurigae, which is the star's own light reflected off dust, and the deep red of glowing hydrogen beyond it. The red is faint here because a broad red filter lets in a great deal of sky along with the hydrogen line; that is what the narrowband filters are for.</figcaption>
+            </figure>
+
+            <p class="science-text">
+                So the answer to the question in the title is: by taking the picture three times. A monochrome camera is not a limitation to be worked around but the reason the colors can be chosen at all. Behind the red, green and blue of a phone photograph there are three filters too; they are just glued to the pixels, and nobody gets to pick them.
+            </p>
+        </article>
 
         <article id="hubble-v1-distance" class="note">
             <h2 class="note-title">Hubble's Star, a Century Later</h2>
